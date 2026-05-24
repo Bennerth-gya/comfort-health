@@ -7,7 +7,7 @@ export default async function DashboardPage() {
     const user = await getCurrentUser();
     const userId = user.id;
 
-    const [totalProducts, recent, allProducts] = await prisma.$transaction([
+    const [totalProducts, recent, allProducts] = await Promise.all([
         prisma.product.count({ where: { userId } }),
         prisma.product.findMany({
             where: { userId },

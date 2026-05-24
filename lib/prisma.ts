@@ -1,8 +1,8 @@
 import "server-only";
 
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../app/generated/db";
-import type { PrismaClient as PrismaClientType } from "../app/generated/db";
+import { PrismaClient } from "../generated/db";
+import type { PrismaClient as PrismaClientType } from "../generated/db";
 
 const connectionString = process.env.DATABASE_URL;
 

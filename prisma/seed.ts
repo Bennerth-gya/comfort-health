@@ -1,6 +1,6 @@
-import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../app/generated/db";
+import { PrismaClient } from "../app/generated/prisma/client";
+import type { PrismaClient as PrismaClientType } from "../app/generated/prisma/client";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -8,62 +8,40 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is not set");
 }
 
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString }),
-});
+const globalForPrisma = globalThis as unknown as {
+  prisma?: PrismaClientType;
+};
 
-const products = [
-  {
-    userId: "seed-user",
-    name: "Wireless Mouse",
-    sku: "MOUSE-001",
-    price: 29.99,
-    quantity: 24,
-    lowStock: 5,
-  },
-  {
-    userId: "seed-user",
-    name: "Mechanical Keyboard",
-    sku: "KEYBOARD-001",
-    price: 89.99,
-    quantity: 12,
-    lowStock: 3,
-  },
-  {
-    userId: "seed-user",
-    name: "USB-C Hub",
-    sku: "HUB-001",
-    price: 49.99,
-    quantity: 18,
-    lowStock: 4,
-  },
-];
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter: new PrismaPg({ connectionString }),
+  });
 
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 async function main() {
-  for (const product of products) {
-    const existingProduct = await prisma.product.findFirst({
-      where: { sku: product.sku },
-      select: { id: true },
-    });
+  const demoUserId = "2eba823f-23db-40c0-84ef-9d34bdb09cb0";
 
-    if (existingProduct) {
-      await prisma.product.update({
-        where: { id: existingProduct.id },
-        data: product,
-      });
-    } else {
-      await prisma.product.create({
-        data: product,
-      });
-    }
-  }
+  await prisma.product.createMany({
+    data: Array.from({ length: 25 }).map((_, i) => ({
+      userId: demoUserId,
+      name: `Product ${i + 1}`,
+      price: parseFloat((Math.random() * 90 + 10).toFixed(2)),
+      quantity: Math.floor(Math.random() * 20),
+      lowStockAt: 5,
+      createdAt: new Date(
+        Date.now() - 1000 * 60 * 60 * 24 * (i * 5)
+      ),
+    })),
+  });
 
-  console.log(`Seeded ${products.length} products`);
+  console.log("Seed data created successfully");
+  console.log(`Created 25 products for user ID: ${demoUserId}`);
 }
 
 main()
-  .catch((error) => {
-    console.error(error);
+  .catch((e) => {
+    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

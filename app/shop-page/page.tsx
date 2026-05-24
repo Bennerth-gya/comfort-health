@@ -15,10 +15,10 @@ const heroSlides = [
   },
   {
     id: 2,
-    image: "/hero/black-computer-pharmacy.jpg",
-    title: "Fast campus delivery\nwithin minutes",
+    image: "/hero/packaging.jpg",
+    title: "Discrete Packaging,\nConfidential Service",
     subtitle:
-      "Get your medications delivered quickly and safely anywhere around campus.",
+      "",
     button: "Order Now",
   },
   {
@@ -27,6 +27,14 @@ const heroSlides = [
     title: "Your trusted online\ncampus pharmacy",
     subtitle:
       "Affordable healthcare products from trusted suppliers in Ghana.",
+    button: "Explore Products",
+  },
+  {
+    id: 4,
+    image: "/hero/delivery.jpg",
+    title: "Fast, reliable delivery\nright to your doorstep",
+    subtitle:
+      "Delivered quickly and discreetly to you.",
     button: "Explore Products",
   },
 ];
@@ -58,9 +66,9 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative w-full overflow-hidden rounded-3xl bg-[#f4f8f5]">
+    <section className="relative w-full overflow-hidden rounded-3xl">
       {/* Slides */}
-      <div className="relative h-[500px] w-800px mx-auto">
+      <div className="relative h-[500px] w-full">
         {heroSlides.map((slide, index) => (
           <div
             key={slide.id}
@@ -70,31 +78,40 @@ export default function HeroSection() {
                 : "opacity-0 z-0"
             }`}
           >
-            <div className="grid h-full grid-cols-1 lg:grid-cols-2 gap-10 items-center px-8 lg:px-16">
-              
-              {/* LEFT TEXT */}
-              <div className="z-20">
-                <p className="mb-4 inline-flex items-center rounded-full bg-green-100 px-4 py-1 text-sm font-medium text-green-700">
+            <div className="absolute inset-0">
+              <Image
+                src={slide.image}
+                alt="Hero"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/40" />
+            </div>
+
+            <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-8 lg:px-16">
+              <div className="max-w-2xl text-white">
+                <p className="mb-4 inline-flex items-center rounded-full bg-emerald-600/20 px-4 py-1 text-sm font-medium text-emerald-100">
                   Trusted Campus Pharmacy
                 </p>
 
-                <h1 className="whitespace-pre-line text-5xl font-bold leading-tight text-gray-900">
+                <h1 className="whitespace-pre-line text-5xl font-bold leading-tight text-white drop-shadow-[0_15px_30px_rgba(0,0,0,0.35)]">
                   {slide.title}
                 </h1>
 
-                <p className="mt-6 max-w-xl text-lg leading-8 text-gray-600">
+                <p className="mt-6 max-w-xl text-lg leading-8 text-emerald-100/90">
                   {slide.subtitle}
                 </p>
 
                 {/* Search Box */}
-                <div className="mt-8 flex max-w-xl overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                <div className="mt-8 flex max-w-xl flex-wrap items-center gap-3 rounded-2xl bg-white/90 p-2 shadow-2xl backdrop-blur">
                   <input
                     type="text"
                     placeholder="Search medicines, vitamins, health products..."
-                    className="w-full px-5 py-4 text-sm outline-none text-gray-600"
+                    className="flex-1 min-w-[200px] bg-transparent px-5 py-4 text-sm text-gray-900 outline-none"
                   />
 
-                  <button className="flex items-center gap-2 bg-green-600 px-6 text-sm font-semibold text-white hover:bg-green-700">
+                  <button className="flex items-center gap-2 rounded-2xl bg-emerald-600 px-6 py-4 text-sm font-semibold text-white shadow-lg transition hover:bg-emerald-700">
                     <Search className="h-4 w-4" />
                     Search
                   </button>
@@ -110,24 +127,12 @@ export default function HeroSection() {
                   ].map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-white px-4 py-2 text-sm text-gray-600 shadow-sm"
+                      className="rounded-full bg-white/85 px-4 py-2 text-sm font-medium text-gray-800 shadow-sm"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
-              </div>
-
-              {/* RIGHT IMAGE */}
-              <div className="relative flex items-center justify-center">
-                <Image
-                  src={slide.image}
-                  alt="Hero"
-                  width={650}
-                  height={650}
-                  className="object-contain"
-                  priority
-                />
               </div>
             </div>
           </div>
