@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { stackServerApp } from "@/stack/server";
+import { getCurrentUserOrNull } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +50,7 @@ function isPrismaError(error: unknown, code: string) {
 
 export async function POST(req: Request) {
   try {
-    const user = await stackServerApp.getUser();
+    const user = await getCurrentUserOrNull();
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

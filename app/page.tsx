@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   HeartPulse,
   Pill,
@@ -10,9 +9,10 @@ import {
   ShoppingCart,
   Truck,
   Search,
-  Star,
 } from "lucide-react";
 import HeroSection from "./shop-page/page";
+import { useCart } from "@/app/context/cartContext";
+import ProductCard from "@/app/components/ProductCard";
 
 type Product = {
   id: string;
@@ -23,6 +23,7 @@ type Product = {
 };
 
 export default function HomePage() {
+  const { cartCount } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,11 +43,17 @@ export default function HomePage() {
 
       try {
         const response = await fetch("/api/products?limit=100");
+        const responseText = await response.text();
+
         if (!response.ok) {
-          throw new Error("Failed to load products");
+          throw new Error(responseText || "Failed to load products");
         }
 
-        const data = (await response.json()) as { products: ApiProduct[] };
+        if (!responseText.trim()) {
+          throw new Error("Received empty response from products API");
+        }
+
+        const data = JSON.parse(responseText) as { products: ApiProduct[] };
         setProducts(
           data.products.map((item) => ({
             id: item.id,
@@ -105,12 +112,15 @@ export default function HomePage() {
             <button className="hidden text-sm font-medium text-gray-600 hover:text-emerald-600 md:block">
               Orders
             </button>
-            <button className="relative rounded-xl border border-gray-200 p-3 hover:bg-gray-100">
+            <Link
+              href="/cart"
+              className="relative rounded-xl border border-gray-200 p-3 hover:bg-gray-100"
+            >
               <ShoppingCart className="h-5 w-5 text-gray-700" />
               <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-xs text-white">
-                2
+                {cartCount}
               </span>
-            </button>
+            </Link>
             <button className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
               Login
             </button>
@@ -164,43 +174,16 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
             {displayProducts.slice(0, 4).map((product) => (
-              <Link
+              <ProductCard
                 key={product.id}
-                href={`/products/${product.id}`}
-                className="block overflow-hidden rounded-3xl border border-gray-200 bg-white transition hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="relative h-60 overflow-hidden bg-gray-100">
-                  {product.imageUrl ? (
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center bg-gray-200 text-gray-400">
-                      No image
-                    </div>
-                  )}
-                </div>
-                <div className="p-5">
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
-                    {product.category || "Uncategorized"}
-                  </span>
-                  <h3 className="mt-4 text-lg font-semibold text-gray-900">{product.name}</h3>
-                  <div className="mt-3 flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <div className="mt-5 flex items-center justify-between">
-                    <p className="text-xl font-bold text-gray-900">GHS {product.price.toFixed(2)}</p>
-                    <button className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </Link>
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  image: product.imageUrl,
+                  category: product.category,
+                }}
+              />
             ))}
             {showPlaceholder ? (
               <div className="col-span-full rounded-3xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
@@ -224,36 +207,16 @@ export default function HomePage() {
         ) : (
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-5">
             {displayProducts.map((product) => (
-              <Link
+              <ProductCard
                 key={product.id}
-                href={`/products/${product.id}`}
-                className="block overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="relative h-48 overflow-hidden bg-gray-100">
-                  {product.imageUrl ? (
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      fill
-                      className="object-cover transition hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center bg-gray-200 text-gray-400">No image</div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
-                    {product.category || "Uncategorized"}
-                  </span>
-                  <h3 className="mt-3 line-clamp-2 text-sm font-semibold text-gray-900">{product.name}</h3>
-                  <div className="mt-3 flex items-center justify-between">
-                    <p className="font-bold text-gray-900">GHS {product.price.toFixed(2)}</p>
-                    <button className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-700">
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </Link>
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  image: product.imageUrl,
+                  category: product.category,
+                }}
+              />
             ))}
             {showPlaceholder ? (
               <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
@@ -349,6 +312,7 @@ export default function HomePage() {
               <li>+233 53 735 5068</li>
               <li>support@comfihealth.com</li>
               <li>Tarkwa, Ghana</li>
+              <li>Join our whatsapp community</li>
             </ul>
           </div>
         </div>

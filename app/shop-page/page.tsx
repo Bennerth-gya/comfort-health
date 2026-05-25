@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const heroSlides = [
   {
@@ -23,11 +23,11 @@ const heroSlides = [
   },
   {
     id: 3,
-    image: "/hero/oluman.jpg",
-    title: "Your trusted online\ncampus pharmacy",
+    image: "/hero/tablet-pharmacist.jpg",
+    title: "Join our whatsapp community ",
     subtitle:
-      "Affordable healthcare products from trusted suppliers in Ghana.",
-    button: "Explore Products",
+      "To interact with our pharmacists, and other health experts, and get personalized health advice.",
+    button: "Join Now",
   },
   {
     id: 4,
@@ -103,36 +103,7 @@ export default function HeroSection() {
                   {slide.subtitle}
                 </p>
 
-                {/* Search Box */}
-                <div className="mt-8 flex max-w-xl flex-wrap items-center gap-3 rounded-2xl bg-white/90 p-2 shadow-2xl backdrop-blur">
-                  <input
-                    type="text"
-                    placeholder="Search medicines, vitamins, health products..."
-                    className="flex-1 min-w-[200px] bg-transparent px-5 py-4 text-sm text-gray-900 outline-none"
-                  />
-
-                  <button className="flex items-center gap-2 rounded-2xl bg-emerald-600 px-6 py-4 text-sm font-semibold text-white shadow-lg transition hover:bg-emerald-700">
-                    <Search className="h-4 w-4" />
-                    Search
-                  </button>
-                </div>
-
-                {/* Tags */}
-                <div className="mt-5 flex flex-wrap gap-3">
-                  {[
-                    "Panadol",
-                    "Condoms",
-                    "Vitamin C",
-                    "Cough Syrup",
-                  ].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-white/85 px-4 py-2 text-sm font-medium text-gray-800 shadow-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                {/* Hero search and tags removed per request */}
               </div>
             </div>
           </div>

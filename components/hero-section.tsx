@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const heroSlides = [
   {
@@ -81,36 +81,7 @@ export default function HeroSection() {
                   {slide.subtitle}
                 </p>
 
-                {/* Search */}
-                <div className="mt-8 flex overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-                  <input
-                    type="text"
-                    placeholder="Search medicines..."
-                    className="h-14 flex-1 px-5 outline-none"
-                  />
-
-                  <button className="flex items-center gap-2 bg-emerald-600 px-8 text-sm font-semibold text-white hover:bg-emerald-700">
-                    <Search className="h-4 w-4" />
-                    Search
-                  </button>
-                </div>
-
-                {/* Tags */}
-                <div className="mt-5 flex flex-wrap gap-3">
-                  {[
-                    "Panadol",
-                    "Condoms",
-                    "Vitamin C",
-                    "Cough Syrup",
-                  ].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full bg-white px-4 py-2 text-sm text-gray-600 shadow-sm"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                {/* Search removed per request */}
               </div>
 
               {/* RIGHT SIDE */}
