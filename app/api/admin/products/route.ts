@@ -1,34 +1,49 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserOrNull } from "@/lib/auth";
+import { getAdminUserOrNull } from "@/lib/auth";
+import type { Prisma } from "@/generated/db";
+import { rateLimitRequest, RequestSecurityError } from "@/lib/request-security";
+import {
+  AdminProductListQuerySchema,
+  validationMessage,
+} from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
-function parseNumber(v: string | null) {
-  if (!v) return undefined;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : undefined;
-}
-
 export async function GET(req: Request) {
   try {
-    const user = await getCurrentUserOrNull();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    await rateLimitRequest(req, "admin-product:list", { limit: 120, windowMs: 60_000 });
+
+    const user = await getAdminUserOrNull();
+    if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { searchParams } = new URL(req.url);
-    const q = searchParams.get("q") || "";
-    const category = searchParams.get("category");
-    const brand = searchParams.get("brand");
-    const status = searchParams.get("status"); // in, low, out, all
-    const minPrice = parseNumber(searchParams.get("minPrice"));
-    const maxPrice = parseNumber(searchParams.get("maxPrice"));
-    const limit = parseInt(searchParams.get("limit") || "50", 10);
-    const skip = parseInt(searchParams.get("skip") || "0", 10);
+    const parsedQuery = AdminProductListQuerySchema.safeParse(
+      Object.fromEntries(searchParams),
+    );
 
-    const where: any = { userId: user.id };
+    if (!parsedQuery.success) {
+      return NextResponse.json(
+        { error: validationMessage(parsedQuery.error) },
+        { status: 400 },
+      );
+    }
+
+    const {
+      q,
+      category,
+      brand,
+      status,
+      minPrice,
+      maxPrice,
+      limit,
+      skip,
+    } = parsedQuery.data;
+
+    const where: Prisma.ProductWhereInput = { userId: user.id };
 
     if (q) {
-      const like = { contains: q, mode: "insensitive" };
+      const like = { contains: q, mode: "insensitive" } as const;
       where.OR = [
         { name: like },
         { description: like },
@@ -60,15 +75,18 @@ export async function GET(req: Request) {
       prisma.product.findMany({
         where,
         orderBy: { createAt: "desc" },
-        take: Math.min(limit, 200),
-        skip: Math.max(0, skip),
+        take: limit,
+        skip,
       }),
       prisma.product.count({ where }),
     ]);
 
     return NextResponse.json({ products, total, limit, skip });
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
+    if (error instanceof RequestSecurityError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json({ error: "Failed to fetch admin products" }, { status: 500 });
   }
 }

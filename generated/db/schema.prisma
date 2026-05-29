@@ -36,5 +36,77 @@ model Product {
   createAt DateTime @default(now())
   updateAt DateTime @updatedAt
 
+  orderItems OrderItem[]
+
+  @@index([userId, createAt])
+  @@index([activeListing, createAt])
+  @@index([userId, activeListing, createAt])
+  @@index([userId, category])
+  @@index([userId, manufacturer])
+  @@index([userId, price])
   @@map("product")
+}
+
+model Order {
+  id             String    @id @default(cuid())
+  reference      String    @unique
+  idempotencyKey String?   @unique
+  sellerId       String?
+  email          String
+  amount         Decimal   @db.Decimal(12, 2)
+  currency       String    @default("GHS")
+  status         String    @default("pending")
+  paidAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  items   OrderItem[]
+  payment PaymentTransaction?
+
+  @@index([email, createdAt])
+  @@index([sellerId, createdAt])
+  @@index([sellerId, status, createdAt])
+  @@index([status, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  name      String
+  unitPrice Decimal @db.Decimal(12, 2)
+  quantity  Int
+  lineTotal Decimal @db.Decimal(12, 2)
+  imageUrl  String?
+  category  String?
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_item")
+}
+
+model PaymentTransaction {
+  id                String    @id @default(cuid())
+  orderId           String    @unique
+  reference         String    @unique
+  provider          String    @default("paystack")
+  providerReference String?
+  authorizationUrl  String?
+  accessCode        String?
+  status            String    @default("pending")
+  amount            Decimal   @db.Decimal(12, 2)
+  currency          String    @default("GHS")
+  paidAt            DateTime?
+  rawPayload        Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@map("payment_transaction")
 }

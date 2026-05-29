@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimitRequest, RequestSecurityError } from "@/lib/request-security";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    await rateLimitRequest(request, "product:public", { limit: 120, windowMs: 60_000 });
+
     const products = await prisma.product.findMany({
       where: {
         activeListing: true,
@@ -12,6 +15,7 @@ export async function GET() {
       orderBy: {
         createAt: "desc",
       },
+      take: 100,
       select: {
         id: true,
         name: true,
@@ -35,6 +39,10 @@ export async function GET() {
     );
   } catch (error) {
     console.error("Failed to fetch public products", error);
+
+    if (error instanceof RequestSecurityError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
 
     return NextResponse.json(
       { error: "Failed to fetch products" },

@@ -1,13 +1,15 @@
 import Sidebar from "@/components/sidebar";
-import { getCurrentUser } from "@/lib/auth";
+import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TrendingUp } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
-    const user = await getCurrentUser();
+    const user = await requireAdminUser();
     const userId = user.id;
 
-    const [totalProducts, recent, allProducts] = await Promise.all([
+    const [totalProducts, recent, stockPreview, lowStockRows, valueRows] = await Promise.all([
         prisma.product.count({ where: { userId } }),
         prisma.product.findMany({
             where: { userId },
@@ -16,24 +18,30 @@ export default async function DashboardPage() {
         }),
         prisma.product.findMany({
             where: { userId },
+            orderBy: { createAt: "desc" },
+            take: 5,
             select: {
-                price: true,
                 quantity: true,
-                lowStock: true,
                 name: true,
-                createAt: true,
             },
         }),
+        prisma.$queryRaw<Array<{ count: number }>>`
+            SELECT COUNT(*)::int AS count
+            FROM "product"
+            WHERE "userId" = ${userId}
+              AND "lowStock" IS NOT NULL
+              AND "quantity" > 0
+              AND "quantity" <= "lowStock"
+        `,
+        prisma.$queryRaw<Array<{ value: string | null }>>`
+            SELECT COALESCE(SUM("price" * "quantity"), 0)::text AS value
+            FROM "product"
+            WHERE "userId" = ${userId}
+        `,
     ]);
 
-    const lowStock = allProducts.filter(
-        (p) => p.lowStock !== null && p.quantity <= p.lowStock
-    ).length;
-
-    const totalValue = allProducts.reduce(
-        (sum, p) => sum + Number(p.price) * Number(p.quantity),
-        0
-    );
+    const lowStock = lowStockRows[0]?.count ?? 0;
+    const totalValue = Number(valueRows[0]?.value ?? 0);
 
     const formattedValue = new Intl.NumberFormat("en-US", {
         style: "currency",
@@ -141,9 +149,9 @@ export default async function DashboardPage() {
                         <h2 className="text-sm font-semibold text-gray-700 mb-4">
                             Stock levels
                         </h2>
-                        {allProducts.length > 0 ? (
+                        {stockPreview.length > 0 ? (
                             <div className="space-y-3">
-                                {allProducts.slice(0, 5).map((product, i) => (
+                                {stockPreview.map((product, i) => (
                                     <div key={i} className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" />
@@ -170,10 +178,10 @@ export default async function DashboardPage() {
                                 <div className="flex justify-between text-xs text-gray-500 mb-1">
                                     <span>Stock health</span>
                                     <span>
-                                        {allProducts.length > 0
+                                        {totalProducts > 0
                                             ? Math.round(
-                                                ((allProducts.length - lowStock) /
-                                                    allProducts.length) *
+                                                ((totalProducts - lowStock) /
+                                                    totalProducts) *
                                                     100
                                               )
                                             : 100}
@@ -185,10 +193,10 @@ export default async function DashboardPage() {
                                         className="bg-green-500 h-2 rounded-full"
                                         style={{
                                             width:
-                                                allProducts.length > 0
+                                                totalProducts > 0
                                                     ? `${Math.round(
-                                                          ((allProducts.length - lowStock) /
-                                                              allProducts.length) *
+                                                          ((totalProducts - lowStock) /
+                                                              totalProducts) *
                                                               100
                                                       )}%`
                                                     : "100%",
@@ -206,9 +214,9 @@ export default async function DashboardPage() {
                                         className="bg-amber-400 h-2 rounded-full"
                                         style={{
                                             width:
-                                                allProducts.length > 0
+                                                totalProducts > 0
                                                     ? `${Math.round(
-                                                          (lowStock / allProducts.length) * 100
+                                                          (lowStock / totalProducts) * 100
                                                       )}%`
                                                     : "0%",
                                         }}

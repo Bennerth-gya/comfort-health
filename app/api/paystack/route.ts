@@ -1,53 +1,41 @@
 import { NextResponse } from "next/server";
-
-const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+import { createPaystackCheckout, PaymentFlowError } from "@/lib/payments";
+import {
+  assertJsonContentType,
+  assertSameOrigin,
+  rateLimitRequest,
+  readJsonRequest,
+  RequestSecurityError,
+} from "@/lib/request-security";
 
 export async function POST(request: Request) {
-  if (!PAYSTACK_SECRET_KEY) {
+  try {
+    assertSameOrigin(request);
+    assertJsonContentType(request);
+    await rateLimitRequest(request, "paystack:init", { limit: 12, windowMs: 60_000 });
+
+    const checkout = await createPaystackCheckout(
+      request,
+      await readJsonRequest(request, 32_000),
+    );
+
     return NextResponse.json(
-      { error: "PAYSTACK_SECRET_KEY is not configured." },
-      { status: 500 }
+      {
+        order: checkout.order,
+        data: checkout.paystack,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Failed to initialize Paystack transaction", error);
+
+    if (error instanceof PaymentFlowError || error instanceof RequestSecurityError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+
+    return NextResponse.json(
+      { error: "Failed to initialize Paystack transaction." },
+      { status: 500 },
     );
   }
-
-  const body = await request.json();
-  const { email, amount, reference, items } = body ?? {};
-
-  if (!email || !amount || !reference) {
-    return NextResponse.json(
-      { error: "Request must include email, amount, and reference." },
-      { status: 400 }
-    );
-  }
-
-  const payload = {
-    email,
-    amount: Math.round(Number(amount) * 100),
-    currency: "GHS",
-    reference,
-    metadata: {
-      source: "Comfi Health checkout",
-      items: Array.isArray(items) ? items : [],
-    },
-  };
-
-  const response = await fetch("https://api.paystack.co/transaction/initialize", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    return NextResponse.json(
-      { error: data.message || "Failed to initialize Paystack transaction.", data },
-      { status: response.status }
-    );
-  }
-
-  return NextResponse.json(data, { status: 200 });
 }

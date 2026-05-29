@@ -64,7 +64,7 @@ export default function ConfirmDeleteModal({
             <h3 className="text-lg font-semibold text-slate-900">Delete Product?</h3>
             <p className="mt-2 text-sm text-slate-600">
               Are you sure you want to delete{" "}
-              <span className="font-semibold text-slate-900">"{productName}"</span>? This
+              <span className="font-semibold text-slate-900">&quot;{productName}&quot;</span>? This
               action can be undone by restoring the listing from soft-delete.
             </p>
           </div>

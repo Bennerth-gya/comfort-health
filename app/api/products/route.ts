@@ -1,43 +1,22 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserOrNull } from "@/lib/auth";
+import { getAdminUserOrNull } from "@/lib/auth";
+import {
+  assertJsonContentType,
+  assertSameOrigin,
+  rateLimitRequest,
+  readJsonRequest,
+  RequestSecurityError,
+} from "@/lib/request-security";
+import {
+  ProductCreateSchema,
+  PublicProductListQuerySchema,
+  validationMessage,
+} from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
 class ProductValidationError extends Error {}
-
-function optionalString(value: unknown) {
-  return typeof value === "string" && value.trim() ? value.trim() : null;
-}
-
-function requiredString(value: unknown, field: string) {
-  if (typeof value !== "string" || !value.trim()) {
-    throw new ProductValidationError(`${field} is required`);
-  }
-  return value.trim();
-}
-
-function requiredNumber(value: unknown, field: string) {
-  const number = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(number)) {
-    throw new ProductValidationError(`${field} must be a valid number`);
-  }
-  return number;
-}
-
-function optionalNumber(value: unknown, field: string) {
-  if (value === null || value === undefined || value === "") return null;
-  return requiredNumber(value, field);
-}
-
-function optionalDate(value: unknown) {
-  if (typeof value !== "string" || !value) return null;
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    throw new ProductValidationError("Expiry date must be valid");
-  }
-  return date;
-}
 
 function isPrismaError(error: unknown, code: string) {
   return (
@@ -50,30 +29,27 @@ function isPrismaError(error: unknown, code: string) {
 
 export async function POST(req: Request) {
   try {
-    const user = await getCurrentUserOrNull();
+    assertSameOrigin(req);
+    assertJsonContentType(req);
+    await rateLimitRequest(req, "product:create", { limit: 20, windowMs: 60_000 });
+
+    const user = await getAdminUserOrNull();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const body = await req.json();
+    const parsed = ProductCreateSchema.safeParse(
+      await readJsonRequest(req, 1_250_000),
+    );
+    if (!parsed.success) {
+      throw new ProductValidationError(validationMessage(parsed.error));
+    }
 
     const product = await prisma.product.create({
       data: {
         userId: user.id,
-        name: requiredString(body.name, "Product name"),
-        description: optionalString(body.description),
-        category: optionalString(body.category),
-        sku: optionalString(body.sku),
-        price: requiredNumber(body.price, "Price"),
-        quantity: requiredNumber(body.quantity, "Quantity"),
-        lowStock: optionalNumber(body.lowStock, "Low stock alert"),
-        dosage: optionalString(body.dosage),
-        manufacturer: optionalString(body.manufacturer),
-        expiryDate: optionalDate(body.expiryDate),
-        imageUrl: optionalString(body.imageUrl),
-        prescriptionRequired: Boolean(body.prescriptionRequired),
-        activeListing: body.activeListing !== false,
+        ...parsed.data,
       },
     });
 
@@ -92,6 +68,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
+    if (error instanceof RequestSecurityError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+
     return NextResponse.json(
       {
         error:
@@ -106,9 +86,21 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
+    await rateLimitRequest(req, "product:list", { limit: 120, windowMs: 60_000 });
+
     const { searchParams } = new URL(req.url);
-    const limit = parseInt(searchParams.get("limit") || "100");
-    const skip = parseInt(searchParams.get("skip") || "0");
+    const parsedQuery = PublicProductListQuerySchema.safeParse(
+      Object.fromEntries(searchParams),
+    );
+
+    if (!parsedQuery.success) {
+      return NextResponse.json(
+        { error: validationMessage(parsedQuery.error) },
+        { status: 400 },
+      );
+    }
+
+    const { limit, skip } = parsedQuery.data;
 
     const products = await prisma.product.findMany({
       where: { activeListing: true },
@@ -145,6 +137,9 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error(error);
+    if (error instanceof RequestSecurityError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json(
       {
         error:

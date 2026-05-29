@@ -1,29 +1,53 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserOrNull } from "@/lib/auth";
+import { getAdminUserOrNull } from "@/lib/auth";
+import {
+  assertJsonContentType,
+  assertSameOrigin,
+  rateLimitRequest,
+  readJsonRequest,
+  RequestSecurityError,
+} from "@/lib/request-security";
+import { ProductUpdateSchema, validationMessage } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
-function optionalString(value: unknown) {
-  return typeof value === "string" && value.trim() ? value.trim() : null;
+class ProductValidationError extends Error {}
+
+function isPrismaError(error: unknown, code: string) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === code
+  );
 }
 
-function optionalNumber(value: unknown) {
-  if (value === null || value === undefined || value === "") return null;
-  const n = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(n)) return null;
-  return n;
+function productError(error: unknown, fallback: string) {
+  console.error(error);
+
+  if (error instanceof ProductValidationError || error instanceof RequestSecurityError) {
+    return NextResponse.json({ error: error.message }, { status: error instanceof RequestSecurityError ? error.status : 400 });
+  }
+
+  if (isPrismaError(error, "P2002")) {
+    return NextResponse.json(
+      { error: "A product with this SKU already exists." },
+      { status: 409 },
+    );
+  }
+
+  return NextResponse.json({ error: fallback }, { status: 500 });
 }
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const user = await getCurrentUserOrNull();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getAdminUserOrNull();
+  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   try {
-    const product = await prisma.product.findUnique({ where: { id } });
+    const product = await prisma.product.findFirst({ where: { id, userId: user.id } });
     if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    if (product.userId !== user.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     return NextResponse.json(product);
   } catch (err) {
     console.error(err);
@@ -33,52 +57,62 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const user = await getCurrentUserOrNull();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getAdminUserOrNull();
+  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   try {
-    const body = await req.json();
-    const existing = await prisma.product.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    if (existing.userId !== user.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    assertSameOrigin(req);
+    assertJsonContentType(req);
+    await rateLimitRequest(req, "product:update", { limit: 60, windowMs: 60_000 });
 
-    const data: any = {};
-    if (body.name !== undefined) data.name = optionalString(body.name) ?? existing.name;
-    if (body.description !== undefined) data.description = optionalString(body.description);
-    if (body.category !== undefined) data.category = optionalString(body.category);
-    if (body.sku !== undefined) data.sku = optionalString(body.sku);
-    if (body.price !== undefined) data.price = optionalNumber(body.price) ?? existing.price;
-    if (body.quantity !== undefined) data.quantity = optionalNumber(body.quantity) ?? existing.quantity;
-    if (body.lowStock !== undefined) data.lowStock = optionalNumber(body.lowStock);
-    if (body.dosage !== undefined) data.dosage = optionalString(body.dosage);
-    if (body.manufacturer !== undefined) data.manufacturer = optionalString(body.manufacturer);
-    if (body.imageUrl !== undefined) data.imageUrl = optionalString(body.imageUrl);
-    if (body.prescriptionRequired !== undefined) data.prescriptionRequired = Boolean(body.prescriptionRequired);
-    if (body.activeListing !== undefined) data.activeListing = Boolean(body.activeListing);
+    const parsed = ProductUpdateSchema.safeParse(
+      await readJsonRequest(req, 1_250_000),
+    );
+    if (!parsed.success) {
+      throw new ProductValidationError(validationMessage(parsed.error));
+    }
 
-    const updated = await prisma.product.update({ where: { id }, data });
+    const claim = await prisma.product.updateMany({
+      where: { id, userId: user.id },
+      data: parsed.data,
+    });
+
+    if (claim.count !== 1) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    const updated = await prisma.product.findUnique({ where: { id } });
+    if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
     return NextResponse.json(updated);
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+  } catch (error) {
+    return productError(error, "Failed to update product");
   }
 }
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const user = await getCurrentUserOrNull();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getAdminUserOrNull();
+  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   try {
-    const existing = await prisma.product.findUnique({ where: { id } });
-    if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    if (existing.userId !== user.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    assertSameOrigin(req);
+    await rateLimitRequest(req, "product:delete", { limit: 40, windowMs: 60_000 });
 
-    // Soft delete: mark activeListing false
-    const deleted = await prisma.product.update({ where: { id }, data: { activeListing: false } });
+    const claim = await prisma.product.updateMany({
+      where: { id, userId: user.id },
+      data: { activeListing: false },
+    });
+
+    if (claim.count !== 1) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    const deleted = await prisma.product.findUnique({ where: { id } });
+    if (!deleted) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
     return NextResponse.json({ success: true, product: deleted });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
+  } catch (error) {
+    return productError(error, "Failed to delete product");
   }
 }

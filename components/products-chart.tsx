@@ -5,5 +5,5 @@ interface chartData {
 
 
 export default function ProductsChart({ data }: { data: chartData[] }) {
-    return <div></div>;
+    return <div data-points={data.length}></div>;
 }

@@ -1,6 +1,7 @@
 import { SignIn } from "@stackframe/stack";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
 
 
 export default function SignInPage() {

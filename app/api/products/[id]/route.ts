@@ -31,7 +31,7 @@ export async function GET(
       },
     });
 
-    if (!product) {
+    if (!product || !product.activeListing) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 

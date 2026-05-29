@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useState,
@@ -27,20 +28,20 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const removeToast = (id: string) => {
+  const removeToast = useCallback((id: string) => {
     setToasts((current) => current.filter((toast) => toast.id !== id));
-  };
+  }, []);
 
-  const pushToast = ({ title, description, variant }: Omit<ToastMessage, "id">) => {
+  const pushToast = useCallback(({ title, description, variant }: Omit<ToastMessage, "id">) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const toast: ToastMessage = { id, title, description, variant };
 
     setToasts((current) => [...current, toast]);
 
     window.setTimeout(() => removeToast(id), 5000);
-  };
+  }, [removeToast]);
 
-  const value = useMemo(() => ({ pushToast }), []);
+  const value = useMemo(() => ({ pushToast }), [pushToast]);
 
   return (
     <ToastContext.Provider value={value}>

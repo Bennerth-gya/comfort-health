@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -74,18 +75,14 @@ function parseStoredOrders(value: string | null): OrderRecord[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<OrderRecord[]>([]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const storedCart = window.localStorage.getItem(CART_STORAGE_KEY);
-    const storedOrders = window.localStorage.getItem(ORDERS_STORAGE_KEY);
-
-    setCart(parseStoredCart(storedCart));
-    setOrders(parseStoredOrders(storedOrders));
-  }, []);
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
+    return parseStoredCart(window.localStorage.getItem(CART_STORAGE_KEY));
+  });
+  const [orders, setOrders] = useState<OrderRecord[]>(() => {
+    if (typeof window === "undefined") return [];
+    return parseStoredOrders(window.localStorage.getItem(ORDERS_STORAGE_KEY));
+  });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -107,7 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     [cart]
   );
 
-  const addToCart = (product: CartItem) => {
+  const addToCart = useCallback((product: CartItem) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
@@ -119,21 +116,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, product];
     });
-  };
+  }, []);
 
-  const removeFromCart = (id: string) => {
+  const removeFromCart = useCallback((id: string) => {
     setCart((prev) => prev.filter((item) => item.id !== id));
-  };
+  }, []);
 
-  const increaseQty = (id: string) => {
+  const increaseQty = useCallback((id: string) => {
     setCart((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
-  };
+  }, []);
 
-  const decreaseQty = (id: string) => {
+  const decreaseQty = useCallback((id: string) => {
     setCart((prev) =>
       prev.map((item) =>
         item.id === id
@@ -141,33 +138,50 @@ export function CartProvider({ children }: { children: ReactNode }) {
           : item
       )
     );
-  };
+  }, []);
 
-  const clearCart = () => setCart([]);
+  const clearCart = useCallback(() => setCart([]), []);
 
-  const saveOrder = (order: OrderRecord) => {
+  const saveOrder = useCallback((order: OrderRecord) => {
     setOrders((prev) => [order, ...prev]);
-  };
+  }, []);
 
-  const getOrderByReference = (reference: string) =>
-    orders.find((order) => order.reference === reference);
+  const getOrderByReference = useCallback(
+    (reference: string) => orders.find((order) => order.reference === reference),
+    [orders],
+  );
+
+  const value = useMemo(
+    () => ({
+      cart,
+      cartCount,
+      subtotal,
+      orders,
+      addToCart,
+      removeFromCart,
+      increaseQty,
+      decreaseQty,
+      clearCart,
+      saveOrder,
+      getOrderByReference,
+    }),
+    [
+      cart,
+      cartCount,
+      subtotal,
+      orders,
+      addToCart,
+      removeFromCart,
+      increaseQty,
+      decreaseQty,
+      clearCart,
+      saveOrder,
+      getOrderByReference,
+    ],
+  );
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        cartCount,
-        subtotal,
-        orders,
-        addToCart,
-        removeFromCart,
-        increaseQty,
-        decreaseQty,
-        clearCart,
-        saveOrder,
-        getOrderByReference,
-      }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

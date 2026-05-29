@@ -140,9 +140,57 @@ exports.Prisma.ProductScalarFieldEnum = {
   updateAt: 'updateAt'
 };
 
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  reference: 'reference',
+  idempotencyKey: 'idempotencyKey',
+  sellerId: 'sellerId',
+  email: 'email',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  name: 'name',
+  unitPrice: 'unitPrice',
+  quantity: 'quantity',
+  lineTotal: 'lineTotal',
+  imageUrl: 'imageUrl',
+  category: 'category'
+};
+
+exports.Prisma.PaymentTransactionScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  reference: 'reference',
+  provider: 'provider',
+  providerReference: 'providerReference',
+  authorizationUrl: 'authorizationUrl',
+  accessCode: 'accessCode',
+  status: 'status',
+  amount: 'amount',
+  currency: 'currency',
+  paidAt: 'paidAt',
+  rawPayload: 'rawPayload',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -155,9 +203,18 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
 
 exports.Prisma.ModelName = {
-  Product: 'Product'
+  Product: 'Product',
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  PaymentTransaction: 'PaymentTransaction'
 };
 
 /**

@@ -1,28 +1,17 @@
 import {
-  BarChart3,
   Boxes,
   Cross,
-  Grid2X2,
   LayoutDashboard,
-  MapPin,
   Package,
-  Settings,
   ShoppingBag,
   Truck,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Orders", href: "/orders", icon: ShoppingBag },
-  { name: "Customers", href: "/customers", icon: Users },
   { name: "Inventory", href: "/inventory", icon: Package },
-  { name: "Categories", href: "/categories", icon: Grid2X2 },
-  { name: "Pharmacies", href: "/pharmacies", icon: MapPin },
-  { name: "Delivery", href: "/delivery", icon: Truck },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
-  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function Sidebar({
@@ -80,12 +69,6 @@ export default function Sidebar({
           <p className="mt-2 text-xs text-slate-500">
             We deliver health to your door.
           </p>
-          <Link
-            href="/delivery"
-            className="mt-5 inline-flex h-10 items-center rounded-lg bg-emerald-700 px-5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800"
-          >
-            View Deliveries
-          </Link>
         </div>
 
         <div className="border-t border-gray-200 pt-6">

@@ -109,9 +109,12 @@ export default function HomePage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="hidden text-sm font-medium text-gray-600 hover:text-emerald-600 md:block">
-              Orders
-            </button>
+            <Link
+              href="/sign-in"
+              className="hidden text-sm font-medium text-gray-600 hover:text-emerald-600 md:block"
+            >
+              Admin
+            </Link>
             <Link
               href="/cart"
               className="relative rounded-xl border border-gray-200 p-3 hover:bg-gray-100"
@@ -121,9 +124,12 @@ export default function HomePage() {
                 {cartCount}
               </span>
             </Link>
-            <button className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700">
+            <Link
+              href="/sign-in"
+              className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
               Login
-            </button>
+            </Link>
           </div>
         </div>
       </header>
@@ -291,10 +297,31 @@ export default function HomePage() {
           <div>
             <h3 className="mb-4 text-lg font-semibold text-white">Quick Links</h3>
             <ul className="space-y-3 text-gray-300">
-              <li>Shop</li>
-              <li>Orders</li>
-              <li>Contact</li>
-              <li>Privacy Policy</li>
+              <li>
+                <Link href="/" className="hover:text-white">
+                  Shop
+                </Link>
+              </li>
+              <li>
+                <Link href="/sign-in" className="hover:text-white">
+                  Admin login
+                </Link>
+              </li>
+              <li>
+                <a href="mailto:support@comfihealth.com" className="hover:text-white">
+                  Contact
+                </a>
+              </li>
+              <li>
+                <Link href="/privacy" className="hover:text-white">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-white">
+                  Terms of Service
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

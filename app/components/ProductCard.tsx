@@ -3,6 +3,7 @@
 import type { MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 import { useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
 
@@ -48,6 +49,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               src={product.image}
               alt={product.name}
               fill
+              unoptimized={shouldUnoptimizeProductImage(product.image)}
               className="object-cover transition hover:scale-105"
             />
           ) : (

@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle2, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
 import PaystackCheckout from "@/app/components/PaystackCheckout";
 import { useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
@@ -17,30 +16,8 @@ export default function CartPage() {
     decreaseQty,
     removeFromCart,
     clearCart,
-    saveOrder,
   } = useCart();
-  const router = useRouter();
   const { pushToast } = useToast();
-
-  const handlePaymentSuccess = (reference: string, email: string) => {
-    saveOrder({
-      reference,
-      email,
-      amount: subtotal,
-      currency: "GHS",
-      items: cart,
-      createdAt: new Date().toISOString(),
-      status: "success",
-    });
-
-    clearCart();
-    pushToast({
-      title: "Order confirmed",
-      description: "Your order has been saved successfully.",
-      variant: "success",
-    });
-    router.push(`/order-success?reference=${encodeURIComponent(reference)}`);
-  };
 
   return (
     <div className="min-h-screen bg-[#f8faf8] px-4 py-10 sm:px-6 lg:px-8">
@@ -170,7 +147,6 @@ export default function CartPage() {
               <PaystackCheckout
                 items={cart}
                 amount={subtotal}
-                onSuccess={handlePaymentSuccess}
                 buttonLabel="Pay with Paystack"
               />
 

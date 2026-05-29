@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export type ValidationRule = {
-  validate: (value: any) => boolean | string;
+  validate: (value: unknown) => boolean | string;
   message: string;
 };
 
@@ -16,7 +16,7 @@ export type FormErrors = {
 export function useFormValidation(rules: ValidationRules) {
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const validateField = (fieldName: string, value: any): boolean => {
+  const validateField = (fieldName: string, value: unknown): boolean => {
     const fieldRules = rules[fieldName];
     if (!fieldRules) return true;
 
@@ -38,7 +38,7 @@ export function useFormValidation(rules: ValidationRules) {
     return true;
   };
 
-  const validateAll = (data: Record<string, any>): boolean => {
+  const validateAll = (data: Record<string, unknown>): boolean => {
     const newErrors: FormErrors = {};
     let isValid = true;
 
@@ -83,7 +83,7 @@ export function useFormValidation(rules: ValidationRules) {
 // Common validation rules
 export const commonRules = {
   required: (message = "This field is required"): ValidationRule => ({
-    validate: (value: any) => {
+    validate: (value: unknown) => {
       if (typeof value === "string") return value.trim().length > 0;
       if (typeof value === "number") return value !== null && value !== undefined;
       return !!value;
@@ -92,27 +92,27 @@ export const commonRules = {
   }),
 
   minLength: (length: number): ValidationRule => ({
-    validate: (value: any) => !value || value.toString().length >= length,
+    validate: (value: unknown) => !value || value.toString().length >= length,
     message: `Minimum ${length} characters required`,
   }),
 
   maxLength: (length: number): ValidationRule => ({
-    validate: (value: any) => !value || value.toString().length <= length,
+    validate: (value: unknown) => !value || value.toString().length <= length,
     message: `Maximum ${length} characters allowed`,
   }),
 
   min: (num: number): ValidationRule => ({
-    validate: (value: any) => value === null || value === undefined || value === "" || Number(value) >= num,
+    validate: (value: unknown) => value === null || value === undefined || value === "" || Number(value) >= num,
     message: `Minimum value is ${num}`,
   }),
 
   max: (num: number): ValidationRule => ({
-    validate: (value: any) => value === null || value === undefined || value === "" || Number(value) <= num,
+    validate: (value: unknown) => value === null || value === undefined || value === "" || Number(value) <= num,
     message: `Maximum value is ${num}`,
   }),
 
   positiveNumber: (): ValidationRule => ({
-    validate: (value: any) => {
+    validate: (value: unknown) => {
       if (value === null || value === undefined || value === "") return true;
       const num = Number(value);
       return Number.isFinite(num) && num > 0;
@@ -121,7 +121,7 @@ export const commonRules = {
   }),
 
   validNumber: (): ValidationRule => ({
-    validate: (value: any) => {
+    validate: (value: unknown) => {
       if (value === null || value === undefined || value === "") return true;
       return Number.isFinite(Number(value));
     },
@@ -129,10 +129,10 @@ export const commonRules = {
   }),
 
   validUrl: (): ValidationRule => ({
-    validate: (value: any) => {
+    validate: (value: unknown) => {
       if (!value) return true;
       try {
-        new URL(value);
+        new URL(String(value));
         return true;
       } catch {
         return false;

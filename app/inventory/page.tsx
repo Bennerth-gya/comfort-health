@@ -1,26 +1,23 @@
 import Sidebar from "@/components/sidebar";
-import { getCurrentUser } from "@/lib/auth";
+import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   AlertTriangle,
   Bell,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Download,
   MessageSquare,
   Package,
   PackageCheck,
   PackageX,
-  Pencil,
   Plus,
   Search,
-  SlidersHorizontal,
-  Trash2,
   Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import InventoryClient from "@/components/inventory/InventoryClient";
+
+export const dynamic = "force-dynamic";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -45,8 +42,6 @@ const expiryLabels = [
   "Sep 2026",
   "Nov 2026",
 ];
-
-const tabLabels = ["All Products", "In Stock", "Low Stock", "Out of Stock"];
 
 function getCategory(productName: string, index: number) {
   const name = productName.toLowerCase();
@@ -91,13 +86,37 @@ function getProductInitials(name: string) {
 }
 
 export default async function InventoryPage() {
-  const user = await getCurrentUser();
+  const user = await requireAdminUser();
   const userId = user.id;
 
-  const products = await prisma.product.findMany({
-    where: { userId },
-    orderBy: { createAt: "desc" },
-  });
+  const [
+    products,
+    totalProducts,
+    outOfStock,
+    lowStockRows,
+    inventoryValueRows,
+  ] = await Promise.all([
+    prisma.product.findMany({
+      where: { userId },
+      orderBy: { createAt: "desc" },
+      take: 20,
+    }),
+    prisma.product.count({ where: { userId } }),
+    prisma.product.count({ where: { userId, quantity: { lte: 0 } } }),
+    prisma.$queryRaw<Array<{ count: number }>>`
+      SELECT COUNT(*)::int AS count
+      FROM "product"
+      WHERE "userId" = ${userId}
+        AND "quantity" > 0
+        AND "lowStock" IS NOT NULL
+        AND "quantity" <= "lowStock"
+    `,
+    prisma.$queryRaw<Array<{ value: string | null }>>`
+      SELECT COALESCE(SUM("price" * "quantity"), 0)::text AS value
+      FROM "product"
+      WHERE "userId" = ${userId}
+    `,
+  ]);
 
   const rows = products.map((product, index) => {
     const status = getStatus(product.quantity, product.lowStock);
@@ -121,19 +140,9 @@ export default async function InventoryPage() {
     };
   });
 
-  const totalProducts = rows.length;
-  const outOfStock = rows.filter((product) => product.quantity <= 0).length;
-  const lowStock = rows.filter(
-    (product) =>
-      product.quantity > 0 &&
-      product.lowStock !== null &&
-      product.quantity <= product.lowStock,
-  ).length;
+  const lowStock = lowStockRows[0]?.count ?? 0;
   const inStock = totalProducts - lowStock - outOfStock;
-  const inventoryValue = rows.reduce(
-    (sum, product) => sum + Number(product.price) * product.quantity,
-    0,
-  );
+  const inventoryValue = Number(inventoryValueRows[0]?.value ?? 0);
 
   const stats = [
     {

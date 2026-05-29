@@ -1,6 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../app/generated/prisma/client";
-import type { PrismaClient as PrismaClientType } from "../app/generated/prisma/client";
+import { PrismaClient } from "../generated/db";
+import type { PrismaClient as PrismaClientType } from "../generated/db";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -28,8 +28,8 @@ async function main() {
       name: `Product ${i + 1}`,
       price: parseFloat((Math.random() * 90 + 10).toFixed(2)),
       quantity: Math.floor(Math.random() * 20),
-      lowStockAt: 5,
-      createdAt: new Date(
+      lowStock: 5,
+      createAt: new Date(
         Date.now() - 1000 * 60 * 60 * 24 * (i * 5)
       ),
     })),
