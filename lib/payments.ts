@@ -1,22 +1,12 @@
 import "server-only";
 
 import crypto from "crypto";
-import { sendOrderReceiptEmail } from "@/lib/email";
-import { createReceiptToken } from "@/lib/payment-security";
 import { prisma } from "@/lib/prisma";
-
-export {
-  createReceiptToken,
-  verifyPaystackWebhookSignature,
-  verifyReceiptToken,
-} from "@/lib/payment-security";
-import {
-  CheckoutRequestSchema,
-  validationMessage,
-} from "@/lib/validation";
+import { CheckoutRequestSchema, validationMessage } from "@/lib/validation";
 import type { Prisma } from "@/generated/db";
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+const ORDER_RECEIPT_SECRET = process.env.ORDER_RECEIPT_SECRET;
 const MONEY_FACTOR = 100;
 const CURRENCY = "GHS";
 const PAID_STATUSES = new Set(["paid", "paid_fulfillment_review"]);
@@ -59,6 +49,15 @@ type PaystackVerifyResponse = {
   };
 };
 
+type CheckoutResponse = {
+  order: PublicOrder;
+  paystack: {
+    authorization_url?: string;
+    access_code?: string;
+    reference?: string;
+  };
+};
+
 export type PublicOrder = {
   reference: string;
   email: string;
@@ -90,6 +89,45 @@ function requiredPaystackSecret() {
   return PAYSTACK_SECRET_KEY;
 }
 
+function requiredReceiptSecret() {
+  const secret = ORDER_RECEIPT_SECRET ?? PAYSTACK_SECRET_KEY;
+  if (!secret) {
+    throw new PaymentFlowError("ORDER_RECEIPT_SECRET or PAYSTACK_SECRET_KEY is not configured.", 500);
+  }
+
+  return secret;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+export function normalizeCheckoutItems(value: unknown): CheckoutItemInput[] {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new PaymentFlowError("Cart items are required.");
+  }
+
+  if (value.length > 50) {
+    throw new PaymentFlowError("Too many cart items.");
+  }
+
+  return value.map((item) => {
+    if (!isRecord(item) || typeof item.id !== "string") {
+      throw new PaymentFlowError("Invalid cart item.");
+    }
+
+    const quantity = Number(item.quantity);
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+      throw new PaymentFlowError("Invalid item quantity.");
+    }
+
+    return {
+      id: item.id,
+      quantity,
+    };
+  });
+}
+
 function toPesewas(amount: unknown) {
   return Math.round(Number(amount) * MONEY_FACTOR);
 }
@@ -100,6 +138,26 @@ function toMoney(pesewas: number) {
 
 function makeReference() {
   return `comfi_${crypto.randomUUID().replaceAll("-", "").slice(0, 24)}`;
+}
+
+export function createReceiptToken(reference: string) {
+  return crypto
+    .createHmac("sha256", requiredReceiptSecret())
+    .update(reference)
+    .digest("hex");
+}
+
+export function verifyReceiptToken(reference: string, token: string | null | undefined) {
+  if (!token) return false;
+
+  const expected = Buffer.from(createReceiptToken(reference), "hex");
+  const provided = Buffer.from(token, "hex");
+
+  if (expected.length !== provided.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expected, provided);
 }
 
 function publicOrder(
@@ -136,19 +194,19 @@ function callbackUrl(request: Request, reference: string) {
   return url.toString();
 }
 
-export async function createPaystackCheckout(request: Request, body: unknown) {
-  const secret = requiredPaystackSecret();
+function isPrismaError(error: unknown, code: string) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === code
+  );
+}
 
-  const parsed = CheckoutRequestSchema.safeParse(body);
-  if (!parsed.success) {
-    throw new PaymentFlowError(validationMessage(parsed.error));
-  }
-
-  const { email, idempotencyKey } = parsed.data;
-  const requestedItems: CheckoutItemInput[] = parsed.data.items;
-  const requestedById = new Map(requestedItems.map((item) => [item.id, item]));
-
-  const existingOrder = await prisma.order.findUnique({
+async function existingCheckoutResponse(
+  idempotencyKey: string,
+): Promise<CheckoutResponse | null> {
+  const existing = await prisma.order.findUnique({
     where: { idempotencyKey },
     include: {
       items: true,
@@ -156,28 +214,42 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
     },
   });
 
-  if (existingOrder) {
-    if (existingOrder.email !== email) {
-      throw new PaymentFlowError("Checkout idempotency key is already in use.", 409);
-    }
-
-    if (isPaidOrderStatus(existingOrder.status)) {
-      throw new PaymentFlowError("This checkout has already been paid.", 409);
-    }
-
-    if (!existingOrder.payment?.authorizationUrl) {
-      throw new PaymentFlowError("Existing checkout is not payable. Start a new checkout.", 409);
-    }
-
-    return {
-      order: publicOrder(existingOrder),
-      paystack: {
-        authorization_url: existingOrder.payment.authorizationUrl,
-        access_code: existingOrder.payment.accessCode ?? undefined,
-        reference: existingOrder.reference,
-      },
-    };
+  if (!existing) {
+    return null;
   }
+
+  if (!existing.payment?.authorizationUrl) {
+    throw new PaymentFlowError(
+      "Checkout is already being prepared. Please wait a moment and try again.",
+      409,
+    );
+  }
+
+  return {
+    order: publicOrder(existing),
+    paystack: {
+      authorization_url: existing.payment.authorizationUrl,
+      access_code: existing.payment.accessCode ?? undefined,
+      reference: existing.reference,
+    },
+  };
+}
+
+export async function createPaystackCheckout(request: Request, body: unknown) {
+  const secret = requiredPaystackSecret();
+  const parsed = CheckoutRequestSchema.safeParse(body);
+
+  if (!parsed.success) {
+    throw new PaymentFlowError(validationMessage(parsed.error));
+  }
+
+  const { email, idempotencyKey, items: requestedItems } = parsed.data;
+  const existing = await existingCheckoutResponse(idempotencyKey);
+  if (existing) {
+    return existing;
+  }
+
+  const requestedById = new Map(requestedItems.map((item) => [item.id, item]));
 
   const products = await prisma.product.findMany({
     where: {
@@ -202,17 +274,18 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
 
   const sellerIds = new Set(products.map((product) => product.userId));
   if (sellerIds.size !== 1) {
-    throw new PaymentFlowError("Cart items must belong to one seller.");
+    throw new PaymentFlowError("Cart items must belong to a single seller.");
   }
 
   const sellerId = products[0]?.userId;
   if (!sellerId) {
-    throw new PaymentFlowError("Unable to resolve seller for checkout.");
+    throw new PaymentFlowError("Unable to determine seller for this checkout.");
   }
 
-  const orderItems = products.map((product) => {
-    const requested = requestedById.get(product.id);
-    if (!requested) {
+  const productsById = new Map(products.map((product) => [product.id, product]));
+  const orderItems = requestedItems.map((requested) => {
+    const product = productsById.get(requested.id);
+    if (!product || !requestedById.has(product.id)) {
       throw new PaymentFlowError("Invalid cart item.");
     }
 
@@ -245,37 +318,50 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
   }
 
   const reference = makeReference();
-  const order = await prisma.order.create({
-    data: {
-      reference,
-      idempotencyKey,
-      sellerId,
-      email,
-      amount: toMoney(amountPesewas),
-      currency: CURRENCY,
-      items: {
-        create: orderItems.map((item) => ({
-          productId: item.productId,
-          name: item.name,
-          unitPrice: item.unitPrice,
-          quantity: item.quantity,
-          lineTotal: item.lineTotal,
-          imageUrl: item.imageUrl,
-          category: item.category,
-        })),
-      },
-      payment: {
-        create: {
-          reference,
-          amount: toMoney(amountPesewas),
-          currency: CURRENCY,
+  let order: Prisma.OrderGetPayload<{ include: { items: true } }>;
+
+  try {
+    order = await prisma.order.create({
+      data: {
+        reference,
+        idempotencyKey,
+        sellerId,
+        email,
+        amount: toMoney(amountPesewas),
+        currency: CURRENCY,
+        items: {
+          create: orderItems.map((item) => ({
+            productId: item.productId,
+            name: item.name,
+            unitPrice: item.unitPrice,
+            quantity: item.quantity,
+            lineTotal: item.lineTotal,
+            imageUrl: item.imageUrl,
+            category: item.category,
+          })),
+        },
+        payment: {
+          create: {
+            reference,
+            amount: toMoney(amountPesewas),
+            currency: CURRENCY,
+          },
         },
       },
-    },
-    include: {
-      items: true,
-    },
-  });
+      include: {
+        items: true,
+      },
+    });
+  } catch (error) {
+    if (isPrismaError(error, "P2002")) {
+      const checkout = await existingCheckoutResponse(idempotencyKey);
+      if (checkout) {
+        return checkout;
+      }
+    }
+
+    throw error;
+  }
 
   const response = await fetch("https://api.paystack.co/transaction/initialize", {
     method: "POST",
@@ -299,7 +385,12 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
 
   const paystackData = (await response.json()) as PaystackInitializeResponse;
 
-  if (!response.ok || paystackData.status !== true || !paystackData.data?.authorization_url) {
+  if (
+    !response.ok ||
+    paystackData.status !== true ||
+    !paystackData.data?.authorization_url ||
+    (paystackData.data.reference && paystackData.data.reference !== reference)
+  ) {
     await prisma.order.update({
       where: { id: order.id },
       data: {
@@ -321,9 +412,9 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
   await prisma.paymentTransaction.update({
     where: { reference },
     data: {
-      status: "initialized",
       authorizationUrl: paystackData.data.authorization_url,
       accessCode: paystackData.data.access_code ?? null,
+      status: "initialized",
     },
   });
 
@@ -365,19 +456,24 @@ function paystackPayload(data: PaystackVerifyResponse): Prisma.InputJsonObject {
   };
 }
 
-export async function finalizeVerifiedPayment(reference: string) {
+export async function finalizeVerifiedPayment(reference: string, verification?: PaystackVerifyResponse) {
   if (!reference.trim()) {
     throw new PaymentFlowError("Payment reference is required.");
   }
 
-  const paystack = await fetchPaystackVerification(reference);
+  const paystack = verification ?? (await fetchPaystackVerification(reference));
   const transaction = paystack.data;
 
-  if (transaction?.status !== "success") {
-    throw new PaymentFlowError(paystack.message ?? "Payment is not successful yet.", 402);
+  if (!transaction) {
+    throw new PaymentFlowError("Paystack verification did not include transaction data.", 502);
   }
 
-  return prisma.$transaction(async (tx) => {
+  if (transaction.reference !== reference) {
+    throw new PaymentFlowError("Payment reference mismatch.", 409);
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.$executeRawUnsafe("SET LOCAL interactive_transaction_timeout = '30000'");
     const order = await tx.order.findUnique({
       where: { reference },
       include: {
@@ -390,16 +486,31 @@ export async function finalizeVerifiedPayment(reference: string) {
     }
 
     if (isPaidOrderStatus(order.status)) {
-      return publicOrder(order);
+      return {
+        order: publicOrder(order),
+        shouldSendReceipt: false,
+      };
+    }
+
+    if (transaction.status?.toLowerCase() !== "success") {
+      await tx.paymentTransaction.update({
+        where: { reference },
+        data: {
+          status: transaction.status ?? "not_successful",
+          rawPayload: paystackPayload(paystack),
+        },
+      });
+      await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: "payment_not_successful",
+        },
+      });
+      throw new PaymentFlowError("Payment has not been successfully completed.", 409);
     }
 
     const expectedAmount = toPesewas(order.amount);
-    const isVerificationMismatch =
-      transaction.reference !== reference ||
-      Number(transaction.amount) !== expectedAmount ||
-      transaction.currency !== order.currency;
-
-    if (isVerificationMismatch) {
+    if (Number(transaction.amount) !== expectedAmount || transaction.currency !== order.currency) {
       await tx.paymentTransaction.update({
         where: { reference },
         data: {
@@ -413,7 +524,7 @@ export async function finalizeVerifiedPayment(reference: string) {
           status: "verification_mismatch",
         },
       });
-      throw new PaymentFlowError("Payment reference, amount, or currency did not match the order.", 409);
+      throw new PaymentFlowError("Payment amount or currency did not match the order.", 409);
     }
 
     const claim = await tx.order.updateMany({
@@ -437,7 +548,10 @@ export async function finalizeVerifiedPayment(reference: string) {
       });
 
       if (latest && isPaidOrderStatus(latest.status)) {
-        return publicOrder(latest);
+        return {
+          order: publicOrder(latest),
+          shouldSendReceipt: false,
+        };
       }
 
       throw new PaymentFlowError("Order is already being processed.", 409);
@@ -466,11 +580,7 @@ export async function finalizeVerifiedPayment(reference: string) {
       }
     }
 
-    const parsedPaidAt = transaction.paid_at ? new Date(transaction.paid_at) : null;
-    const paidAt =
-      parsedPaidAt && !Number.isNaN(parsedPaidAt.getTime())
-        ? parsedPaidAt
-        : new Date();
+    const paidAt = transaction.paid_at ? new Date(transaction.paid_at) : new Date();
     const needsFulfillmentReview = fulfillmentReviewItems.length > 0;
 
     const paidOrder = await tx.order.update({
@@ -495,17 +605,26 @@ export async function finalizeVerifiedPayment(reference: string) {
       },
     });
 
-    const result = publicOrder(paidOrder);
-
-    void sendOrderReceiptEmail(result).catch((emailError) => {
-      console.error("Order receipt email failed", emailError);
-    });
-
-    return result;
-  }, {
-    maxWait: 5_000,
-    timeout: 10_000,
+    return {
+      order: publicOrder(paidOrder),
+      shouldSendReceipt: true,
+    };
   });
+
+  if (result.shouldSendReceipt) {
+    await sendReceipt(result.order);
+  }
+
+  return result.order;
+}
+
+async function sendReceipt(order: PublicOrder) {
+  try {
+    const { sendOrderReceiptEmail } = await import("@/lib/email");
+    await sendOrderReceiptEmail(order);
+  } catch (error) {
+    console.error("Failed to send order receipt email", error);
+  }
 }
 
 export async function getOrder(reference: string) {
@@ -519,3 +638,17 @@ export async function getOrder(reference: string) {
   return order ? publicOrder(order) : null;
 }
 
+export function verifyPaystackWebhookSignature(body: string, signature: string | null) {
+  const secret = requiredPaystackSecret();
+  if (!signature) return false;
+
+  const expected = crypto.createHmac("sha512", secret).update(body).digest("hex");
+  const expectedBuffer = Buffer.from(expected);
+  const signatureBuffer = Buffer.from(signature);
+
+  if (expectedBuffer.length !== signatureBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expectedBuffer, signatureBuffer);
+}

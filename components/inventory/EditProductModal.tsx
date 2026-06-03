@@ -17,6 +17,7 @@ type Product = {
   manufacturer?: string | null;
   imageUrl?: string | null;
   activeListing?: boolean;
+  isFeatured?: boolean;
 };
 
 type Props = {
@@ -62,6 +63,7 @@ export default function EditProductModal({ open, product, onClose, onSave }: Pro
         manufacturer: product.manufacturer || "",
         imageUrl: product.imageUrl || "",
         activeListing: product.activeListing ?? true,
+        isFeatured: product.isFeatured ?? false,
       });
       clearErrors();
     }
@@ -335,6 +337,21 @@ export default function EditProductModal({ open, product, onClose, onSave }: Pro
               Active Listing
             </label>
             <span className="text-xs text-slate-500">(Product is visible for purchase)</span>
+          </div>
+
+          <div className="flex items-center gap-3 rounded-lg border border-slate-200 p-3">
+            <input
+              type="checkbox"
+              id="isFeatured"
+              checked={form.isFeatured ?? false}
+              onChange={(e) => handleFieldChange("isFeatured", e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+              disabled={loading}
+            />
+            <label htmlFor="isFeatured" className="text-sm font-medium text-slate-700">
+              Feature on homepage
+            </label>
+            <span className="text-xs text-slate-500">(Show product in the featured products section)</span>
           </div>
         </div>
 

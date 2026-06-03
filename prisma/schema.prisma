@@ -16,25 +16,25 @@ model Product {
   id     String @id @default(cuid())
   userId String
 
-  name        String
-  description String?
-  category    String?
-  sku         String? @unique
-  price       Decimal @db.Decimal(12, 2)
-  quantity    Int     @default(0)
-  lowStock    Int?
-
+  name         String
+  description  String?
+  category     String?
+  sku          String?   @unique
+  price        Decimal   @db.Decimal(12, 2)
+  quantity     Int       @default(0)
+  lowStock     Int?
   dosage       String?
   manufacturer String?
   expiryDate   DateTime?
-
-  imageUrl String?
+  imageUrl     String?
 
   prescriptionRequired Boolean @default(false)
   activeListing        Boolean @default(true)
 
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  isFeatured   Boolean  @default(false)
+  featuredRank Int?
+  createAt     DateTime @default(now())
+  updateAt     DateTime @updatedAt
 
   orderItems OrderItem[]
 
@@ -109,4 +109,17 @@ model PaymentTransaction {
 
   @@index([status, createdAt])
   @@map("payment_transaction")
+}
+
+model HeroSlide {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  imageUrl  String
+  ctaText   String?
+  ctaUrl    String?
+  active    Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

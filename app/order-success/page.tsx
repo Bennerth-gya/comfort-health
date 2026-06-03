@@ -10,6 +10,7 @@ import {
   verifyReceiptToken,
 } from "@/lib/payments";
 import ClearCartOnPaid from "./ClearCartOnPaid";
+import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 
 export const dynamic = "force-dynamic";
 
@@ -95,7 +96,7 @@ function OrderSummary({ order }: { order: PublicOrder }) {
                       src={item.imageUrl}
                       alt={item.name}
                       fill
-                      unoptimized
+                      unoptimized={shouldUnoptimizeProductImage(item.imageUrl)}
                       className="object-cover"
                     />
                   ) : null}

@@ -33,6 +33,11 @@ export type OrderItem = $Result.DefaultSelection<Prisma.$OrderItemPayload>
  * 
  */
 export type PaymentTransaction = $Result.DefaultSelection<Prisma.$PaymentTransactionPayload>
+/**
+ * Model HeroSlide
+ * 
+ */
+export type HeroSlide = $Result.DefaultSelection<Prisma.$HeroSlidePayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -194,6 +199,16 @@ export class PrismaClient<
     * ```
     */
   get paymentTransaction(): Prisma.PaymentTransactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.heroSlide`: Exposes CRUD operations for the **HeroSlide** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more HeroSlides
+    * const heroSlides = await prisma.heroSlide.findMany()
+    * ```
+    */
+  get heroSlide(): Prisma.HeroSlideDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -631,7 +646,8 @@ export namespace Prisma {
     Product: 'Product',
     Order: 'Order',
     OrderItem: 'OrderItem',
-    PaymentTransaction: 'PaymentTransaction'
+    PaymentTransaction: 'PaymentTransaction',
+    HeroSlide: 'HeroSlide'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -647,7 +663,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "product" | "order" | "orderItem" | "paymentTransaction"
+      modelProps: "product" | "order" | "orderItem" | "paymentTransaction" | "heroSlide"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -947,6 +963,80 @@ export namespace Prisma {
           }
         }
       }
+      HeroSlide: {
+        payload: Prisma.$HeroSlidePayload<ExtArgs>
+        fields: Prisma.HeroSlideFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.HeroSlideFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.HeroSlideFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>
+          }
+          findFirst: {
+            args: Prisma.HeroSlideFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.HeroSlideFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>
+          }
+          findMany: {
+            args: Prisma.HeroSlideFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>[]
+          }
+          create: {
+            args: Prisma.HeroSlideCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>
+          }
+          createMany: {
+            args: Prisma.HeroSlideCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.HeroSlideCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>[]
+          }
+          delete: {
+            args: Prisma.HeroSlideDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>
+          }
+          update: {
+            args: Prisma.HeroSlideUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>
+          }
+          deleteMany: {
+            args: Prisma.HeroSlideDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.HeroSlideUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.HeroSlideUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>[]
+          }
+          upsert: {
+            args: Prisma.HeroSlideUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HeroSlidePayload>
+          }
+          aggregate: {
+            args: Prisma.HeroSlideAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHeroSlide>
+          }
+          groupBy: {
+            args: Prisma.HeroSlideGroupByArgs<ExtArgs>
+            result: $Utils.Optional<HeroSlideGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.HeroSlideCountArgs<ExtArgs>
+            result: $Utils.Optional<HeroSlideCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1059,6 +1149,7 @@ export namespace Prisma {
     order?: OrderOmit
     orderItem?: OrderItemOmit
     paymentTransaction?: PaymentTransactionOmit
+    heroSlide?: HeroSlideOmit
   }
 
   /* Types for Logging */
@@ -1216,12 +1307,14 @@ export namespace Prisma {
     price: Decimal | null
     quantity: number | null
     lowStock: number | null
+    featuredRank: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     price: Decimal | null
     quantity: number | null
     lowStock: number | null
+    featuredRank: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -1240,6 +1333,8 @@ export namespace Prisma {
     imageUrl: string | null
     prescriptionRequired: boolean | null
     activeListing: boolean | null
+    isFeatured: boolean | null
+    featuredRank: number | null
     createAt: Date | null
     updateAt: Date | null
   }
@@ -1260,6 +1355,8 @@ export namespace Prisma {
     imageUrl: string | null
     prescriptionRequired: boolean | null
     activeListing: boolean | null
+    isFeatured: boolean | null
+    featuredRank: number | null
     createAt: Date | null
     updateAt: Date | null
   }
@@ -1280,6 +1377,8 @@ export namespace Prisma {
     imageUrl: number
     prescriptionRequired: number
     activeListing: number
+    isFeatured: number
+    featuredRank: number
     createAt: number
     updateAt: number
     _all: number
@@ -1290,12 +1389,14 @@ export namespace Prisma {
     price?: true
     quantity?: true
     lowStock?: true
+    featuredRank?: true
   }
 
   export type ProductSumAggregateInputType = {
     price?: true
     quantity?: true
     lowStock?: true
+    featuredRank?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -1314,6 +1415,8 @@ export namespace Prisma {
     imageUrl?: true
     prescriptionRequired?: true
     activeListing?: true
+    isFeatured?: true
+    featuredRank?: true
     createAt?: true
     updateAt?: true
   }
@@ -1334,6 +1437,8 @@ export namespace Prisma {
     imageUrl?: true
     prescriptionRequired?: true
     activeListing?: true
+    isFeatured?: true
+    featuredRank?: true
     createAt?: true
     updateAt?: true
   }
@@ -1354,6 +1459,8 @@ export namespace Prisma {
     imageUrl?: true
     prescriptionRequired?: true
     activeListing?: true
+    isFeatured?: true
+    featuredRank?: true
     createAt?: true
     updateAt?: true
     _all?: true
@@ -1461,6 +1568,8 @@ export namespace Prisma {
     imageUrl: string | null
     prescriptionRequired: boolean
     activeListing: boolean
+    isFeatured: boolean
+    featuredRank: number | null
     createAt: Date
     updateAt: Date
     _count: ProductCountAggregateOutputType | null
@@ -1500,6 +1609,8 @@ export namespace Prisma {
     imageUrl?: boolean
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: boolean
     createAt?: boolean
     updateAt?: boolean
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
@@ -1522,6 +1633,8 @@ export namespace Prisma {
     imageUrl?: boolean
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: boolean
     createAt?: boolean
     updateAt?: boolean
   }, ExtArgs["result"]["product"]>
@@ -1542,6 +1655,8 @@ export namespace Prisma {
     imageUrl?: boolean
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: boolean
     createAt?: boolean
     updateAt?: boolean
   }, ExtArgs["result"]["product"]>
@@ -1562,11 +1677,13 @@ export namespace Prisma {
     imageUrl?: boolean
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: boolean
     createAt?: boolean
     updateAt?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "description" | "category" | "sku" | "price" | "quantity" | "lowStock" | "dosage" | "manufacturer" | "expiryDate" | "imageUrl" | "prescriptionRequired" | "activeListing" | "createAt" | "updateAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "name" | "description" | "category" | "sku" | "price" | "quantity" | "lowStock" | "dosage" | "manufacturer" | "expiryDate" | "imageUrl" | "prescriptionRequired" | "activeListing" | "isFeatured" | "featuredRank" | "createAt" | "updateAt", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1595,6 +1712,8 @@ export namespace Prisma {
       imageUrl: string | null
       prescriptionRequired: boolean
       activeListing: boolean
+      isFeatured: boolean
+      featuredRank: number | null
       createAt: Date
       updateAt: Date
     }, ExtArgs["result"]["product"]>
@@ -2036,6 +2155,8 @@ export namespace Prisma {
     readonly imageUrl: FieldRef<"Product", 'String'>
     readonly prescriptionRequired: FieldRef<"Product", 'Boolean'>
     readonly activeListing: FieldRef<"Product", 'Boolean'>
+    readonly isFeatured: FieldRef<"Product", 'Boolean'>
+    readonly featuredRank: FieldRef<"Product", 'Int'>
     readonly createAt: FieldRef<"Product", 'DateTime'>
     readonly updateAt: FieldRef<"Product", 'DateTime'>
   }
@@ -6059,6 +6180,1105 @@ export namespace Prisma {
 
 
   /**
+   * Model HeroSlide
+   */
+
+  export type AggregateHeroSlide = {
+    _count: HeroSlideCountAggregateOutputType | null
+    _avg: HeroSlideAvgAggregateOutputType | null
+    _sum: HeroSlideSumAggregateOutputType | null
+    _min: HeroSlideMinAggregateOutputType | null
+    _max: HeroSlideMaxAggregateOutputType | null
+  }
+
+  export type HeroSlideAvgAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type HeroSlideSumAggregateOutputType = {
+    sortOrder: number | null
+  }
+
+  export type HeroSlideMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    subtitle: string | null
+    imageUrl: string | null
+    ctaText: string | null
+    ctaUrl: string | null
+    active: boolean | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HeroSlideMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    subtitle: string | null
+    imageUrl: string | null
+    ctaText: string | null
+    ctaUrl: string | null
+    active: boolean | null
+    sortOrder: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type HeroSlideCountAggregateOutputType = {
+    id: number
+    title: number
+    subtitle: number
+    imageUrl: number
+    ctaText: number
+    ctaUrl: number
+    active: number
+    sortOrder: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type HeroSlideAvgAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type HeroSlideSumAggregateInputType = {
+    sortOrder?: true
+  }
+
+  export type HeroSlideMinAggregateInputType = {
+    id?: true
+    title?: true
+    subtitle?: true
+    imageUrl?: true
+    ctaText?: true
+    ctaUrl?: true
+    active?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HeroSlideMaxAggregateInputType = {
+    id?: true
+    title?: true
+    subtitle?: true
+    imageUrl?: true
+    ctaText?: true
+    ctaUrl?: true
+    active?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type HeroSlideCountAggregateInputType = {
+    id?: true
+    title?: true
+    subtitle?: true
+    imageUrl?: true
+    ctaText?: true
+    ctaUrl?: true
+    active?: true
+    sortOrder?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type HeroSlideAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HeroSlide to aggregate.
+     */
+    where?: HeroSlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HeroSlides to fetch.
+     */
+    orderBy?: HeroSlideOrderByWithRelationInput | HeroSlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: HeroSlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HeroSlides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HeroSlides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned HeroSlides
+    **/
+    _count?: true | HeroSlideCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: HeroSlideAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: HeroSlideSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: HeroSlideMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: HeroSlideMaxAggregateInputType
+  }
+
+  export type GetHeroSlideAggregateType<T extends HeroSlideAggregateArgs> = {
+        [P in keyof T & keyof AggregateHeroSlide]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHeroSlide[P]>
+      : GetScalarType<T[P], AggregateHeroSlide[P]>
+  }
+
+
+
+
+  export type HeroSlideGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HeroSlideWhereInput
+    orderBy?: HeroSlideOrderByWithAggregationInput | HeroSlideOrderByWithAggregationInput[]
+    by: HeroSlideScalarFieldEnum[] | HeroSlideScalarFieldEnum
+    having?: HeroSlideScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: HeroSlideCountAggregateInputType | true
+    _avg?: HeroSlideAvgAggregateInputType
+    _sum?: HeroSlideSumAggregateInputType
+    _min?: HeroSlideMinAggregateInputType
+    _max?: HeroSlideMaxAggregateInputType
+  }
+
+  export type HeroSlideGroupByOutputType = {
+    id: string
+    title: string
+    subtitle: string | null
+    imageUrl: string
+    ctaText: string | null
+    ctaUrl: string | null
+    active: boolean
+    sortOrder: number
+    createdAt: Date
+    updatedAt: Date
+    _count: HeroSlideCountAggregateOutputType | null
+    _avg: HeroSlideAvgAggregateOutputType | null
+    _sum: HeroSlideSumAggregateOutputType | null
+    _min: HeroSlideMinAggregateOutputType | null
+    _max: HeroSlideMaxAggregateOutputType | null
+  }
+
+  type GetHeroSlideGroupByPayload<T extends HeroSlideGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<HeroSlideGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof HeroSlideGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], HeroSlideGroupByOutputType[P]>
+            : GetScalarType<T[P], HeroSlideGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type HeroSlideSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    subtitle?: boolean
+    imageUrl?: boolean
+    ctaText?: boolean
+    ctaUrl?: boolean
+    active?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["heroSlide"]>
+
+  export type HeroSlideSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    subtitle?: boolean
+    imageUrl?: boolean
+    ctaText?: boolean
+    ctaUrl?: boolean
+    active?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["heroSlide"]>
+
+  export type HeroSlideSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    subtitle?: boolean
+    imageUrl?: boolean
+    ctaText?: boolean
+    ctaUrl?: boolean
+    active?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["heroSlide"]>
+
+  export type HeroSlideSelectScalar = {
+    id?: boolean
+    title?: boolean
+    subtitle?: boolean
+    imageUrl?: boolean
+    ctaText?: boolean
+    ctaUrl?: boolean
+    active?: boolean
+    sortOrder?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type HeroSlideOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "subtitle" | "imageUrl" | "ctaText" | "ctaUrl" | "active" | "sortOrder" | "createdAt" | "updatedAt", ExtArgs["result"]["heroSlide"]>
+
+  export type $HeroSlidePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "HeroSlide"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      subtitle: string | null
+      imageUrl: string
+      ctaText: string | null
+      ctaUrl: string | null
+      active: boolean
+      sortOrder: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["heroSlide"]>
+    composites: {}
+  }
+
+  type HeroSlideGetPayload<S extends boolean | null | undefined | HeroSlideDefaultArgs> = $Result.GetResult<Prisma.$HeroSlidePayload, S>
+
+  type HeroSlideCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<HeroSlideFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: HeroSlideCountAggregateInputType | true
+    }
+
+  export interface HeroSlideDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['HeroSlide'], meta: { name: 'HeroSlide' } }
+    /**
+     * Find zero or one HeroSlide that matches the filter.
+     * @param {HeroSlideFindUniqueArgs} args - Arguments to find a HeroSlide
+     * @example
+     * // Get one HeroSlide
+     * const heroSlide = await prisma.heroSlide.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends HeroSlideFindUniqueArgs>(args: SelectSubset<T, HeroSlideFindUniqueArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one HeroSlide that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {HeroSlideFindUniqueOrThrowArgs} args - Arguments to find a HeroSlide
+     * @example
+     * // Get one HeroSlide
+     * const heroSlide = await prisma.heroSlide.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends HeroSlideFindUniqueOrThrowArgs>(args: SelectSubset<T, HeroSlideFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HeroSlide that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HeroSlideFindFirstArgs} args - Arguments to find a HeroSlide
+     * @example
+     * // Get one HeroSlide
+     * const heroSlide = await prisma.heroSlide.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends HeroSlideFindFirstArgs>(args?: SelectSubset<T, HeroSlideFindFirstArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first HeroSlide that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HeroSlideFindFirstOrThrowArgs} args - Arguments to find a HeroSlide
+     * @example
+     * // Get one HeroSlide
+     * const heroSlide = await prisma.heroSlide.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends HeroSlideFindFirstOrThrowArgs>(args?: SelectSubset<T, HeroSlideFindFirstOrThrowArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more HeroSlides that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HeroSlideFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all HeroSlides
+     * const heroSlides = await prisma.heroSlide.findMany()
+     * 
+     * // Get first 10 HeroSlides
+     * const heroSlides = await prisma.heroSlide.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const heroSlideWithIdOnly = await prisma.heroSlide.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends HeroSlideFindManyArgs>(args?: SelectSubset<T, HeroSlideFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a HeroSlide.
+     * @param {HeroSlideCreateArgs} args - Arguments to create a HeroSlide.
+     * @example
+     * // Create one HeroSlide
+     * const HeroSlide = await prisma.heroSlide.create({
+     *   data: {
+     *     // ... data to create a HeroSlide
+     *   }
+     * })
+     * 
+     */
+    create<T extends HeroSlideCreateArgs>(args: SelectSubset<T, HeroSlideCreateArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many HeroSlides.
+     * @param {HeroSlideCreateManyArgs} args - Arguments to create many HeroSlides.
+     * @example
+     * // Create many HeroSlides
+     * const heroSlide = await prisma.heroSlide.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends HeroSlideCreateManyArgs>(args?: SelectSubset<T, HeroSlideCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many HeroSlides and returns the data saved in the database.
+     * @param {HeroSlideCreateManyAndReturnArgs} args - Arguments to create many HeroSlides.
+     * @example
+     * // Create many HeroSlides
+     * const heroSlide = await prisma.heroSlide.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many HeroSlides and only return the `id`
+     * const heroSlideWithIdOnly = await prisma.heroSlide.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends HeroSlideCreateManyAndReturnArgs>(args?: SelectSubset<T, HeroSlideCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a HeroSlide.
+     * @param {HeroSlideDeleteArgs} args - Arguments to delete one HeroSlide.
+     * @example
+     * // Delete one HeroSlide
+     * const HeroSlide = await prisma.heroSlide.delete({
+     *   where: {
+     *     // ... filter to delete one HeroSlide
+     *   }
+     * })
+     * 
+     */
+    delete<T extends HeroSlideDeleteArgs>(args: SelectSubset<T, HeroSlideDeleteArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one HeroSlide.
+     * @param {HeroSlideUpdateArgs} args - Arguments to update one HeroSlide.
+     * @example
+     * // Update one HeroSlide
+     * const heroSlide = await prisma.heroSlide.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends HeroSlideUpdateArgs>(args: SelectSubset<T, HeroSlideUpdateArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more HeroSlides.
+     * @param {HeroSlideDeleteManyArgs} args - Arguments to filter HeroSlides to delete.
+     * @example
+     * // Delete a few HeroSlides
+     * const { count } = await prisma.heroSlide.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends HeroSlideDeleteManyArgs>(args?: SelectSubset<T, HeroSlideDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HeroSlides.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HeroSlideUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many HeroSlides
+     * const heroSlide = await prisma.heroSlide.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends HeroSlideUpdateManyArgs>(args: SelectSubset<T, HeroSlideUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more HeroSlides and returns the data updated in the database.
+     * @param {HeroSlideUpdateManyAndReturnArgs} args - Arguments to update many HeroSlides.
+     * @example
+     * // Update many HeroSlides
+     * const heroSlide = await prisma.heroSlide.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more HeroSlides and only return the `id`
+     * const heroSlideWithIdOnly = await prisma.heroSlide.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends HeroSlideUpdateManyAndReturnArgs>(args: SelectSubset<T, HeroSlideUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one HeroSlide.
+     * @param {HeroSlideUpsertArgs} args - Arguments to update or create a HeroSlide.
+     * @example
+     * // Update or create a HeroSlide
+     * const heroSlide = await prisma.heroSlide.upsert({
+     *   create: {
+     *     // ... data to create a HeroSlide
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the HeroSlide we want to update
+     *   }
+     * })
+     */
+    upsert<T extends HeroSlideUpsertArgs>(args: SelectSubset<T, HeroSlideUpsertArgs<ExtArgs>>): Prisma__HeroSlideClient<$Result.GetResult<Prisma.$HeroSlidePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of HeroSlides.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HeroSlideCountArgs} args - Arguments to filter HeroSlides to count.
+     * @example
+     * // Count the number of HeroSlides
+     * const count = await prisma.heroSlide.count({
+     *   where: {
+     *     // ... the filter for the HeroSlides we want to count
+     *   }
+     * })
+    **/
+    count<T extends HeroSlideCountArgs>(
+      args?: Subset<T, HeroSlideCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], HeroSlideCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a HeroSlide.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HeroSlideAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends HeroSlideAggregateArgs>(args: Subset<T, HeroSlideAggregateArgs>): Prisma.PrismaPromise<GetHeroSlideAggregateType<T>>
+
+    /**
+     * Group by HeroSlide.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HeroSlideGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends HeroSlideGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: HeroSlideGroupByArgs['orderBy'] }
+        : { orderBy?: HeroSlideGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, HeroSlideGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHeroSlideGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the HeroSlide model
+   */
+  readonly fields: HeroSlideFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for HeroSlide.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__HeroSlideClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the HeroSlide model
+   */
+  interface HeroSlideFieldRefs {
+    readonly id: FieldRef<"HeroSlide", 'String'>
+    readonly title: FieldRef<"HeroSlide", 'String'>
+    readonly subtitle: FieldRef<"HeroSlide", 'String'>
+    readonly imageUrl: FieldRef<"HeroSlide", 'String'>
+    readonly ctaText: FieldRef<"HeroSlide", 'String'>
+    readonly ctaUrl: FieldRef<"HeroSlide", 'String'>
+    readonly active: FieldRef<"HeroSlide", 'Boolean'>
+    readonly sortOrder: FieldRef<"HeroSlide", 'Int'>
+    readonly createdAt: FieldRef<"HeroSlide", 'DateTime'>
+    readonly updatedAt: FieldRef<"HeroSlide", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * HeroSlide findUnique
+   */
+  export type HeroSlideFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * Filter, which HeroSlide to fetch.
+     */
+    where: HeroSlideWhereUniqueInput
+  }
+
+  /**
+   * HeroSlide findUniqueOrThrow
+   */
+  export type HeroSlideFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * Filter, which HeroSlide to fetch.
+     */
+    where: HeroSlideWhereUniqueInput
+  }
+
+  /**
+   * HeroSlide findFirst
+   */
+  export type HeroSlideFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * Filter, which HeroSlide to fetch.
+     */
+    where?: HeroSlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HeroSlides to fetch.
+     */
+    orderBy?: HeroSlideOrderByWithRelationInput | HeroSlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HeroSlides.
+     */
+    cursor?: HeroSlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HeroSlides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HeroSlides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HeroSlides.
+     */
+    distinct?: HeroSlideScalarFieldEnum | HeroSlideScalarFieldEnum[]
+  }
+
+  /**
+   * HeroSlide findFirstOrThrow
+   */
+  export type HeroSlideFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * Filter, which HeroSlide to fetch.
+     */
+    where?: HeroSlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HeroSlides to fetch.
+     */
+    orderBy?: HeroSlideOrderByWithRelationInput | HeroSlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for HeroSlides.
+     */
+    cursor?: HeroSlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HeroSlides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HeroSlides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HeroSlides.
+     */
+    distinct?: HeroSlideScalarFieldEnum | HeroSlideScalarFieldEnum[]
+  }
+
+  /**
+   * HeroSlide findMany
+   */
+  export type HeroSlideFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * Filter, which HeroSlides to fetch.
+     */
+    where?: HeroSlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of HeroSlides to fetch.
+     */
+    orderBy?: HeroSlideOrderByWithRelationInput | HeroSlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing HeroSlides.
+     */
+    cursor?: HeroSlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` HeroSlides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` HeroSlides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of HeroSlides.
+     */
+    distinct?: HeroSlideScalarFieldEnum | HeroSlideScalarFieldEnum[]
+  }
+
+  /**
+   * HeroSlide create
+   */
+  export type HeroSlideCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * The data needed to create a HeroSlide.
+     */
+    data: XOR<HeroSlideCreateInput, HeroSlideUncheckedCreateInput>
+  }
+
+  /**
+   * HeroSlide createMany
+   */
+  export type HeroSlideCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many HeroSlides.
+     */
+    data: HeroSlideCreateManyInput | HeroSlideCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * HeroSlide createManyAndReturn
+   */
+  export type HeroSlideCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * The data used to create many HeroSlides.
+     */
+    data: HeroSlideCreateManyInput | HeroSlideCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * HeroSlide update
+   */
+  export type HeroSlideUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * The data needed to update a HeroSlide.
+     */
+    data: XOR<HeroSlideUpdateInput, HeroSlideUncheckedUpdateInput>
+    /**
+     * Choose, which HeroSlide to update.
+     */
+    where: HeroSlideWhereUniqueInput
+  }
+
+  /**
+   * HeroSlide updateMany
+   */
+  export type HeroSlideUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update HeroSlides.
+     */
+    data: XOR<HeroSlideUpdateManyMutationInput, HeroSlideUncheckedUpdateManyInput>
+    /**
+     * Filter which HeroSlides to update
+     */
+    where?: HeroSlideWhereInput
+    /**
+     * Limit how many HeroSlides to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * HeroSlide updateManyAndReturn
+   */
+  export type HeroSlideUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * The data used to update HeroSlides.
+     */
+    data: XOR<HeroSlideUpdateManyMutationInput, HeroSlideUncheckedUpdateManyInput>
+    /**
+     * Filter which HeroSlides to update
+     */
+    where?: HeroSlideWhereInput
+    /**
+     * Limit how many HeroSlides to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * HeroSlide upsert
+   */
+  export type HeroSlideUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * The filter to search for the HeroSlide to update in case it exists.
+     */
+    where: HeroSlideWhereUniqueInput
+    /**
+     * In case the HeroSlide found by the `where` argument doesn't exist, create a new HeroSlide with this data.
+     */
+    create: XOR<HeroSlideCreateInput, HeroSlideUncheckedCreateInput>
+    /**
+     * In case the HeroSlide was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<HeroSlideUpdateInput, HeroSlideUncheckedUpdateInput>
+  }
+
+  /**
+   * HeroSlide delete
+   */
+  export type HeroSlideDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+    /**
+     * Filter which HeroSlide to delete.
+     */
+    where: HeroSlideWhereUniqueInput
+  }
+
+  /**
+   * HeroSlide deleteMany
+   */
+  export type HeroSlideDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which HeroSlides to delete
+     */
+    where?: HeroSlideWhereInput
+    /**
+     * Limit how many HeroSlides to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * HeroSlide without action
+   */
+  export type HeroSlideDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the HeroSlide
+     */
+    select?: HeroSlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the HeroSlide
+     */
+    omit?: HeroSlideOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -6088,6 +7308,8 @@ export namespace Prisma {
     imageUrl: 'imageUrl',
     prescriptionRequired: 'prescriptionRequired',
     activeListing: 'activeListing',
+    isFeatured: 'isFeatured',
+    featuredRank: 'featuredRank',
     createAt: 'createAt',
     updateAt: 'updateAt'
   };
@@ -6145,6 +7367,22 @@ export namespace Prisma {
   };
 
   export type PaymentTransactionScalarFieldEnum = (typeof PaymentTransactionScalarFieldEnum)[keyof typeof PaymentTransactionScalarFieldEnum]
+
+
+  export const HeroSlideScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    subtitle: 'subtitle',
+    imageUrl: 'imageUrl',
+    ctaText: 'ctaText',
+    ctaUrl: 'ctaUrl',
+    active: 'active',
+    sortOrder: 'sortOrder',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type HeroSlideScalarFieldEnum = (typeof HeroSlideScalarFieldEnum)[keyof typeof HeroSlideScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -6306,6 +7544,8 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"Product"> | string | null
     prescriptionRequired?: BoolFilter<"Product"> | boolean
     activeListing?: BoolFilter<"Product"> | boolean
+    isFeatured?: BoolFilter<"Product"> | boolean
+    featuredRank?: IntNullableFilter<"Product"> | number | null
     createAt?: DateTimeFilter<"Product"> | Date | string
     updateAt?: DateTimeFilter<"Product"> | Date | string
     orderItems?: OrderItemListRelationFilter
@@ -6327,6 +7567,8 @@ export namespace Prisma {
     imageUrl?: SortOrderInput | SortOrder
     prescriptionRequired?: SortOrder
     activeListing?: SortOrder
+    isFeatured?: SortOrder
+    featuredRank?: SortOrderInput | SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
     orderItems?: OrderItemOrderByRelationAggregateInput
@@ -6351,6 +7593,8 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"Product"> | string | null
     prescriptionRequired?: BoolFilter<"Product"> | boolean
     activeListing?: BoolFilter<"Product"> | boolean
+    isFeatured?: BoolFilter<"Product"> | boolean
+    featuredRank?: IntNullableFilter<"Product"> | number | null
     createAt?: DateTimeFilter<"Product"> | Date | string
     updateAt?: DateTimeFilter<"Product"> | Date | string
     orderItems?: OrderItemListRelationFilter
@@ -6372,6 +7616,8 @@ export namespace Prisma {
     imageUrl?: SortOrderInput | SortOrder
     prescriptionRequired?: SortOrder
     activeListing?: SortOrder
+    isFeatured?: SortOrder
+    featuredRank?: SortOrderInput | SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
     _count?: ProductCountOrderByAggregateInput
@@ -6400,6 +7646,8 @@ export namespace Prisma {
     imageUrl?: StringNullableWithAggregatesFilter<"Product"> | string | null
     prescriptionRequired?: BoolWithAggregatesFilter<"Product"> | boolean
     activeListing?: BoolWithAggregatesFilter<"Product"> | boolean
+    isFeatured?: BoolWithAggregatesFilter<"Product"> | boolean
+    featuredRank?: IntNullableWithAggregatesFilter<"Product"> | number | null
     createAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updateAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
   }
@@ -6676,6 +7924,85 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"PaymentTransaction"> | Date | string
   }
 
+  export type HeroSlideWhereInput = {
+    AND?: HeroSlideWhereInput | HeroSlideWhereInput[]
+    OR?: HeroSlideWhereInput[]
+    NOT?: HeroSlideWhereInput | HeroSlideWhereInput[]
+    id?: StringFilter<"HeroSlide"> | string
+    title?: StringFilter<"HeroSlide"> | string
+    subtitle?: StringNullableFilter<"HeroSlide"> | string | null
+    imageUrl?: StringFilter<"HeroSlide"> | string
+    ctaText?: StringNullableFilter<"HeroSlide"> | string | null
+    ctaUrl?: StringNullableFilter<"HeroSlide"> | string | null
+    active?: BoolFilter<"HeroSlide"> | boolean
+    sortOrder?: IntFilter<"HeroSlide"> | number
+    createdAt?: DateTimeFilter<"HeroSlide"> | Date | string
+    updatedAt?: DateTimeFilter<"HeroSlide"> | Date | string
+  }
+
+  export type HeroSlideOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    subtitle?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
+    ctaText?: SortOrderInput | SortOrder
+    ctaUrl?: SortOrderInput | SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HeroSlideWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: HeroSlideWhereInput | HeroSlideWhereInput[]
+    OR?: HeroSlideWhereInput[]
+    NOT?: HeroSlideWhereInput | HeroSlideWhereInput[]
+    title?: StringFilter<"HeroSlide"> | string
+    subtitle?: StringNullableFilter<"HeroSlide"> | string | null
+    imageUrl?: StringFilter<"HeroSlide"> | string
+    ctaText?: StringNullableFilter<"HeroSlide"> | string | null
+    ctaUrl?: StringNullableFilter<"HeroSlide"> | string | null
+    active?: BoolFilter<"HeroSlide"> | boolean
+    sortOrder?: IntFilter<"HeroSlide"> | number
+    createdAt?: DateTimeFilter<"HeroSlide"> | Date | string
+    updatedAt?: DateTimeFilter<"HeroSlide"> | Date | string
+  }, "id">
+
+  export type HeroSlideOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    subtitle?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
+    ctaText?: SortOrderInput | SortOrder
+    ctaUrl?: SortOrderInput | SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: HeroSlideCountOrderByAggregateInput
+    _avg?: HeroSlideAvgOrderByAggregateInput
+    _max?: HeroSlideMaxOrderByAggregateInput
+    _min?: HeroSlideMinOrderByAggregateInput
+    _sum?: HeroSlideSumOrderByAggregateInput
+  }
+
+  export type HeroSlideScalarWhereWithAggregatesInput = {
+    AND?: HeroSlideScalarWhereWithAggregatesInput | HeroSlideScalarWhereWithAggregatesInput[]
+    OR?: HeroSlideScalarWhereWithAggregatesInput[]
+    NOT?: HeroSlideScalarWhereWithAggregatesInput | HeroSlideScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"HeroSlide"> | string
+    title?: StringWithAggregatesFilter<"HeroSlide"> | string
+    subtitle?: StringNullableWithAggregatesFilter<"HeroSlide"> | string | null
+    imageUrl?: StringWithAggregatesFilter<"HeroSlide"> | string
+    ctaText?: StringNullableWithAggregatesFilter<"HeroSlide"> | string | null
+    ctaUrl?: StringNullableWithAggregatesFilter<"HeroSlide"> | string | null
+    active?: BoolWithAggregatesFilter<"HeroSlide"> | boolean
+    sortOrder?: IntWithAggregatesFilter<"HeroSlide"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"HeroSlide"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"HeroSlide"> | Date | string
+  }
+
   export type ProductCreateInput = {
     id?: string
     userId: string
@@ -6692,6 +8019,8 @@ export namespace Prisma {
     imageUrl?: string | null
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: number | null
     createAt?: Date | string
     updateAt?: Date | string
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
@@ -6713,6 +8042,8 @@ export namespace Prisma {
     imageUrl?: string | null
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: number | null
     createAt?: Date | string
     updateAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
@@ -6734,6 +8065,8 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     prescriptionRequired?: BoolFieldUpdateOperationsInput | boolean
     activeListing?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredRank?: NullableIntFieldUpdateOperationsInput | number | null
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
@@ -6755,6 +8088,8 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     prescriptionRequired?: BoolFieldUpdateOperationsInput | boolean
     activeListing?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredRank?: NullableIntFieldUpdateOperationsInput | number | null
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
@@ -6776,6 +8111,8 @@ export namespace Prisma {
     imageUrl?: string | null
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: number | null
     createAt?: Date | string
     updateAt?: Date | string
   }
@@ -6796,6 +8133,8 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     prescriptionRequired?: BoolFieldUpdateOperationsInput | boolean
     activeListing?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredRank?: NullableIntFieldUpdateOperationsInput | number | null
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6816,6 +8155,8 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     prescriptionRequired?: BoolFieldUpdateOperationsInput | boolean
     activeListing?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredRank?: NullableIntFieldUpdateOperationsInput | number | null
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7126,6 +8467,97 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type HeroSlideCreateInput = {
+    id?: string
+    title: string
+    subtitle?: string | null
+    imageUrl: string
+    ctaText?: string | null
+    ctaUrl?: string | null
+    active?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HeroSlideUncheckedCreateInput = {
+    id?: string
+    title: string
+    subtitle?: string | null
+    imageUrl: string
+    ctaText?: string | null
+    ctaUrl?: string | null
+    active?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HeroSlideUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subtitle?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    ctaText?: NullableStringFieldUpdateOperationsInput | string | null
+    ctaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HeroSlideUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subtitle?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    ctaText?: NullableStringFieldUpdateOperationsInput | string | null
+    ctaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HeroSlideCreateManyInput = {
+    id?: string
+    title: string
+    subtitle?: string | null
+    imageUrl: string
+    ctaText?: string | null
+    ctaUrl?: string | null
+    active?: boolean
+    sortOrder?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type HeroSlideUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subtitle?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    ctaText?: NullableStringFieldUpdateOperationsInput | string | null
+    ctaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HeroSlideUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    subtitle?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    ctaText?: NullableStringFieldUpdateOperationsInput | string | null
+    ctaUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    active?: BoolFieldUpdateOperationsInput | boolean
+    sortOrder?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -7247,6 +8679,8 @@ export namespace Prisma {
     imageUrl?: SortOrder
     prescriptionRequired?: SortOrder
     activeListing?: SortOrder
+    isFeatured?: SortOrder
+    featuredRank?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
   }
@@ -7255,6 +8689,7 @@ export namespace Prisma {
     price?: SortOrder
     quantity?: SortOrder
     lowStock?: SortOrder
+    featuredRank?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -7273,6 +8708,8 @@ export namespace Prisma {
     imageUrl?: SortOrder
     prescriptionRequired?: SortOrder
     activeListing?: SortOrder
+    isFeatured?: SortOrder
+    featuredRank?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
   }
@@ -7293,6 +8730,8 @@ export namespace Prisma {
     imageUrl?: SortOrder
     prescriptionRequired?: SortOrder
     activeListing?: SortOrder
+    isFeatured?: SortOrder
+    featuredRank?: SortOrder
     createAt?: SortOrder
     updateAt?: SortOrder
   }
@@ -7301,6 +8740,7 @@ export namespace Prisma {
     price?: SortOrder
     quantity?: SortOrder
     lowStock?: SortOrder
+    featuredRank?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -7640,6 +9080,53 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type HeroSlideCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    subtitle?: SortOrder
+    imageUrl?: SortOrder
+    ctaText?: SortOrder
+    ctaUrl?: SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HeroSlideAvgOrderByAggregateInput = {
+    sortOrder?: SortOrder
+  }
+
+  export type HeroSlideMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    subtitle?: SortOrder
+    imageUrl?: SortOrder
+    ctaText?: SortOrder
+    ctaUrl?: SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HeroSlideMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    subtitle?: SortOrder
+    imageUrl?: SortOrder
+    ctaText?: SortOrder
+    ctaUrl?: SortOrder
+    active?: SortOrder
+    sortOrder?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type HeroSlideSumOrderByAggregateInput = {
+    sortOrder?: SortOrder
   }
 
   export type OrderItemCreateNestedManyWithoutProductInput = {
@@ -8337,6 +9824,8 @@ export namespace Prisma {
     imageUrl?: string | null
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: number | null
     createAt?: Date | string
     updateAt?: Date | string
   }
@@ -8357,6 +9846,8 @@ export namespace Prisma {
     imageUrl?: string | null
     prescriptionRequired?: boolean
     activeListing?: boolean
+    isFeatured?: boolean
+    featuredRank?: number | null
     createAt?: Date | string
     updateAt?: Date | string
   }
@@ -8434,6 +9925,8 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     prescriptionRequired?: BoolFieldUpdateOperationsInput | boolean
     activeListing?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredRank?: NullableIntFieldUpdateOperationsInput | number | null
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8454,6 +9947,8 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     prescriptionRequired?: BoolFieldUpdateOperationsInput | boolean
     activeListing?: BoolFieldUpdateOperationsInput | boolean
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
+    featuredRank?: NullableIntFieldUpdateOperationsInput | number | null
     createAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updateAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -1,4 +1,4 @@
-import Sidebar from "@/components/sidebar";
+import AdminShell from "@/components/AdminShell";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { AlertTriangle, CheckCircle2, Clock, ShoppingBag } from "lucide-react";
@@ -62,9 +62,7 @@ export default async function OrdersPage() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <Sidebar currentPath="/orders" />
-
+    <AdminShell className="min-h-screen bg-slate-50 text-slate-950">
       <main className="ml-64 min-h-screen p-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
@@ -144,6 +142,6 @@ export default async function OrdersPage() {
           )}
         </section>
       </main>
-    </div>
+    </AdminShell>
   );
 }

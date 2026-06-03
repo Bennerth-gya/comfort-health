@@ -87,6 +87,25 @@ export async function GET(req: Request) {
     if (error instanceof RequestSecurityError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
+
+    const code =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string"
+        ? error.code
+        : null;
+
+    if (code === "ETIMEDOUT" || code === "P1001" || code === "P2024") {
+      return NextResponse.json(
+        {
+          error:
+            "Database connection timed out. Check DATABASE_URL and try again in a few seconds.",
+        },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json({ error: "Failed to fetch admin products" }, { status: 500 });
   }
 }

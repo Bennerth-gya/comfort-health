@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
 import { CheckCircle, Heart, Minus, Plus, ShoppingCart } from "lucide-react";
+import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 
 type ProductDetails = {
   id: string;
@@ -95,7 +96,7 @@ export default function ProductDetailsClient({
                     alt={product.name}
                     fill
                     className="object-cover"
-                    unoptimized
+                    unoptimized={shouldUnoptimizeProductImage(product.imageUrl)}
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-gray-200 text-gray-500">

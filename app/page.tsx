@@ -1,161 +1,124 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  HeartPulse,
-  Pill,
-  ShieldCheck,
-  ShoppingCart,
-  Truck,
-  Search,
-} from "lucide-react";
-import HeroSection from "./shop-page/page";
-import { useCart } from "@/app/context/cartContext";
+import { HeartPulse, Pill, ShieldCheck, Truck } from "lucide-react";
+import HeroSection from "@/components/HeroSection";
+import SiteHeader from "@/components/SiteHeader";
 import ProductCard from "@/app/components/ProductCard";
+import { prisma } from "@/lib/prisma";
 
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  imageUrl: string | null;
-  category: string | null;
-};
+const categories = [
+  { name: "Pain Relief", icon: Pill },
+  { name: "Sexual Wellness", icon: HeartPulse },
+  { name: "Vitamins", icon: ShieldCheck },
+  { name: "Flu & Cold", icon: Pill },
+];
 
-export default function HomePage() {
-  const { cartCount } = useCart();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+async function getHomeData() {
+  const [products, heroSlides] = await Promise.all([
+    prisma.product.findMany({
+      where: { activeListing: true },
+      orderBy: { createAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        imageUrl: true,
+        category: true,
+        isFeatured: true,
+        featuredRank: true,
+        createAt: true,
+      },
+    }),
+    prisma.heroSlide.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: "asc" },
+      select: {
+        id: true,
+        title: true,
+        subtitle: true,
+        imageUrl: true,
+        ctaText: true,
+        ctaUrl: true,
+      },
+    }),
+  ]);
 
-  useEffect(() => {
-    type ApiProduct = {
-      id: string;
-      name: string;
-      price: string | number;
-      imageUrl: string | null;
-      category: string | null;
-    };
+  const featuredProducts = products
+    .filter((product) => product.isFeatured)
+    .sort((a, b) => {
+      const rankA = a.featuredRank ?? Number.MAX_SAFE_INTEGER;
+      const rankB = b.featuredRank ?? Number.MAX_SAFE_INTEGER;
+      if (rankA !== rankB) return rankA - rankB;
+      return b.createAt.getTime() - a.createAt.getTime();
+    })
+    .slice(0, 4);
 
-    const fetchProducts = async () => {
-      setError(null);
-      setLoading(true);
+  return { products, featuredProducts, heroSlides };
+}
 
-      try {
-        const response = await fetch("/api/products?limit=100");
-        const responseText = await response.text();
 
-        if (!response.ok) {
-          throw new Error(responseText || "Failed to load products");
-        }
+export default async function HomePage() {
+  let products = [] as Awaited<ReturnType<typeof getHomeData>>["products"];
+  let featuredProducts = [] as Awaited<ReturnType<typeof getHomeData>>["featuredProducts"];
+  let heroSlides = [] as Awaited<ReturnType<typeof getHomeData>>["heroSlides"];
+  let loadError: string | null = null;
 
-        if (!responseText.trim()) {
-          throw new Error("Received empty response from products API");
-        }
-
-        const data = JSON.parse(responseText) as { products: ApiProduct[] };
-        setProducts(
-          data.products.map((item) => ({
-            id: item.id,
-            name: item.name,
-            price: Number(item.price),
-            imageUrl: item.imageUrl,
-            category: item.category,
-          }))
-        );
-      } catch (fetchError) {
-        console.error("Failed to fetch products:", fetchError);
-        setError("Unable to load products right now.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  try {
+    const data = await getHomeData();
+    products = data.products;
+    featuredProducts = data.featuredProducts;
+    heroSlides = data.heroSlides;
+  } catch (error) {
+    console.error("Failed to load home data", error);
+    loadError =
+      error instanceof Error && error.message
+        ? error.message
+        : "Unable to load products right now. Please try again later.";
+  }
 
   const displayProducts = products;
-  const showLoadingProducts = loading && displayProducts.length === 0;
-  const showPlaceholder = !loading && displayProducts.length === 0;
-
-  const categories = [
-    { name: "Pain Relief", icon: Pill },
-    { name: "Sexual Wellness", icon: HeartPulse },
-    { name: "Vitamins", icon: ShieldCheck },
-    { name: "Flu & Cold", icon: Pill },
-  ];
+  const featuredDisplay = featuredProducts.length > 0 ? featuredProducts : displayProducts.slice(0, 4);
+  const showPlaceholder = displayProducts.length === 0;
 
   return (
     <div className="min-h-screen bg-[#f8faf8]">
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600">
-              <HeartPulse className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Comfi Health</h1>
-              <p className="text-xs text-gray-500">Good health with comfort</p>
-            </div>
-          </div>
-
-          <div className="hidden w-125 items-center rounded-xl border border-gray-200 bg-gray-50 px-4 lg:flex">
-            <Search className="h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search medicines..."
-              className="h-12 w-full bg-transparent px-3 outline-none text-gray-700"
-            />
-          </div>
-
-          <div className="flex items-center gap-4">
-            <Link
-              href="/sign-in"
-              className="hidden text-sm font-medium text-gray-600 hover:text-emerald-600 md:block"
-            >
-              Admin
-            </Link>
-            <Link
-              href="/cart"
-              className="relative rounded-xl border border-gray-200 p-3 hover:bg-gray-100"
-            >
-              <ShoppingCart className="h-5 w-5 text-gray-700" />
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-xs text-white">
-                {cartCount}
-              </span>
-            </Link>
-            <Link
-              href="/sign-in"
-              className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
-            >
-              Login
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section className="mx-auto max-w-7xl px-6 py-10">
-        <HeroSection />
+        <HeroSection slides={heroSlides} />
       </section>
+
+      {loadError ? (
+        <section className="mx-auto max-w-7xl px-6 py-6">
+          <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
+            <h2 className="text-xl font-semibold">Unable to load products</h2>
+            <p className="mt-2 text-sm text-red-700">{loadError}</p>
+          </div>
+        </section>
+      ) : null}
 
       <section className="mx-auto max-w-7xl px-6 py-10">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-3xl font-bold text-gray-900">Shop by Category</h2>
-          <button className="text-sm font-semibold text-emerald-600">View all →</button>
+          <Link href="#full-catalog" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+            View all →
+          </Link>
         </div>
         <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
-              <div
+              <Link
                 key={category.name}
+                href="#full-catalog"
                 className="rounded-3xl border border-gray-200 bg-white p-8 transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100">
                   <Icon className="h-7 w-7 text-emerald-700" />
                 </div>
                 <h3 className="font-semibold text-gray-900">{category.name}</h3>
-              </div>
+              </Link>
             );
           })}
         </div>
@@ -166,49 +129,41 @@ export default function HomePage() {
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Featured Products</h2>
           </div>
-          <button className="text-sm font-semibold text-emerald-600">View all →</button>
+          <Link href="#full-catalog" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+            View all →
+          </Link>
         </div>
-        {error && !loading ? (
-          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-center text-red-700">
-            {error}
-          </div>
-        ) : null}
-        {showLoadingProducts ? (
-          <div className="rounded-3xl border border-gray-200 bg-white p-12 text-center text-gray-500">
-            Loading products...
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-            {displayProducts.slice(0, 4).map((product) => (
-              <ProductCard
-                key={product.id}
-                product={{
+
+        <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+          {featuredDisplay.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={{
                   id: product.id,
                   name: product.name,
-                  price: product.price,
+                  price: Number(product.price),
                   image: product.imageUrl,
                   category: product.category,
                 }}
-              />
-            ))}
-            {showPlaceholder ? (
-              <div className="col-span-full rounded-3xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
-                {error ?? "No products available right now."}
-              </div>
-            ) : null}
-          </div>
-        )}
+            />
+          ))}
+          {showPlaceholder ? (
+            <div className="col-span-full rounded-3xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
+              No products available right now.
+            </div>
+          ) : null}
+        </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16">
+      <section id="full-catalog" className="mx-auto max-w-7xl scroll-mt-24 px-6 py-16">
         <div className="mb-12 text-center">
           <h2 className="text-4xl font-bold text-gray-900">Browse Our Full Catalog</h2>
           <p className="mt-4 text-lg text-gray-600">Discover all the health and wellness products we have available</p>
         </div>
 
-        {showLoadingProducts ? (
+        {showPlaceholder ? (
           <div className="rounded-3xl border border-gray-200 bg-white p-12 text-center text-gray-500">
-            Loading products...
+            No products available at the moment.
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-6 lg:grid-cols-5">
@@ -216,27 +171,16 @@ export default function HomePage() {
               <ProductCard
                 key={product.id}
                 product={{
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  image: product.imageUrl,
-                  category: product.category,
-                }}
+                id: product.id,
+                name: product.name,
+                price: Number(product.price),
+                image: product.imageUrl,
+                category: product.category,
+              }}
               />
             ))}
-            {showPlaceholder ? (
-              <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
-                {error ?? "No products available at the moment."}
-              </div>
-            ) : null}
           </div>
         )}
-
-        <div className="mt-12 text-center">
-          <button className="rounded-full bg-emerald-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-emerald-300/20 transition hover:bg-emerald-700">
-            Load More Products
-          </button>
-        </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-10">
@@ -271,23 +215,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-20">
-        <h2 className="mb-12 text-center text-4xl font-bold text-gray-900">How It Works</h2>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {[
-            { title: "Choose Products", desc: "Browse and add medicines to your cart." },
-            { title: "Pay with MoMo", desc: "Make secure mobile money payment instantly." },
-            { title: "Get Delivery", desc: "Receive your medicines discreetly on campus." },
-          ].map((step, index) => (
-            <div key={step.title} className="rounded-3xl border border-gray-200 bg-white p-10 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-xl font-bold text-white">{index + 1}</div>
-              <h3 className="mt-6 text-2xl font-bold text-gray-900">{step.title}</h3>
-              <p className="mt-4 text-gray-600">{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section className="border-t border-gray-200 bg-emerald-800">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 lg:grid-cols-4">
           <div>
@@ -302,11 +229,13 @@ export default function HomePage() {
                   Shop
                 </Link>
               </li>
+              
               <li>
-                <Link href="/sign-in" className="hover:text-white">
-                  Admin login
+                <Link href="/cart" className="hover:text-white">
+                  Cart
                 </Link>
               </li>
+              
               <li>
                 <a href="mailto:support@comfihealth.com" className="hover:text-white">
                   Contact

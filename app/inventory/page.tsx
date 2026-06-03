@@ -1,4 +1,4 @@
-import Sidebar from "@/components/sidebar";
+import AdminShell from "@/components/AdminShell";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
@@ -92,6 +92,7 @@ export default async function InventoryPage() {
   const [
     products,
     totalProducts,
+    storefrontProductCount,
     outOfStock,
     lowStockRows,
     inventoryValueRows,
@@ -102,6 +103,7 @@ export default async function InventoryPage() {
       take: 20,
     }),
     prisma.product.count({ where: { userId } }),
+    prisma.product.count({ where: { activeListing: true } }),
     prisma.product.count({ where: { userId, quantity: { lte: 0 } } }),
     prisma.$queryRaw<Array<{ count: number }>>`
       SELECT COUNT(*)::int AS count
@@ -183,9 +185,7 @@ export default async function InventoryPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <Sidebar currentPath="/inventory" />
-
+    <AdminShell className="min-h-screen bg-slate-50 text-slate-950">
       <div className="ml-64 min-h-screen">
         <header className="flex h-24 items-center justify-between border-b border-gray-200 bg-white px-8">
           <h1 className="text-xl font-semibold text-slate-950">Inventory</h1>
@@ -195,7 +195,7 @@ export default async function InventoryPage() {
               <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
               <input
                 aria-label="Search inventory"
-                className="h-11 w-[420px] rounded-lg border border-gray-200 bg-slate-50 pl-12 pr-4 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:bg-white"
+                className="h-11 w-105 rounded-lg border border-gray-200 bg-slate-50 pl-12 pr-4 text-sm text-slate-700 outline-none transition focus:border-emerald-500 focus:bg-white"
                 placeholder="Search medicines, categories, or SKU..."
                 type="search"
               />
@@ -254,6 +254,12 @@ export default async function InventoryPage() {
                 Export Report
               </button>
               <Link
+                href="/inventory/hero-slides"
+                className="inline-flex h-11 items-center gap-3 rounded-lg border border-gray-200 bg-white px-5 text-sm font-semibold text-slate-900 shadow-sm hover:bg-slate-50"
+              >
+                Manage Hero Slides
+              </Link>
+              <Link
                 href="/add-products"
                 className="inline-flex h-11 items-center gap-3 rounded-lg bg-emerald-700 px-6 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800"
               >
@@ -295,11 +301,14 @@ export default async function InventoryPage() {
             </div>
 
             <div>
-              <InventoryClient initialRows={rows} />
+              <InventoryClient
+                initialRows={rows}
+                storefrontProductCount={storefrontProductCount}
+              />
             </div>
           </section>
         </main>
       </div>
-    </div>
+    </AdminShell>
   );
 }

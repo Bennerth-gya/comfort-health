@@ -115,6 +115,8 @@ const productShape = {
   imageUrl,
   prescriptionRequired: z.boolean(),
   activeListing: z.boolean(),
+  isFeatured: z.boolean(),
+  featuredRank: optionalInt(1_000),
 };
 
 export const ProductCreateSchema = z
@@ -122,6 +124,7 @@ export const ProductCreateSchema = z
     ...productShape,
     prescriptionRequired: productShape.prescriptionRequired.default(false),
     activeListing: productShape.activeListing.default(true),
+    isFeatured: productShape.isFeatured.default(false),
   })
   .strip();
 
@@ -131,6 +134,36 @@ export const ProductUpdateSchema = z
   .strip()
   .refine((value) => Object.keys(value).length > 0, {
     message: "At least one product field is required.",
+  });
+
+const HeroSlideSchema = z
+  .object({
+    title: z.string().trim().min(1, "Slide title is required.").max(160),
+    subtitle: optionalString(1_000),
+    // For the general schema we accept the common `imageUrl` transform, but
+    // creation requires a non-null string because the DB column is non-nullable.
+    imageUrl: imageUrl,
+    ctaText: optionalString(80),
+    ctaUrl: z
+      .preprocess(emptyToNull, z.string().trim().url().max(1_000).nullable().optional())
+      .transform((value) => value ?? null),
+    active: z.boolean().default(true),
+    sortOrder: z.coerce.number().int().min(0).default(0),
+  })
+  .strip();
+
+// Creation schema must ensure `imageUrl` is a real string (DB requires it)
+export const HeroSlideCreateSchema = HeroSlideSchema.extend({
+  imageUrl: z.preprocess(emptyToNull, z.string().trim().max(1_000_000)),
+});
+
+export const HeroSlideUpdateSchema = HeroSlideSchema
+  .partial()
+  .extend({
+    imageUrl: z.preprocess(emptyToUndefined, z.string().trim().max(1_000_000).optional()),
+  })
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "At least one hero slide field is required.",
   });
 
 const CheckoutItemSchema = z.object({

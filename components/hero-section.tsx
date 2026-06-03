@@ -55,7 +55,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative overflow-hidden rounded-[40px] bg-[#f4f8f5]">
-      <div className="relative h-[550px] w-full">
+      <div className="relative h-137.5 w-full">
         {heroSlides.map((slide, index) => (
           <div
             key={slide.id}

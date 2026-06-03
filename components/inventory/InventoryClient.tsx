@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Pencil,
@@ -26,6 +27,7 @@ type Product = {
   manufacturer?: string | null;
   imageUrl?: string | null;
   activeListing?: boolean;
+  isFeatured?: boolean;
   createAt?: string;
 };
 
@@ -112,9 +114,17 @@ const CATEGORIES = [
   "General Health",
 ];
 
-export default function InventoryClient({ initialRows }: { initialRows?: Product[] }) {
+export default function InventoryClient({
+  initialRows,
+  storefrontProductCount = 0,
+}: {
+  initialRows?: Product[];
+  /** Active products visible on the public shop (any owner). */
+  storefrontProductCount?: number;
+}) {
   const [rows, setRows] = useState<Product[]>(initialRows || []);
   const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const debounced = useDebounced(search, 350);
   const [page, setPage] = useState(0);
@@ -127,8 +137,18 @@ export default function InventoryClient({ initialRows }: { initialRows?: Product
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
+  const hasClientFilters = Boolean(
+    debounced ||
+      category ||
+      statusFilter ||
+      typeof minPrice === "number" ||
+      typeof maxPrice === "number" ||
+      page > 0,
+  );
+
   const fetchProducts = useCallback(async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       const params = new URLSearchParams();
       params.set("limit", String(limit));
@@ -140,20 +160,36 @@ export default function InventoryClient({ initialRows }: { initialRows?: Product
       if (typeof maxPrice === "number") params.set("maxPrice", String(maxPrice));
 
       const res = await fetch(`/api/admin/products?${params.toString()}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Failed to fetch");
+      const data = (await res.json()) as { error?: string; products?: Product[] };
+      if (!res.ok) {
+        throw new Error(data?.error || "Failed to fetch");
+      }
       setRows(data.products || []);
     } catch (err) {
       console.error(err);
+      const message =
+        err instanceof Error ? err.message : "Failed to load inventory";
+      setFetchError(
+        message.includes("Forbidden")
+          ? "Session expired or you are not an admin. Sign in again."
+          : message.includes("timed out") || message.includes("Database")
+            ? message
+            : message.includes("fetch admin products") || message.includes("Failed to fetch")
+              ? "Could not reach the database. Wait a moment and retry (Neon may be waking up)."
+              : message,
+      );
     } finally {
       setLoading(false);
     }
   }, [debounced, limit, page, category, statusFilter, minPrice, maxPrice]);
 
   useEffect(() => {
+    if (!hasClientFilters && initialRows !== undefined) {
+      return;
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
-  }, [fetchProducts]);
+  }, [fetchProducts, hasClientFilters, initialRows]);
 
   const onSave = useCallback(async (product: Product) => {
     try {
@@ -197,6 +233,21 @@ export default function InventoryClient({ initialRows }: { initialRows?: Product
 
   return (
     <div className="space-y-4">
+      {fetchError ? (
+        <div
+          role="alert"
+          className="flex flex-col gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p>{fetchError}</p>
+          <button
+            type="button"
+            onClick={() => fetchProducts()}
+            className="shrink-0 rounded-lg bg-amber-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-950"
+          >
+            Retry
+          </button>
+        </div>
+      ) : null}
 
       {/* ── Toolbar ── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -304,7 +355,7 @@ export default function InventoryClient({ initialRows }: { initialRows?: Product
       {/* ── Table ── */}
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[860px] border-collapse text-sm">
+          <table className="w-full min-w-215 border-collapse text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50">
                 <th className="px-5 py-3.5 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-400">Product</th>
@@ -345,10 +396,33 @@ export default function InventoryClient({ initialRows }: { initialRows?: Product
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
                         <Package className="h-7 w-7" />
                       </div>
-                      <div>
+                      <div className="max-w-md">
                         <p className="font-semibold text-slate-700">No products found</p>
-                        <p className="mt-0.5 text-xs text-slate-400">Try adjusting your search or filters.</p>
+                        {rows.length === 0 &&
+                        storefrontProductCount > 0 &&
+                        !search &&
+                        !hasActiveFilters ? (
+                          <p className="mt-2 text-xs leading-relaxed text-slate-500">
+                            The shop shows {storefrontProductCount} active listing
+                            {storefrontProductCount === 1 ? "" : "s"} from other accounts
+                            (for example seed data). Inventory only lists products you created
+                            while signed in as this admin. Add a product or reassign existing
+                            rows to your Stack user ID in the database.
+                          </p>
+                        ) : (
+                          <p className="mt-0.5 text-xs text-slate-400">
+                            Try adjusting your search or filters.
+                          </p>
+                        )}
                       </div>
+                      {rows.length === 0 && !search && !hasActiveFilters ? (
+                        <Link
+                          href="/add-products"
+                          className="mt-1 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-800"
+                        >
+                          Add your first product
+                        </Link>
+                      ) : null}
                       {(search || hasActiveFilters) && (
                         <button
                           onClick={clearFilters}
@@ -372,7 +446,7 @@ export default function InventoryClient({ initialRows }: { initialRows?: Product
                       {/* Product */}
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-xs font-bold ${palette.bg} ${palette.text}`}>
+                          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${palette.bg} ${palette.text}`}>
                             {initials || "—"}
                           </div>
                           <div className="min-w-0">
@@ -462,7 +536,7 @@ export default function InventoryClient({ initialRows }: { initialRows?: Product
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <span className="min-w-[5rem] text-center text-xs font-medium text-slate-600">
+              <span className="min-w-20 text-center text-xs font-medium text-slate-600">
                 Page {page + 1}
               </span>
               <button

@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingCart, Lock, ShieldCheck } from "lucide-react";
 import PaystackCheckout from "@/app/components/PaystackCheckout";
 import { useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
+import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 
 export default function CartPage() {
   const {
@@ -20,99 +21,121 @@ export default function CartPage() {
   const { pushToast } = useToast();
 
   return (
-    <div className="min-h-screen bg-[#f8faf8] px-4 py-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-8 flex flex-col gap-4 rounded-4xl border border-gray-200 bg-white px-6 py-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+
+        {/* Header */}
+        <div className="mb-6 flex flex-col gap-4 rounded-[20px] border border-gray-200 bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Your cart</p>
-            <h1 className="mt-2 text-3xl font-semibold text-slate-950">Ready for checkout</h1>
-            <p className="mt-2 text-sm text-slate-600">
-              {cartCount} item{cartCount === 1 ? "" : "s"} in your cart.
+            <p className="text-[11px] uppercase tracking-[0.25em] text-slate-400">Your cart</p>
+            <h1 className="mt-1.5 flex items-center gap-2 text-[22px] font-medium text-slate-900">
+              Ready for checkout
+              <span className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-2.5 py-0.5 text-[11px] font-medium text-white">
+                {cartCount}
+              </span>
+            </h1>
+            <p className="mt-1 text-[13px] text-slate-500">
+              {cartCount} item{cartCount === 1 ? "" : "s"} in your cart
             </p>
           </div>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-3xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+            className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-slate-50 px-4 py-2 text-[13px] font-medium text-slate-800 transition hover:bg-slate-100"
           >
-            <ArrowLeft className="h-4 w-4" /> Continue shopping
+            <ArrowLeft className="h-3.5 w-3.5" /> Continue shopping
           </Link>
         </div>
 
+        {/* Empty state */}
         {cart.length === 0 ? (
-          <div className="rounded-4xl border border-dashed border-gray-300 bg-white px-8 py-16 text-center shadow-sm">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-              <ShoppingCart className="h-8 w-8" />
+          <div className="rounded-[20px] border border-dashed border-gray-300 bg-white px-8 py-16 text-center">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+              <ShoppingCart className="h-7 w-7" />
             </div>
-            <h2 className="text-2xl font-semibold text-slate-900">Your cart is empty</h2>
-            <p className="mt-3 text-sm text-slate-600">Browse our products and add items to your cart to begin checkout.</p>
+            <h2 className="text-[18px] font-medium text-slate-900">Your cart is empty</h2>
+            <p className="mt-2 text-[13px] text-slate-500">
+              Browse our products and add items to your cart to begin checkout.
+            </p>
             <Link
               href="/"
-              className="mt-8 inline-flex rounded-3xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+              className="mt-7 inline-flex rounded-full bg-emerald-600 px-6 py-3 text-[13px] font-medium text-white transition hover:bg-emerald-700"
             >
               Continue shopping
             </Link>
           </div>
         ) : (
-          <div className="grid gap-8 xl:grid-cols-[1.7fr_0.9fr]">
-            <div className="space-y-6">
+          <div className="grid gap-6 xl:grid-cols-[1.6fr_0.9fr]">
+
+            {/* Cart items */}
+            <div className="space-y-4">
               {cart.map((item) => (
                 <div
                   key={item.id}
-                  className="grid gap-4 rounded-[28px] border border-gray-200 bg-white p-5 sm:grid-cols-[120px_1fr_auto]"
+                  className="grid gap-4 rounded-[18px] border border-gray-200 bg-white p-5 sm:grid-cols-[100px_1fr_auto]"
                 >
-                  <div className="relative h-28 w-full overflow-hidden rounded-3xl bg-gray-100">
+                  {/* Image */}
+                  <div className="relative h-[90px] w-full overflow-hidden rounded-[12px] bg-emerald-50">
                     {item.image ? (
-                      <Image src={item.image} alt={item.name} fill className="object-cover" />
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        unoptimized={shouldUnoptimizeProductImage(item.image)}
+                        className="object-cover"
+                      />
                     ) : (
-                      <div className="flex h-full items-center justify-center bg-gray-200 text-gray-400">No image</div>
+                      <div className="flex h-full items-center justify-center text-emerald-300">
+                        <ShoppingCart className="h-7 w-7" />
+                      </div>
                     )}
                   </div>
 
+                  {/* Details */}
                   <div className="space-y-3">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900">{item.name}</p>
-                      <p className="mt-1 text-sm text-slate-500">{item.category ?? "Uncategorized"}</p>
+                      <p className="text-[14px] font-medium text-slate-900">{item.name}</p>
+                      <p className="mt-0.5 text-[12px] text-slate-400">{item.category ?? "Uncategorized"}</p>
                     </div>
-
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-3xl bg-slate-100 px-3 py-2 text-sm text-slate-700">
-                        Unit price: GHS {item.price.toFixed(2)}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full border border-gray-200 bg-slate-50 px-3 py-1.5 text-[12px] text-slate-600">
+                        Unit: GHS {item.price.toFixed(2)}
                       </span>
-                      <div className="flex items-center gap-2 rounded-3xl border border-gray-200 bg-white px-2 py-2">
+                      <div className="flex items-center gap-1 rounded-full border border-gray-200 bg-slate-50 px-1.5 py-1">
                         <button
                           type="button"
                           onClick={() => decreaseQty(item.id)}
-                          className="h-9 w-9 rounded-full text-slate-600 transition hover:bg-slate-100"
+                          className="flex h-7 w-7 items-center justify-center rounded-full text-slate-600 transition hover:bg-white"
                           aria-label="Decrease quantity"
                         >
-                          <Minus className="h-4 w-4" />
+                          <Minus className="h-3 w-3" />
                         </button>
-                        <span className="min-w-8 text-center text-sm font-semibold text-slate-900">
+                        <span className="min-w-[20px] text-center text-[13px] font-medium text-slate-900">
                           {item.quantity}
                         </span>
                         <button
                           type="button"
                           onClick={() => increaseQty(item.id)}
-                          className="h-9 w-9 rounded-full text-slate-600 transition hover:bg-slate-100"
+                          className="flex h-7 w-7 items-center justify-center rounded-full text-slate-600 transition hover:bg-white"
                           aria-label="Increase quantity"
                         >
-                          <Plus className="h-4 w-4" />
+                          <Plus className="h-3 w-3" />
                         </button>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-start justify-between gap-3 text-right sm:items-end">
+                  {/* Right col */}
+                  <div className="flex flex-col items-end justify-between gap-3">
                     <button
                       type="button"
                       onClick={() => removeFromCart(item.id)}
-                      className="text-sm font-semibold text-red-600 transition hover:text-red-700"
+                      className="text-[12px] font-medium text-red-600 transition hover:text-red-700"
                     >
                       Remove
                     </button>
-                    <div>
-                      <p className="text-sm text-slate-500">Line total</p>
-                      <p className="mt-1 text-lg font-semibold text-slate-950">
+                    <div className="text-right">
+                      <p className="text-[11px] text-slate-400">Line total</p>
+                      <p className="mt-0.5 text-[16px] font-medium text-slate-900">
                         GHS {(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
@@ -121,35 +144,46 @@ export default function CartPage() {
               ))}
             </div>
 
-            <div className="space-y-6">
-              <div className="rounded-4xl border border-gray-200 bg-white p-6 shadow-sm">
-                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Order summary</p>
-                <div className="mt-6 space-y-4">
-                  <div className="flex items-center justify-between text-sm text-slate-600">
+            {/* Sidebar */}
+            <div className="space-y-4">
+
+              {/* Order summary */}
+              <div className="rounded-[20px] border border-gray-200 bg-white p-6">
+                <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-400">
+                  Order summary
+                </p>
+                <div className="mt-5 space-y-3">
+                  <div className="flex items-center justify-between text-[13px] text-slate-500">
                     <span>Subtotal</span>
-                    <span>GHS {subtotal.toFixed(2)}</span>
+                    <span className="text-slate-700">GHS {subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-slate-600">
+                  <div className="flex items-center justify-between text-[13px] text-slate-500">
                     <span>Delivery</span>
-                    <span>GHS 0.00</span>
+                    <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-medium text-emerald-800">
+                      Free
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-slate-600">
+                  <div className="flex items-center justify-between text-[13px] text-slate-500">
                     <span>Taxes</span>
-                    <span>GHS 0.00</span>
+                    <span className="text-slate-700">GHS 0.00</span>
                   </div>
                 </div>
-                <div className="mt-6 flex items-center justify-between border-t border-slate-200 pt-5 text-lg font-semibold text-slate-950">
+                <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-5 text-[15px] font-medium text-slate-900">
                   <span>Total</span>
                   <span>GHS {subtotal.toFixed(2)}</span>
                 </div>
               </div>
 
+              {/* Pay button */}
               <PaystackCheckout
                 items={cart}
                 amount={subtotal}
                 buttonLabel="Pay with Paystack"
+                buttonClassName="w-full flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-5 py-3.5 text-[14px] font-medium text-white transition hover:bg-emerald-700"
+                buttonIcon={<Lock className="h-4 w-4" />}
               />
 
+              {/* Clear cart */}
               <button
                 type="button"
                 onClick={() => {
@@ -160,14 +194,20 @@ export default function CartPage() {
                     variant: "info",
                   });
                 }}
-                className="w-full rounded-3xl border border-gray-200 bg-white px-5 py-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+                className="w-full rounded-full border border-gray-200 bg-slate-50 px-5 py-3 text-[13px] font-medium text-slate-800 transition hover:bg-slate-100"
               >
                 Clear cart
               </button>
 
-              <div className="rounded-3xl bg-emerald-50 p-4 text-sm text-emerald-700">
-                <p className="font-semibold">Secure checkout</p>
-                <p className="mt-2 text-slate-700">Paystack handles your payment securely and confidently.</p>
+              {/* Secure badge */}
+              <div className="rounded-[14px] bg-emerald-50 p-4">
+                <p className="flex items-center gap-2 text-[13px] font-medium text-emerald-900">
+                  <ShieldCheck className="h-4 w-4 text-emerald-700" />
+                  Secure checkout
+                </p>
+                <p className="mt-1.5 text-[12px] text-emerald-700">
+                  Paystack handles your payment securely and confidently.
+                </p>
               </div>
             </div>
           </div>

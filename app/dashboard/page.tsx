@@ -1,4 +1,5 @@
-import Sidebar from "@/components/sidebar";
+import AdminShell from "@/components/AdminShell";
+import DashboardQuickActions from "@/components/DashboardQuickActions";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { TrendingUp } from "lucide-react";
@@ -50,9 +51,7 @@ export default async function DashboardPage() {
     }).format(totalValue);
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Sidebar currentPath="/dashboard" />
-
+        <AdminShell>
             <main className="ml-64 min-h-screen p-8">
                 {/* Header */}
                 <div className="mb-8">
@@ -61,6 +60,8 @@ export default async function DashboardPage() {
                         Welcome back! Here is an overview of your inventory
                     </p>
                 </div>
+
+                <DashboardQuickActions />
 
                 {/* Top row: Key Metrics + New Products */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -233,6 +234,6 @@ export default async function DashboardPage() {
                     </div>
                 </div>
             </main>
-        </div>
+        </AdminShell>
     );
 }

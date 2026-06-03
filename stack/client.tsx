@@ -15,5 +15,13 @@ export const stackClientApp = new StackClientApp({
   projectId,
   publishableClientKey,
   tokenStore: "nextjs-cookie",
+  redirectMethod: "nextjs",
   noAutomaticPrefetch: true,
+  urls: {
+    handler: "/handler",
+    signIn: "/sign-in",
+    signUp: "/handler/sign-up",
+    afterSignIn: "/dashboard",
+    afterSignUp: "/dashboard",
+  },
 });

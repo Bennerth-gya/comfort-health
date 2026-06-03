@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useToast } from "@/app/context/toastContext";
 import type { CartItem } from "@/app/context/cartContext";
 
@@ -9,6 +9,8 @@ export type PaystackCheckoutProps = {
   amount: number;
   onSuccess?: (reference: string, email: string) => void;
   buttonLabel?: string;
+  buttonClassName?: string;
+  buttonIcon?: ReactNode;
 };
 
 type CheckoutResponse = {
@@ -27,10 +29,15 @@ function makeIdempotencyKey() {
   return globalThis.crypto?.randomUUID?.() ?? `checkout_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
 
+const defaultButtonClassName =
+  "inline-flex w-full items-center justify-center rounded-3xl bg-emerald-600 px-5 py-4 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300";
+
 export default function PaystackCheckout({
   items,
   amount,
   buttonLabel = "Checkout with Paystack",
+  buttonClassName = defaultButtonClassName,
+  buttonIcon,
 }: PaystackCheckoutProps) {
   const [email, setEmail] = useState("");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -46,7 +53,23 @@ export default function PaystackCheckout({
       })),
     [items],
   );
-  const idempotencyKey = useMemo(() => makeIdempotencyKey(), [checkoutItems, email]);
+  const idempotencyRef = useRef<{ signature: string; key: string } | null>(null);
+
+  const getIdempotencyKey = () => {
+    const signature = JSON.stringify({
+      email: email.trim().toLowerCase(),
+      items: checkoutItems,
+    });
+
+    if (idempotencyRef.current?.signature !== signature) {
+      idempotencyRef.current = {
+        signature,
+        key: makeIdempotencyKey(),
+      };
+    }
+
+    return idempotencyRef.current.key;
+  };
 
   const handleCheckout = async () => {
     if (!email.trim()) {
@@ -69,11 +92,11 @@ export default function PaystackCheckout({
         headers: {
           "Content-Type": "application/json",
         },
-          body: JSON.stringify({
-            email,
-            idempotencyKey,
-            items: checkoutItems,
-          }),
+        body: JSON.stringify({
+          email,
+          idempotencyKey: getIdempotencyKey(),
+          items: checkoutItems,
+        }),
       });
 
       const initializeData = (await initializeResponse.json()) as CheckoutResponse;
@@ -122,9 +145,16 @@ export default function PaystackCheckout({
         type="button"
         onClick={handleCheckout}
         disabled={isLoading}
-        className="inline-flex w-full items-center justify-center rounded-3xl bg-emerald-600 px-5 py-4 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-300"
+        className={`${buttonClassName} disabled:cursor-not-allowed disabled:opacity-60`}
       >
-        {isLoading ? "Processing payment..." : buttonLabel}
+        {isLoading ? (
+          "Processing payment..."
+        ) : (
+          <>
+            {buttonIcon}
+            {buttonLabel}
+          </>
+        )}
       </button>
 
       {statusMessage && (

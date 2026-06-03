@@ -136,6 +136,8 @@ exports.Prisma.ProductScalarFieldEnum = {
   imageUrl: 'imageUrl',
   prescriptionRequired: 'prescriptionRequired',
   activeListing: 'activeListing',
+  isFeatured: 'isFeatured',
+  featuredRank: 'featuredRank',
   createAt: 'createAt',
   updateAt: 'updateAt'
 };
@@ -183,6 +185,19 @@ exports.Prisma.PaymentTransactionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.HeroSlideScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  subtitle: 'subtitle',
+  imageUrl: 'imageUrl',
+  ctaText: 'ctaText',
+  ctaUrl: 'ctaUrl',
+  active: 'active',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -214,7 +229,8 @@ exports.Prisma.ModelName = {
   Product: 'Product',
   Order: 'Order',
   OrderItem: 'OrderItem',
-  PaymentTransaction: 'PaymentTransaction'
+  PaymentTransaction: 'PaymentTransaction',
+  HeroSlide: 'HeroSlide'
 };
 
 /**

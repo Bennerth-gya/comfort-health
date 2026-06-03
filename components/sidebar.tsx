@@ -1,24 +1,31 @@
+"use client";
+
 import {
   Boxes,
   Cross,
   LayoutDashboard,
   Package,
+  PlusCircle,
   ShoppingBag,
+  Store,
   Truck,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Orders", href: "/orders", icon: ShoppingBag },
   { name: "Inventory", href: "/inventory", icon: Package },
+  { name: "Add product", href: "/add-products", icon: PlusCircle },
 ];
 
-export default function Sidebar({
-  currentPath = "/dashboard",
-}: {
-  currentPath: string;
-}) {
+function isNavActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+export default function Sidebar() {
+  const pathname = usePathname();
   return (
     <aside className="fixed left-0 top-0 z-10 flex min-h-screen w-64 flex-col border-r border-gray-200 bg-white text-slate-700">
       <div className="flex h-24 items-center border-b border-gray-100 px-8">
@@ -38,7 +45,7 @@ export default function Sidebar({
       <nav className="flex-1 space-y-1 px-4 py-8">
         {navigation.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPath === item.href;
+          const isActive = isNavActive(pathname, item.href);
 
           return (
             <Link
@@ -55,6 +62,14 @@ export default function Sidebar({
             </Link>
           );
         })}
+
+        <Link
+          href="/"
+          className="mt-4 flex h-11 items-center gap-4 rounded-lg px-4 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-950"
+        >
+          <Store className="h-5 w-5" />
+          View storefront
+        </Link>
       </nav>
 
       <div className="px-4 pb-8">

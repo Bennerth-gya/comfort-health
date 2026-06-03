@@ -1,17 +1,25 @@
 import { isAllowlistedAdmin, parseAdminAllowlist } from "@/lib/admin-access";
 import { stackServerApp } from "@/stack/server";
-import { forbidden, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 type StackUser = NonNullable<Awaited<ReturnType<typeof stackServerApp.getUser>>>;
 
 function userEmail(user: StackUser) {
   const record = user as unknown as Record<string, unknown>;
-  const candidates = [
-    record.primaryEmail,
-    record.email,
-    record.primary_email,
-  ];
+  const primary = record.primaryEmail;
 
+  if (typeof primary === "string") {
+    return primary;
+  }
+
+  if (primary && typeof primary === "object" && "email" in primary) {
+    const email = (primary as { email?: unknown }).email;
+    if (typeof email === "string") {
+      return email;
+    }
+  }
+
+  const candidates = [record.email, record.primary_email];
   return candidates.find((value): value is string => typeof value === "string");
 }
 
@@ -50,7 +58,7 @@ export async function requireAdminUser() {
   const user = await getCurrentUser();
 
   if (!isAdminUser(user)) {
-    forbidden();
+    redirect("/sign-in?reason=not-admin&after=/dashboard");
   }
 
   return user;

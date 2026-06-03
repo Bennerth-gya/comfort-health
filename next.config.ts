@@ -23,21 +23,57 @@ function storageCspHost() {
   return hostname ? ` https://${hostname}` : "";
 }
 
-const storagePattern = storageImagePattern();
+function productImageRemotePatterns() {
+  const patterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
+    {
+      protocol: "https",
+      hostname: "images.unsplash.com",
+      pathname: "/**",
+    },
+    {
+      protocol: "https",
+      hostname: "*.amazonaws.com",
+      pathname: "/**",
+    },
+    {
+      protocol: "https",
+      hostname: "*.r2.dev",
+      pathname: "/**",
+    },
+    {
+      protocol: "https",
+      hostname: "*.r2.cloudflarestorage.com",
+      pathname: "/**",
+    },
+  ];
+
+  const storage = storageImagePattern();
+  if (storage) {
+    patterns.push(storage);
+  }
+
+  return patterns;
+}
 
 const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname,
   },
   async headers() {
+    // Strict CSP breaks Next.js dev (HMR needs eval) and can block hydration → blank black page.
+    if (process.env.NODE_ENV !== "production") {
+      return [];
+    }
+
     const contentSecurityPolicy = [
       "default-src 'self'",
       "base-uri 'self'",
       "frame-ancestors 'self'",
       "object-src 'none'",
-      "script-src 'self' 'unsafe-inline' https://js.paystack.co",
+      "script-src 'self' 'unsafe-inline' https://js.paystack.co https://*.stack-auth.com https://*.built-with-stack-auth.com",
       "style-src 'self' 'unsafe-inline'",
-      `img-src 'self' data: blob: https://images.unsplash.com https://*.stack-auth.com https://*.built-with-stack-auth.com${storageCspHost()}`,
+      // `https:` allows product/CDN images loaded directly (unoptimized remote URLs).
+      `img-src 'self' data: blob: https: https://images.unsplash.com https://*.stack-auth.com https://*.built-with-stack-auth.com${storageCspHost()}`,
       "font-src 'self' data:",
       "connect-src 'self' https://api.paystack.co https://api.stack-auth.com https://api1.stack-auth.com https://api2.stack-auth.com https://app.stack-auth.com https://*.stack-auth.com",
       "frame-src 'self' https://checkout.paystack.com https://*.paystack.co https://*.built-with-stack-auth.com",
@@ -60,14 +96,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/photo-*",
-      },
-      ...(storagePattern ? [storagePattern] : []),
-    ],
+    remotePatterns: productImageRemotePatterns(),
     dangerouslyAllowSVG: false,
     qualities: [75],
   },

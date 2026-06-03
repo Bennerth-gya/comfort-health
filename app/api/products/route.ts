@@ -72,6 +72,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
 
+    const code =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string"
+        ? error.code
+        : null;
+
+    if (code === "ETIMEDOUT" || code === "P1001" || code === "P2024") {
+      return NextResponse.json(
+        { error: "Database connection timed out. Please try again in a few seconds." },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
       {
         error:
@@ -119,6 +134,8 @@ export async function GET(req: Request) {
         dosage: true,
         prescriptionRequired: true,
         activeListing: true,
+        isFeatured: true,
+        featuredRank: true,
       },
     });
 
@@ -140,6 +157,22 @@ export async function GET(req: Request) {
     if (error instanceof RequestSecurityError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
+
+    const code =
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string"
+        ? error.code
+        : null;
+
+    if (code === "ETIMEDOUT" || code === "P1001" || code === "P2024") {
+      return NextResponse.json(
+        { error: "Database connection timed out. Please try again in a few seconds." },
+        { status: 503 },
+      );
+    }
+
     return NextResponse.json(
       {
         error:

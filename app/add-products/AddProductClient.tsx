@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "@/components/sidebar";
+import AdminShell from "@/components/AdminShell";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,6 +19,7 @@ export default function AddProductClient() {
     const [error, setError] = useState<string | null>(null);
     const [prescriptionRequired, setPrescriptionRequired] = useState(false);
     const [activeListing, setActiveListing] = useState(true);
+    const [isFeatured, setIsFeatured] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageUploading, setImageUploading] = useState(false);
 
@@ -100,6 +101,7 @@ export default function AddProductClient() {
                     lowStock: form.lowStock ? parseInt(form.lowStock) : null,
                     prescriptionRequired,
                     activeListing,
+                    isFeatured,
                     imageUrl: imagePreview,
                 }),
             });
@@ -117,9 +119,7 @@ export default function AddProductClient() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Sidebar currentPath="/inventory" />
-
+        <AdminShell>
             <main className="ml-64 min-h-screen p-8">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-8">
@@ -435,6 +435,29 @@ export default function AddProductClient() {
                                             />
                                         </button>
                                     </div>
+                                    <div className="border-t border-gray-100 pt-4 flex items-center justify-between">
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-800">
+                                                Feature on homepage
+                                            </p>
+                                            <p className="text-xs text-gray-400 mt-0.5">
+                                                Show this product in the featured section
+                                            </p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsFeatured(!isFeatured)}
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1 ${
+                                                isFeatured ? "bg-emerald-600" : "bg-gray-200"
+                                            }`}
+                                        >
+                                            <span
+                                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform shadow-sm ${
+                                                    isFeatured ? "translate-x-6" : "translate-x-1"
+                                                }`}
+                                            />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -509,6 +532,6 @@ export default function AddProductClient() {
                     </div>
                 </form>
             </main>
-        </div>
+        </AdminShell>
     );
 }

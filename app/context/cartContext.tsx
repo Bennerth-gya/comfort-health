@@ -4,9 +4,8 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 
@@ -47,6 +46,8 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = "comfi-cart";
 const ORDERS_STORAGE_KEY = "comfi-orders";
+const EMPTY_CART: CartItem[] = [];
+const EMPTY_ORDERS: OrderRecord[] = [];
 
 function parseStoredCart(value: string | null): CartItem[] {
   if (!value) return [];
@@ -74,25 +75,95 @@ function parseStoredOrders(value: string | null): OrderRecord[] {
   }
 }
 
+function createLocalStorageStore<T>(
+  key: string,
+  fallback: T,
+  parse: (value: string | null) => T,
+) {
+  let cachedRaw: string | null | undefined;
+  let cachedSnapshot = fallback;
+  const listeners = new Set<() => void>();
+
+  const emit = () => {
+    for (const listener of listeners) {
+      listener();
+    }
+  };
+
+  const getSnapshot = () => {
+    if (typeof window === "undefined") {
+      return fallback;
+    }
+
+    const raw = window.localStorage.getItem(key);
+    if (raw === cachedRaw) {
+      return cachedSnapshot;
+    }
+
+    cachedRaw = raw;
+    cachedSnapshot = parse(raw);
+    return cachedSnapshot;
+  };
+
+  const subscribe = (listener: () => void) => {
+    listeners.add(listener);
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === key) {
+        cachedRaw = undefined;
+        emit();
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+
+    return () => {
+      listeners.delete(listener);
+      window.removeEventListener("storage", handleStorage);
+    };
+  };
+
+  const setSnapshot = (value: T) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    cachedSnapshot = value;
+    cachedRaw = JSON.stringify(value);
+    window.localStorage.setItem(key, cachedRaw);
+    emit();
+  };
+
+  return {
+    getServerSnapshot: () => fallback,
+    getSnapshot,
+    setSnapshot,
+    subscribe,
+  };
+}
+
+const cartStore = createLocalStorageStore(
+  CART_STORAGE_KEY,
+  EMPTY_CART,
+  parseStoredCart,
+);
+const ordersStore = createLocalStorageStore(
+  ORDERS_STORAGE_KEY,
+  EMPTY_ORDERS,
+  parseStoredOrders,
+);
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window === "undefined") return [];
-    return parseStoredCart(window.localStorage.getItem(CART_STORAGE_KEY));
-  });
-  const [orders, setOrders] = useState<OrderRecord[]>(() => {
-    if (typeof window === "undefined") return [];
-    return parseStoredOrders(window.localStorage.getItem(ORDERS_STORAGE_KEY));
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-  }, [cart]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
-  }, [orders]);
+  const cart = useSyncExternalStore(
+    cartStore.subscribe,
+    cartStore.getSnapshot,
+    cartStore.getServerSnapshot,
+  );
+  const orders = useSyncExternalStore(
+    ordersStore.subscribe,
+    ordersStore.getSnapshot,
+    ordersStore.getServerSnapshot,
+  );
 
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
@@ -105,45 +176,44 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 
   const addToCart = useCallback((product: CartItem) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + product.quantity }
-            : item
-        );
-      }
-      return [...prev, product];
-    });
+    const currentCart = cartStore.getSnapshot();
+    cartStore.setSnapshot(
+      currentCart.find((item) => item.id === product.id)
+        ? currentCart.map((item) =>
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + product.quantity }
+              : item,
+          )
+        : [...currentCart, product],
+    );
   }, []);
 
   const removeFromCart = useCallback((id: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+    cartStore.setSnapshot(cartStore.getSnapshot().filter((item) => item.id !== id));
   }, []);
 
   const increaseQty = useCallback((id: string) => {
-    setCart((prev) =>
-      prev.map((item) =>
+    cartStore.setSnapshot(
+      cartStore.getSnapshot().map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+      ),
     );
   }, []);
 
   const decreaseQty = useCallback((id: string) => {
-    setCart((prev) =>
-      prev.map((item) =>
+    cartStore.setSnapshot(
+      cartStore.getSnapshot().map((item) =>
         item.id === id
           ? { ...item, quantity: Math.max(1, item.quantity - 1) }
           : item
-      )
+      ),
     );
   }, []);
 
-  const clearCart = useCallback(() => setCart([]), []);
+  const clearCart = useCallback(() => cartStore.setSnapshot(EMPTY_CART), []);
 
   const saveOrder = useCallback((order: OrderRecord) => {
-    setOrders((prev) => [order, ...prev]);
+    ordersStore.setSnapshot([order, ...ordersStore.getSnapshot()]);
   }, []);
 
   const getOrderByReference = useCallback(

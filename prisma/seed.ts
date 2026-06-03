@@ -1,11 +1,20 @@
+import { loadEnvConfig } from "@next/env";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../generated/db";
 import type { PrismaClient as PrismaClientType } from "../generated/db";
 
-const connectionString = process.env.DATABASE_URL;
+loadEnvConfig(process.cwd());
+
+const connectionString =
+  process.env.DATABASE_DIRECT_URL ??
+  process.env.DATABASE_URL_UNPOOLED ??
+  process.env.DATABASE_URL ??
+  process.env.DATABASE_POOL_URL;
 
 if (!connectionString) {
-  throw new Error("DATABASE_URL is not set");
+  throw new Error(
+    "DATABASE_DIRECT_URL, DATABASE_URL_UNPOOLED, DATABASE_URL, or DATABASE_POOL_URL is not set",
+  );
 }
 
 const globalForPrisma = globalThis as unknown as {
@@ -20,7 +29,10 @@ export const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 async function main() {
-  const demoUserId = "2eba823f-23db-40c0-84ef-9d34bdb09cb0";
+  // Must match your Stack admin user ID (ADMIN_USER_IDS in .env.local), or inventory stays empty.
+  const demoUserId =
+    process.env.ADMIN_USER_IDS?.split(",")[0]?.trim() ||
+    "2eba823f-23db-40c0-84ef-9d34bdb09cb0";
 
   await prisma.product.createMany({
     data: Array.from({ length: 25 }).map((_, i) => ({
