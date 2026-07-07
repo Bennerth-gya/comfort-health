@@ -1,5 +1,6 @@
 "use client";
 
+import { isAuthPath } from "@/lib/admin-routes";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
@@ -7,7 +8,9 @@ export default function BackButton() {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (!pathname || pathname === "/") return null;
+  if (!pathname || pathname === "/" || isAuthPath(pathname)) {
+    return null;
+  }
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {

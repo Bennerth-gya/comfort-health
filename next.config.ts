@@ -1,5 +1,48 @@
 import type { NextConfig } from "next";
 
+function csv(value: string | undefined) {
+  return (value ?? "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function originHost(value: string) {
+  try {
+    return new URL(value).hostname;
+  } catch {
+    return value;
+  }
+}
+
+const privateDevOriginHosts = [
+  "localhost",
+  "*.localhost",
+  "127.0.0.1",
+  "10.*.*.*",
+  "172.*.*.*",
+  "192.168.*.*",
+];
+
+function allowedDevOrigins() {
+  const hosts = new Set<string>(
+    process.env.NODE_ENV === "production" ? [] : privateDevOriginHosts,
+  );
+
+  for (const value of [
+    ...csv(process.env.ALLOWED_DEV_ORIGINS),
+    ...csv(process.env.ALLOWED_ORIGINS),
+    process.env.APP_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+  ]) {
+    if (value) {
+      hosts.add(originHost(value));
+    }
+  }
+
+  return hosts.size > 0 ? Array.from(hosts) : undefined;
+}
+
 function storageImagePattern() {
   const publicUrl = process.env.S3_PUBLIC_URL;
   if (!publicUrl) return null;
@@ -56,6 +99,7 @@ function productImageRemotePatterns() {
 }
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: allowedDevOrigins(),
   turbopack: {
     root: __dirname,
   },

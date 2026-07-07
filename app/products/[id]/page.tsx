@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { type DosageGuide, normalizeDosageGuide } from "@/lib/dosage-guide";
 import { prisma } from "@/lib/prisma";
 import ProductDetailsClient from "@/app/products/ProductDetailsClient";
 
@@ -11,6 +12,7 @@ type ProductDetails = {
   price: number;
   imageUrl: string | null;
   dosage: string | null;
+  dosageGuide: DosageGuide | null;
   manufacturer: string | null;
   prescriptionRequired: boolean;
   quantity: number;
@@ -38,6 +40,7 @@ export default async function ProductDetailsPage({
     price: { toString(): string };
     imageUrl: string | null;
     dosage: string | null;
+    dosageGuide: unknown;
     manufacturer: string | null;
     prescriptionRequired: boolean;
     quantity: number;
@@ -55,6 +58,7 @@ export default async function ProductDetailsPage({
         price: true,
         imageUrl: true,
         dosage: true,
+        dosageGuide: true,
         manufacturer: true,
         prescriptionRequired: true,
         quantity: true,
@@ -90,6 +94,7 @@ export default async function ProductDetailsPage({
   const productDetails: ProductDetails = {
     ...product,
     price: parseFloat(product.price.toString()),
+    dosageGuide: normalizeDosageGuide(product.dosageGuide),
   };
 
   return <ProductDetailsClient product={productDetails} />;

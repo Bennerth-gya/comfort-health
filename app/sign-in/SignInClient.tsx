@@ -59,9 +59,11 @@ export default function SignInClient() {
         {blockedAsAdmin ? (
           <div className="space-y-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
             <p>
-              You are signed in, but this account is not on the admin allowlist.
-              Update <code className="text-xs">.env.local</code>, restart{" "}
-              <code className="text-xs">npm run dev</code>, then reload this page.
+              You are signed in, but this account does not have the{" "}
+              <strong>ADMIN</strong> role. Add your Stack user ID to{" "}
+              <code className="text-xs">ADMIN_USER_IDS</code> in{" "}
+              <code className="text-xs">.env.local</code>, restart the dev server,
+              then reload — or promote the user in the database:
             </p>
             {user ? (
               <div className="space-y-1 rounded-lg bg-white/80 p-3 font-mono text-xs text-slate-800">
@@ -74,9 +76,11 @@ export default function SignInClient() {
                 {stackUserEmail(user) ? (
                   <p>
                     <span className="font-sans font-medium text-slate-600">
-                      ADMIN_EMAILS=
+                      -- or in SQL:
                     </span>
-                    {stackUserEmail(user)}
+                    <br />
+                    UPDATE users SET role = &apos;ADMIN&apos; WHERE id =
+                    &apos;{user.id}&apos;;
                   </p>
                 ) : null}
               </div>
@@ -86,17 +90,9 @@ export default function SignInClient() {
           </div>
         ) : null}
 
-        {!blockedAsAdmin ? <SignIn automaticRedirect /> : null}
+        {!blockedAsAdmin ? <SignIn automaticRedirect={false} /> : null}
 
         <div className="flex flex-col gap-2 text-center text-sm">
-          {!blockedAsAdmin ? (
-            <Link
-              href={after}
-              className="font-medium text-emerald-700 hover:text-emerald-800"
-            >
-              Continue to admin area
-            </Link>
-          ) : null}
           <Link href="/" className="text-slate-600 hover:text-slate-900">
             Back to storefront
           </Link>

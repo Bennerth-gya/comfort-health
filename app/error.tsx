@@ -20,7 +20,7 @@ export default function GlobalError({
             type="button"
             onClick={() => reset()}
             className="inline-flex rounded-3xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
-          >
+          > 
             Retry
           </button>
           <Link

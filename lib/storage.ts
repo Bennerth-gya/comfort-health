@@ -1,7 +1,7 @@
 import "server-only";
 
+import { randomUUID } from "crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import crypto from "crypto";
 
 const ALLOWED_IMAGE_TYPES = new Set([
   "image/jpeg",
@@ -78,7 +78,7 @@ export async function uploadProductImage(input: {
   }
 
   const extension = extensionForContentType(input.contentType.toLowerCase());
-  const key = `products/${input.userId}/${crypto.randomUUID()}.${extension}`;
+  const key = `products/${input.userId}/${randomUUID()}.${extension}`;
   const client = getS3Client();
 
   await client.send(

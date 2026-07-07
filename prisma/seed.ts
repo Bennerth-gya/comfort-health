@@ -1,21 +1,24 @@
 import { loadEnvConfig } from "@next/env";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { normalizePostgresSslMode } from "../lib/database-url";
 import { PrismaClient } from "../generated/db";
 import type { PrismaClient as PrismaClientType } from "../generated/db";
 
 loadEnvConfig(process.cwd());
 
-const connectionString =
+const rawConnectionString =
   process.env.DATABASE_DIRECT_URL ??
   process.env.DATABASE_URL_UNPOOLED ??
-  process.env.DATABASE_URL ??
-  process.env.DATABASE_POOL_URL;
+  process.env.DATABASE_POOL_URL ??
+  process.env.DATABASE_URL;
 
-if (!connectionString) {
+if (!rawConnectionString) {
   throw new Error(
     "DATABASE_DIRECT_URL, DATABASE_URL_UNPOOLED, DATABASE_URL, or DATABASE_POOL_URL is not set",
   );
 }
+
+const connectionString = normalizePostgresSslMode(rawConnectionString);
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClientType;
@@ -41,7 +44,7 @@ async function main() {
       price: parseFloat((Math.random() * 90 + 10).toFixed(2)),
       quantity: Math.floor(Math.random() * 20),
       lowStock: 5,
-      createAt: new Date(
+      createdAt: new Date(
         Date.now() - 1000 * 60 * 60 * 24 * (i * 5)
       ),
     })),

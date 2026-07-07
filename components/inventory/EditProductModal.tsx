@@ -3,6 +3,12 @@
 import { useEffect, useState } from "react";
 import { useToast } from "@/app/context/toastContext";
 import { X, AlertCircle, Loader2 } from "lucide-react";
+import {
+  DOSAGE_GUIDE_RANGES,
+  type DosageGuide,
+  type DosageGuideKey,
+  dosageGuideToForm,
+} from "@/lib/dosage-guide";
 import { useFormValidation, commonRules } from "@/hooks/useFormValidation";
 
 type Product = {
@@ -14,6 +20,8 @@ type Product = {
   price: number;
   quantity: number;
   lowStock?: number | null;
+  dosage?: string | null;
+  dosageGuide?: DosageGuide | null;
   manufacturer?: string | null;
   imageUrl?: string | null;
   activeListing?: boolean;
@@ -33,7 +41,10 @@ const CATEGORIES = [
   "Women's Care",
   "Flu & Cold",
   "Vitamins & Supplements",
+  "Skincare",
+  "Antibiotics",
   "General Health",
+  "Other",
 ];
 
 export default function EditProductModal({ open, product, onClose, onSave }: Props) {
@@ -60,6 +71,8 @@ export default function EditProductModal({ open, product, onClose, onSave }: Pro
         price: product.price ?? 0,
         quantity: product.quantity ?? 0,
         lowStock: product.lowStock ?? null,
+        dosage: product.dosage || "",
+        dosageGuide: dosageGuideToForm(product.dosageGuide),
         manufacturer: product.manufacturer || "",
         imageUrl: product.imageUrl || "",
         activeListing: product.activeListing ?? true,
@@ -115,6 +128,16 @@ export default function EditProductModal({ open, product, onClose, onSave }: Pro
     if (errors[field]) {
       validateField(field, value);
     }
+  };
+
+  const handleDosageGuideChange = (field: DosageGuideKey, value: string) => {
+    setForm({
+      ...form,
+      dosageGuide: {
+        ...dosageGuideToForm(form.dosageGuide),
+        [field]: value,
+      },
+    });
   };
 
   return (
@@ -208,6 +231,19 @@ export default function EditProductModal({ open, product, onClose, onSave }: Pro
               />
             </div>
 
+            {/* Dosage */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700">Dosage</label>
+              <input
+                type="text"
+                value={form.dosage || ""}
+                onChange={(e) => handleFieldChange("dosage", e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:bg-slate-50"
+                placeholder="e.g., 500mg"
+                disabled={loading}
+              />
+            </div>
+
             {/* Price */}
             <div>
               <label className="block text-sm font-medium text-slate-700">
@@ -294,6 +330,32 @@ export default function EditProductModal({ open, product, onClose, onSave }: Pro
                   {errors.lowStock}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Dosage guide */}
+          <div className="rounded-lg border border-slate-200 p-4">
+            <h4 className="text-sm font-semibold text-slate-800">
+              Dosage by age range
+            </h4>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              {DOSAGE_GUIDE_RANGES.map((range) => (
+                <div key={range.key}>
+                  <label className="block text-xs font-medium text-slate-600">
+                    {range.label}
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={dosageGuideToForm(form.dosageGuide)[range.key]}
+                    onChange={(e) =>
+                      handleDosageGuideChange(range.key, e.target.value)
+                    }
+                    className="mt-1 w-full resize-none rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:bg-slate-50"
+                    placeholder={range.placeholder}
+                    disabled={loading}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 

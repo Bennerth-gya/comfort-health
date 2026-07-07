@@ -1,7 +1,6 @@
+import { isAdminPath } from "@/lib/admin-routes";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const ADMIN_ROUTES = ["/dashboard", "/inventory", "/orders", "/add-products"];
 
 /** Stack Auth session cookies (nextjs-cookie token store). */
 function hasStackSession(request: NextRequest) {
@@ -21,8 +20,10 @@ function hasStackSession(request: NextRequest) {
 }
 
 function isAdminRoute(pathname: string) {
-  return ADMIN_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`),
+  return (
+    isAdminPath(pathname) ||
+    pathname === "/inventory/hero-slides" ||
+    pathname.startsWith("/inventory/hero-slides/")
   );
 }
 
@@ -30,9 +31,7 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isAdminRoute(pathname) && !hasStackSession(request)) {
-    const signIn = new URL("/sign-in", request.url);
-    signIn.searchParams.set("after", pathname);
-    return NextResponse.redirect(signIn);
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();
@@ -48,5 +47,7 @@ export const config = {
     "/orders/:path*",
     "/add-products",
     "/add-products/:path*",
+    "/inventory/hero-slides",
+    "/inventory/hero-slides/:path*",
   ],
 };

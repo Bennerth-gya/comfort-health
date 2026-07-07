@@ -1,5 +1,10 @@
 import "server-only";
 
+import {
+  DOSAGE_GUIDE_MAX_LENGTH,
+  DOSAGE_GUIDE_RANGES,
+  normalizeDosageGuide,
+} from "@/lib/dosage-guide";
 import { isObjectStorageConfigured } from "@/lib/storage";
 import { z } from "zod";
 
@@ -38,6 +43,26 @@ const optionalInt = (max: number) =>
       z.coerce.number().int().min(0).max(max).nullable().optional(),
     )
     .transform((value) => value ?? null);
+
+const dosageGuideEntry = optionalString(DOSAGE_GUIDE_MAX_LENGTH);
+
+const dosageGuide = z
+  .preprocess(
+    emptyToNull,
+    z
+      .object(
+        Object.fromEntries(
+          DOSAGE_GUIDE_RANGES.map((range) => [range.key, dosageGuideEntry]),
+        ) as Record<
+          (typeof DOSAGE_GUIDE_RANGES)[number]["key"],
+          typeof dosageGuideEntry
+        >,
+      )
+      .partial()
+      .nullable()
+      .optional(),
+  )
+  .transform((value) => normalizeDosageGuide(value));
 
 const optionalDate = z
   .preprocess(emptyToNull, z.string().trim().nullable().optional())
@@ -101,6 +126,31 @@ const imageUrl = z
     }
   });
 
+const safeCtaUrl = z
+  .preprocess(emptyToNull, z.string().trim().max(1_000).nullable().optional())
+  .transform((value, ctx) => {
+    if (!value) return null;
+
+    if (value.startsWith("/") && !value.startsWith("//")) {
+      return value;
+    }
+
+    try {
+      const url = new URL(value);
+      if (url.protocol === "https:") {
+        return value;
+      }
+    } catch {
+      // Fall through to the shared validation issue below.
+    }
+
+    ctx.addIssue({
+      code: "custom",
+      message: "CTA URL must be a safe internal path or HTTPS URL.",
+    });
+    return z.NEVER;
+  });
+
 const productShape = {
   name: z.string().trim().min(1, "Product name is required.").max(160),
   description: optionalString(5_000),
@@ -110,6 +160,7 @@ const productShape = {
   quantity: z.coerce.number().int().min(0).max(100_000),
   lowStock: optionalInt(100_000),
   dosage: optionalString(120),
+  dosageGuide,
   manufacturer: optionalString(160),
   expiryDate: optionalDate,
   imageUrl,
@@ -144,9 +195,7 @@ const HeroSlideSchema = z
     // creation requires a non-null string because the DB column is non-nullable.
     imageUrl: imageUrl,
     ctaText: optionalString(80),
-    ctaUrl: z
-      .preprocess(emptyToNull, z.string().trim().url().max(1_000).nullable().optional())
-      .transform((value) => value ?? null),
+    ctaUrl: safeCtaUrl,
     active: z.boolean().default(true),
     sortOrder: z.coerce.number().int().min(0).default(0),
   })
@@ -259,6 +308,9 @@ export const PublicProductListQuerySchema = z.object({
   skip: z
     .preprocess(emptyToUndefined, z.coerce.number().int().min(0))
     .default(0),
+  q: z
+    .preprocess(emptyToUndefined, z.string().trim().max(100))
+    .optional(),
 });
 
 export function validationMessage(error: z.ZodError) {

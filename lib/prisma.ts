@@ -2,17 +2,21 @@ import "server-only";
 
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import { normalizePostgresSslMode } from "@/lib/database-url";
 import { assertProductionEnv } from "@/lib/env";
 import { PrismaClient } from "../generated/db";
 import type { PrismaClient as PrismaClientType } from "../generated/db";
 
 assertProductionEnv();
 
-const connectionString = process.env.DATABASE_POOL_URL ?? process.env.DATABASE_URL;
+const rawConnectionString =
+  process.env.DATABASE_POOL_URL ?? process.env.DATABASE_URL;
 
-if (!connectionString) {
+if (!rawConnectionString) {
   throw new Error("DATABASE_POOL_URL or DATABASE_URL is not set");
 }
+
+const connectionString = normalizePostgresSslMode(rawConnectionString);
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClientType | undefined;

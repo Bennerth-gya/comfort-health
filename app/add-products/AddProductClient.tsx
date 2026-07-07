@@ -4,6 +4,11 @@ import AdminShell from "@/components/AdminShell";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+    DOSAGE_GUIDE_RANGES,
+    type DosageGuideKey,
+    emptyDosageGuideForm,
+} from "@/lib/dosage-guide";
 import { uploadProductImageFile } from "@/lib/upload-product-image";
 import {
     ArrowLeft,
@@ -22,6 +27,7 @@ export default function AddProductClient() {
     const [isFeatured, setIsFeatured] = useState(false);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageUploading, setImageUploading] = useState(false);
+    const [dosageGuide, setDosageGuide] = useState(emptyDosageGuideForm);
 
     const [form, setForm] = useState({
         name: "",
@@ -38,6 +44,11 @@ export default function AddProductClient() {
 
     const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
         setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+    const setDosageRange = (field: DosageGuideKey) =>
+        (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setDosageGuide((prev) => ({ ...prev, [field]: e.target.value }));
+        };
 
     const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -91,7 +102,7 @@ export default function AddProductClient() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch("/api/products", {
+            const res = await fetch("/api/admin/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -103,6 +114,7 @@ export default function AddProductClient() {
                     activeListing,
                     isFeatured,
                     imageUrl: imagePreview,
+                    dosageGuide,
                 }),
             });
             if (!res.ok) {
@@ -214,7 +226,7 @@ export default function AddProductClient() {
                                                 <option value="">Select category</option>
                                                 <option>Pain Relief</option>
                                                 <option>Sexual Wellness</option>
-                                                <option>Womens Care</option>
+                                                <option>Women&apos;s Care</option>
                                                 <option>Flu & Cold</option>
                                                 <option>Vitamins & Supplements</option>
                                                 <option>Skincare</option>
@@ -332,6 +344,28 @@ export default function AddProductClient() {
                                             onChange={set("expiryDate")}
                                             className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                                         />
+                                    </div>
+                                </div>
+
+                                <div className="mt-6 border-t border-gray-100 pt-5">
+                                    <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                        Dosage by age range
+                                    </h3>
+                                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                                        {DOSAGE_GUIDE_RANGES.map((range) => (
+                                            <div key={range.key}>
+                                                <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                                    {range.label}
+                                                </label>
+                                                <textarea
+                                                    rows={4}
+                                                    placeholder={range.placeholder}
+                                                    value={dosageGuide[range.key]}
+                                                    onChange={setDosageRange(range.key)}
+                                                    className="w-full resize-none rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

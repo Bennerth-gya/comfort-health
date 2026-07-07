@@ -1,5 +1,6 @@
 import { loadEnvConfig } from "@next/env";
 import { defineConfig } from "prisma/config";
+import { normalizePostgresSslMode } from "./lib/database-url";
 
 loadEnvConfig(process.cwd());
 
@@ -9,7 +10,7 @@ function preparePrismaDatabaseUrl(connectionString: string | undefined) {
   }
 
   try {
-    const url = new URL(connectionString);
+    const url = new URL(normalizePostgresSslMode(connectionString));
 
     if (url.hostname.endsWith(".neon.tech")) {
       url.hostname = url.hostname.replace("-pooler.", ".");
@@ -21,15 +22,15 @@ function preparePrismaDatabaseUrl(connectionString: string | undefined) {
 
     return url.toString();
   } catch {
-    return connectionString;
+    return normalizePostgresSslMode(connectionString);
   }
 }
 
 const databaseUrl = preparePrismaDatabaseUrl(
   process.env["DATABASE_DIRECT_URL"] ??
     process.env["DATABASE_URL_UNPOOLED"] ??
-    process.env["DATABASE_URL"] ??
-    process.env["DATABASE_POOL_URL"],
+    process.env["DATABASE_POOL_URL"] ??
+    process.env["DATABASE_URL"],
 );
 
 if (!databaseUrl) {

@@ -15,16 +15,36 @@ const categories = [
 ];
 
 async function getHomeData() {
-  const [products, heroSlides] = await Promise.all([
+  const [products, featuredProducts, heroSlides] = await Promise.all([
     prisma.product.findMany({
       where: { activeListing: true },
       orderBy: { createAt: "desc" },
+      take: 20,
       select: {
         id: true,
         name: true,
         price: true,
+        quantity: true,
         imageUrl: true,
         category: true,
+        prescriptionRequired: true,
+        isFeatured: true,
+        featuredRank: true,
+        createAt: true,
+      },
+    }),
+    prisma.product.findMany({
+      where: { activeListing: true, isFeatured: true },
+      orderBy: [{ featuredRank: "asc" }, { createAt: "desc" }],
+      take: 4,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        quantity: true,
+        imageUrl: true,
+        category: true,
+        prescriptionRequired: true,
         isFeatured: true,
         featuredRank: true,
         createAt: true,
@@ -43,16 +63,6 @@ async function getHomeData() {
       },
     }),
   ]);
-
-  const featuredProducts = products
-    .filter((product) => product.isFeatured)
-    .sort((a, b) => {
-      const rankA = a.featuredRank ?? Number.MAX_SAFE_INTEGER;
-      const rankB = b.featuredRank ?? Number.MAX_SAFE_INTEGER;
-      if (rankA !== rankB) return rankA - rankB;
-      return b.createAt.getTime() - a.createAt.getTime();
-    })
-    .slice(0, 4);
 
   return { products, featuredProducts, heroSlides };
 }
@@ -101,7 +111,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-6 py-10">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-3xl font-bold text-gray-900">Shop by Category</h2>
-          <Link href="#full-catalog" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+          <Link href="/shop-page" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
             View all →
           </Link>
         </div>
@@ -111,7 +121,7 @@ export default async function HomePage() {
             return (
               <Link
                 key={category.name}
-                href="#full-catalog"
+                href={`/shop-page?q=${encodeURIComponent(category.name)}`}
                 className="rounded-3xl border border-gray-200 bg-white p-8 transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100">
@@ -129,7 +139,7 @@ export default async function HomePage() {
           <div>
             <h2 className="text-3xl font-bold text-gray-900">Featured Products</h2>
           </div>
-          <Link href="#full-catalog" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
+          <Link href="/shop-page" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
             View all →
           </Link>
         </div>
@@ -144,6 +154,8 @@ export default async function HomePage() {
                   price: Number(product.price),
                   image: product.imageUrl,
                   category: product.category,
+                  quantity: product.quantity,
+                  prescriptionRequired: product.prescriptionRequired,
                 }}
             />
           ))}
@@ -171,12 +183,14 @@ export default async function HomePage() {
               <ProductCard
                 key={product.id}
                 product={{
-                id: product.id,
-                name: product.name,
-                price: Number(product.price),
-                image: product.imageUrl,
-                category: product.category,
-              }}
+                  id: product.id,
+                  name: product.name,
+                  price: Number(product.price),
+                  image: product.imageUrl,
+                  category: product.category,
+                  quantity: product.quantity,
+                  prescriptionRequired: product.prescriptionRequired,
+                }}
               />
             ))}
           </div>

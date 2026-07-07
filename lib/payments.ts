@@ -1,12 +1,18 @@
 import "server-only";
 
-import crypto from "crypto";
+import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
+import { createReceiptToken } from "@/lib/payment-security";
 import { CheckoutRequestSchema, validationMessage } from "@/lib/validation";
 import type { Prisma } from "@/generated/db";
 
+export {
+  createReceiptToken,
+  verifyPaystackWebhookSignature,
+  verifyReceiptToken,
+} from "@/lib/payment-security";
+
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
-const ORDER_RECEIPT_SECRET = process.env.ORDER_RECEIPT_SECRET;
 const MONEY_FACTOR = 100;
 const CURRENCY = "GHS";
 const PAID_STATUSES = new Set(["paid", "paid_fulfillment_review"]);
@@ -89,15 +95,6 @@ function requiredPaystackSecret() {
   return PAYSTACK_SECRET_KEY;
 }
 
-function requiredReceiptSecret() {
-  const secret = ORDER_RECEIPT_SECRET ?? PAYSTACK_SECRET_KEY;
-  if (!secret) {
-    throw new PaymentFlowError("ORDER_RECEIPT_SECRET or PAYSTACK_SECRET_KEY is not configured.", 500);
-  }
-
-  return secret;
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
@@ -137,27 +134,7 @@ function toMoney(pesewas: number) {
 }
 
 function makeReference() {
-  return `comfi_${crypto.randomUUID().replaceAll("-", "").slice(0, 24)}`;
-}
-
-export function createReceiptToken(reference: string) {
-  return crypto
-    .createHmac("sha256", requiredReceiptSecret())
-    .update(reference)
-    .digest("hex");
-}
-
-export function verifyReceiptToken(reference: string, token: string | null | undefined) {
-  if (!token) return false;
-
-  const expected = Buffer.from(createReceiptToken(reference), "hex");
-  const provided = Buffer.from(token, "hex");
-
-  if (expected.length !== provided.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(expected, provided);
+  return `comfi_${randomUUID().replaceAll("-", "").slice(0, 24)}`;
 }
 
 function publicOrder(
@@ -472,144 +449,150 @@ export async function finalizeVerifiedPayment(reference: string, verification?: 
     throw new PaymentFlowError("Payment reference mismatch.", 409);
   }
 
-  const result = await prisma.$transaction(async (tx) => {
-    await tx.$executeRawUnsafe("SET LOCAL interactive_transaction_timeout = '30000'");
-    const order = await tx.order.findUnique({
-      where: { reference },
-      include: {
-        items: true,
-      },
-    });
-
-    if (!order) {
-      throw new PaymentFlowError("Order not found.", 404);
-    }
-
-    if (isPaidOrderStatus(order.status)) {
-      return {
-        order: publicOrder(order),
-        shouldSendReceipt: false,
-      };
-    }
-
-    if (transaction.status?.toLowerCase() !== "success") {
-      await tx.paymentTransaction.update({
+  const result = await prisma.$transaction(
+    async (tx) => {
+      await tx.$executeRawUnsafe("SET LOCAL idle_in_transaction_session_timeout = '80000'");
+      const order = await tx.order.findUnique({
         where: { reference },
-        data: {
-          status: transaction.status ?? "not_successful",
-          rawPayload: paystackPayload(paystack),
-        },
-      });
-      await tx.order.update({
-        where: { id: order.id },
-        data: {
-          status: "payment_not_successful",
-        },
-      });
-      throw new PaymentFlowError("Payment has not been successfully completed.", 409);
-    }
-
-    const expectedAmount = toPesewas(order.amount);
-    if (Number(transaction.amount) !== expectedAmount || transaction.currency !== order.currency) {
-      await tx.paymentTransaction.update({
-        where: { reference },
-        data: {
-          status: "verification_mismatch",
-          rawPayload: paystackPayload(paystack),
-        },
-      });
-      await tx.order.update({
-        where: { id: order.id },
-        data: {
-          status: "verification_mismatch",
-        },
-      });
-      throw new PaymentFlowError("Payment amount or currency did not match the order.", 409);
-    }
-
-    const claim = await tx.order.updateMany({
-      where: {
-        id: order.id,
-        status: {
-          notIn: Array.from(PAID_STATUSES),
-        },
-      },
-      data: {
-        status: "processing_payment",
-      },
-    });
-
-    if (claim.count !== 1) {
-      const latest = await tx.order.findUnique({
-        where: { id: order.id },
         include: {
           items: true,
         },
       });
 
-      if (latest && isPaidOrderStatus(latest.status)) {
+      if (!order) {
+        throw new PaymentFlowError("Order not found.", 404);
+      }
+
+      if (isPaidOrderStatus(order.status)) {
         return {
-          order: publicOrder(latest),
+          order: publicOrder(order),
           shouldSendReceipt: false,
         };
       }
 
-      throw new PaymentFlowError("Order is already being processed.", 409);
-    }
+      if (transaction.status?.toLowerCase() !== "success") {
+        await tx.paymentTransaction.update({
+          where: { reference },
+          data: {
+            status: transaction.status ?? "not_successful",
+            rawPayload: paystackPayload(paystack),
+          },
+        });
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            status: "payment_not_successful",
+          },
+        });
+        throw new PaymentFlowError("Payment has not been successfully completed.", 409);
+      }
 
-    const fulfillmentReviewItems: string[] = [];
+      const expectedAmount = toPesewas(order.amount);
+      if (Number(transaction.amount) !== expectedAmount || transaction.currency !== order.currency) {
+        await tx.paymentTransaction.update({
+          where: { reference },
+          data: {
+            status: "verification_mismatch",
+            rawPayload: paystackPayload(paystack),
+          },
+        });
+        await tx.order.update({
+          where: { id: order.id },
+          data: {
+            status: "verification_mismatch",
+          },
+        });
+        throw new PaymentFlowError("Payment amount or currency did not match the order.", 409);
+      }
 
-    for (const item of order.items) {
-      const stockUpdate = await tx.product.updateMany({
+      const claim = await tx.order.updateMany({
         where: {
-          id: item.productId,
-          activeListing: true,
-          quantity: {
-            gte: item.quantity,
+          id: order.id,
+          status: {
+            notIn: Array.from(PAID_STATUSES),
           },
         },
         data: {
-          quantity: {
-            decrement: item.quantity,
-          },
+          status: "processing_payment",
         },
       });
 
-      if (stockUpdate.count !== 1) {
-        fulfillmentReviewItems.push(item.name);
+      if (claim.count !== 1) {
+        const latest = await tx.order.findUnique({
+          where: { id: order.id },
+          include: {
+            items: true,
+          },
+        });
+
+        if (latest && isPaidOrderStatus(latest.status)) {
+          return {
+            order: publicOrder(latest),
+            shouldSendReceipt: false,
+          };
+        }
+
+        throw new PaymentFlowError("Order is already being processed.", 409);
       }
-    }
 
-    const paidAt = transaction.paid_at ? new Date(transaction.paid_at) : new Date();
-    const needsFulfillmentReview = fulfillmentReviewItems.length > 0;
+      const fulfillmentReviewItems: string[] = [];
 
-    const paidOrder = await tx.order.update({
-      where: { id: order.id },
-      data: {
-        status: needsFulfillmentReview ? "paid_fulfillment_review" : "paid",
-        paidAt,
-        payment: {
-          update: {
-            status: needsFulfillmentReview ? "success_fulfillment_review" : "success",
-            providerReference: transaction.id === undefined ? reference : String(transaction.id),
-            paidAt,
-            rawPayload: {
-              ...paystackPayload(paystack),
-              fulfillmentReviewItems,
+      for (const item of order.items) {
+        const stockUpdate = await tx.product.updateMany({
+          where: {
+            id: item.productId,
+            activeListing: true,
+            quantity: {
+              gte: item.quantity,
+            },
+          },
+          data: {
+            quantity: {
+              decrement: item.quantity,
+            },
+          },
+        });
+
+        if (stockUpdate.count !== 1) {
+          fulfillmentReviewItems.push(item.name);
+        }
+      }
+
+      const paidAt = transaction.paid_at ? new Date(transaction.paid_at) : new Date();
+      const needsFulfillmentReview = fulfillmentReviewItems.length > 0;
+
+      const paidOrder = await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: needsFulfillmentReview ? "paid_fulfillment_review" : "paid",
+          paidAt,
+          payment: {
+            update: {
+              status: needsFulfillmentReview ? "success_fulfillment_review" : "success",
+              providerReference: transaction.id === undefined ? reference : String(transaction.id),
+              paidAt,
+              rawPayload: {
+                ...paystackPayload(paystack),
+                fulfillmentReviewItems,
+              },
             },
           },
         },
-      },
-      include: {
-        items: true,
-      },
-    });
+        include: {
+          items: true,
+        },
+      });
 
-    return {
-      order: publicOrder(paidOrder),
-      shouldSendReceipt: true,
-    };
-  });
+      return {
+        order: publicOrder(paidOrder),
+        shouldSendReceipt: true,
+      };
+    },
+    {
+      maxWait: 15000,
+      timeout: 30000,
+    }
+  );
 
   if (result.shouldSendReceipt) {
     await sendReceipt(result.order);
@@ -636,19 +619,4 @@ export async function getOrder(reference: string) {
   });
 
   return order ? publicOrder(order) : null;
-}
-
-export function verifyPaystackWebhookSignature(body: string, signature: string | null) {
-  const secret = requiredPaystackSecret();
-  if (!signature) return false;
-
-  const expected = crypto.createHmac("sha512", secret).update(body).digest("hex");
-  const expectedBuffer = Buffer.from(expected);
-  const signatureBuffer = Buffer.from(signature);
-
-  if (expectedBuffer.length !== signatureBuffer.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(expectedBuffer, signatureBuffer);
 }

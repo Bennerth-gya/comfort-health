@@ -24,13 +24,18 @@ function orderReceiptUrl(reference: string) {
 }
 
 export async function sendOrderReceiptEmail(order: PublicOrder) {
+  const receiptUrl = orderReceiptUrl(order.reference);
+
   if (!isEmailConfigured()) {
+    console.info(
+      "Email delivery is not configured. View the order receipt locally:",
+      receiptUrl,
+    );
     return { sent: false as const, reason: "not_configured" };
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
   const from = process.env.EMAIL_FROM!;
-  const receiptUrl = orderReceiptUrl(order.reference);
 
   const itemLines = order.items
     .map(

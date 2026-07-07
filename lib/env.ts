@@ -57,6 +57,14 @@ export function assertProductionEnv() {
     );
   }
 
+  if (!process.env.APP_URL) {
+    missing.push("APP_URL");
+  }
+
+  if (!process.env.NEXT_PUBLIC_APP_URL) {
+    missing.push("NEXT_PUBLIC_APP_URL");
+  }
+
   if (missing.length > 0) {
     throw new Error(
       `Missing required production environment variables: ${missing.join(", ")}`,

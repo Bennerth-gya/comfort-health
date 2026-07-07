@@ -1,5 +1,6 @@
 import AdminShell from "@/components/AdminShell";
 import { requireAdminUser } from "@/lib/auth";
+import { normalizeDosageGuide } from "@/lib/dosage-guide";
 import { prisma } from "@/lib/prisma";
 import {
   AlertTriangle,
@@ -24,36 +25,6 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   currency: "GHS",
   minimumFractionDigits: 2,
 });
-
-const categories = [
-  "Pain Relief",
-  "Sexual Wellness",
-  "Women's Care",
-  "Flu & Cold",
-  "Vitamins & Supplements",
-  "General Health",
-];
-
-const expiryLabels = [
-  "Dec 2026",
-  "Aug 2026",
-  "Jul 2026",
-  "May 2025",
-  "Sep 2026",
-  "Nov 2026",
-];
-
-function getCategory(productName: string, index: number) {
-  const name = productName.toLowerCase();
-
-  if (name.includes("condom")) return "Sexual Wellness";
-  if (name.includes("panadol") || name.includes("pain")) return "Pain Relief";
-  if (name.includes("contraceptive") || name.includes("emcon")) return "Women's Care";
-  if (name.includes("vicks") || name.includes("flu")) return "Flu & Cold";
-  if (name.includes("vitamin")) return "Vitamins & Supplements";
-
-  return categories[index % categories.length];
-}
 
 function getStatus(quantity: number, lowStock: number | null) {
   if (quantity <= 0) {
@@ -120,23 +91,25 @@ export default async function InventoryPage() {
     `,
   ]);
 
-  const rows = products.map((product, index) => {
+  const rows = products.map((product) => {
     const status = getStatus(product.quantity, product.lowStock);
 
     return {
       id: product.id,
       name: product.name,
       description: product.description,
-      category: getCategory(product.name, index),
+      category: product.category,
       sku: product.sku,
       price: Number(product.price),
       quantity: product.quantity,
       lowStock: product.lowStock,
+      dosage: product.dosage,
+      dosageGuide: normalizeDosageGuide(product.dosageGuide),
       manufacturer: product.manufacturer,
       imageUrl: product.imageUrl,
       activeListing: product.activeListing,
       createAt: product.createAt?.toISOString(),
-      expiryDate: expiryLabels[index % expiryLabels.length],
+      expiryDate: product.expiryDate?.toISOString() ?? null,
       status,
       initials: getProductInitials(product.name),
     };
@@ -200,7 +173,6 @@ export default async function InventoryPage() {
                 type="search"
               />
             </div>
-
             <div className="flex items-center gap-5 border-r border-gray-200 pr-6">
               <button
                 aria-label="Notifications"

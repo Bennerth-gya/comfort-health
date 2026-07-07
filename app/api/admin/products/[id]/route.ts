@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminUserOrNull } from "@/lib/auth";
+import { Prisma } from "@/generated/db";
+import { normalizeDosageGuide } from "@/lib/dosage-guide";
 import {
   assertJsonContentType,
   assertSameOrigin,
@@ -13,6 +15,10 @@ import { ProductUpdateSchema, validationMessage } from "@/lib/validation";
 export const dynamic = "force-dynamic";
 
 class ProductValidationError extends Error {}
+
+function hasOwn(object: object, key: PropertyKey) {
+  return Object.prototype.hasOwnProperty.call(object, key);
+}
 
 function isPrismaError(error: unknown, code: string) {
   return (
@@ -46,11 +52,19 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   try {
+    await rateLimitRequest(req, "product:admin-detail", { limit: 120, windowMs: 60_000 });
+
     const product = await prisma.product.findFirst({ where: { id, userId: user.id } });
     if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json(product);
+    return NextResponse.json({
+      ...product,
+      dosageGuide: normalizeDosageGuide(product.dosageGuide),
+    });
   } catch (err) {
     console.error(err);
+    if (err instanceof RequestSecurityError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });
   }
 }
@@ -72,9 +86,15 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       throw new ProductValidationError(validationMessage(parsed.error));
     }
 
+    const { dosageGuide, ...parsedData } = parsed.data;
+    const data: Prisma.ProductUpdateManyMutationInput = { ...parsedData };
+    if (hasOwn(parsed.data, "dosageGuide")) {
+      data.dosageGuide = dosageGuide ?? Prisma.DbNull;
+    }
+
     const claim = await prisma.product.updateMany({
       where: { id, userId: user.id },
-      data: parsed.data,
+      data,
     });
 
     if (claim.count !== 1) {
@@ -84,7 +104,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const updated = await prisma.product.findUnique({ where: { id } });
     if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    return NextResponse.json(updated);
+    return NextResponse.json({
+      ...updated,
+      dosageGuide: normalizeDosageGuide(updated.dosageGuide),
+    });
   } catch (error) {
     return productError(error, "Failed to update product");
   }
@@ -111,7 +134,13 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const deleted = await prisma.product.findUnique({ where: { id } });
     if (!deleted) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    return NextResponse.json({ success: true, product: deleted });
+    return NextResponse.json({
+      success: true,
+      product: {
+        ...deleted,
+        dosageGuide: normalizeDosageGuide(deleted.dosageGuide),
+      },
+    });
   } catch (error) {
     return productError(error, "Failed to delete product");
   }

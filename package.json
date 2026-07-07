@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "next dev --webpack --hostname 0.0.0.0",
     "build": "prisma generate && next build",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
@@ -16,10 +16,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1056.0",
+    "@better-auth/infra": "^0.2.13",
     "@paystack/inline-js": "^2.22.9",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
-    "@stackframe/stack": "^2.5.30",
+    "@stackframe/stack": "^2.8.108",
+    "@stackframe/stack-ui": "^2.8.108",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "lucide-react": "^1.16.0",

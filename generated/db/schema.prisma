@@ -12,6 +12,22 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String   @id // Stack user ID
+  email     String?
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([email])
+  @@map("users")
+}
+
 model Product {
   id     String @id @default(cuid())
   userId String
@@ -24,6 +40,7 @@ model Product {
   quantity     Int       @default(0)
   lowStock     Int?
   dosage       String?
+  dosageGuide  Json?
   manufacturer String?
   expiryDate   DateTime?
   imageUrl     String?

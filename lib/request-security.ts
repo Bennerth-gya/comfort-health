@@ -12,6 +12,27 @@ function csv(value: string | undefined) {
     .filter(Boolean);
 }
 
+function isLocalDevelopmentHost(hostname: string | undefined) {
+  if (!hostname) return false;
+
+  const normalized = hostname.toLowerCase();
+  return (
+    normalized === "localhost" ||
+    normalized === "127.0.0.1" ||
+    normalized === "0.0.0.0" ||
+    normalized === "::1" ||
+    normalized.startsWith("192.168.") ||
+    normalized.startsWith("10.") ||
+    normalized.startsWith("172.16.") ||
+    normalized.startsWith("172.17.") ||
+    normalized.startsWith("172.18.") ||
+    normalized.startsWith("172.19.") ||
+    normalized.startsWith("172.2") ||
+    normalized.startsWith("172.30.") ||
+    normalized.startsWith("172.31.")
+  );
+}
+
 function toOrigin(value: string) {
   try {
     return new URL(value).origin;
@@ -22,6 +43,8 @@ function toOrigin(value: string) {
 
 function configuredOrigins(request: Request) {
   const origins = new Set<string>();
+  const requestUrl = new URL(request.url);
+  const requestHost = requestUrl.hostname;
 
   for (const value of csv(process.env.ALLOWED_ORIGINS)) {
     origins.add(toOrigin(value));
@@ -33,8 +56,26 @@ function configuredOrigins(request: Request) {
     }
   }
 
+  if (process.env.NODE_ENV !== "production") {
+    origins.add(requestUrl.origin);
+
+    if (isLocalDevelopmentHost(requestHost)) {
+      const requestOrigin = requestUrl.origin;
+      const requestOriginUrl = new URL(requestOrigin);
+      const localAliases = ["localhost", "127.0.0.1", "0.0.0.0", "::1"];
+      for (const alias of localAliases) {
+        try {
+          origins.add(`http://${alias}${requestOriginUrl.port ? `:${requestOriginUrl.port}` : ""}`);
+          origins.add(`https://${alias}${requestOriginUrl.port ? `:${requestOriginUrl.port}` : ""}`);
+        } catch {
+          // ignore malformed origin values
+        }
+      }
+    }
+  }
+
   if (origins.size === 0) {
-    origins.add(new URL(request.url).origin);
+    origins.add(requestUrl.origin);
   }
 
   return origins;
@@ -79,9 +120,26 @@ export function assertSameOrigin(request: Request) {
     throw new RequestSecurityError("Invalid request origin.", 403);
   }
 
-  if (!configuredOrigins(request).has(requestOrigin)) {
-    throw new RequestSecurityError("Invalid request origin.", 403);
+  const allowedOrigins = configuredOrigins(request);
+  if (allowedOrigins.has(requestOrigin)) {
+    return;
   }
+
+  if (process.env.NODE_ENV !== "production") {
+    const requestUrl = new URL(request.url);
+    const requestHost = requestUrl.hostname;
+    const originUrl = new URL(requestOrigin);
+    const originHost = originUrl.hostname;
+
+    if (
+      (isLocalDevelopmentHost(requestHost) && isLocalDevelopmentHost(originHost)) ||
+      requestHost === originHost
+    ) {
+      return;
+    }
+  }
+
+  throw new RequestSecurityError("Invalid request origin.", 403);
 }
 
 export function assertJsonContentType(request: Request) {

@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { uploadProductImageFile } from "@/lib/upload-product-image";
 import { useToast } from "@/app/context/toastContext";
-import { ArrowRight, Check, Pencil, Plus, Trash2, X, Upload } from "lucide-react";
+import { Check, Pencil, Plus, Trash2, Upload } from "lucide-react";
 
 type HeroSlide = {
   id: string;
@@ -36,11 +36,6 @@ export default function HeroSlidesClient({ initialSlides }: { initialSlides: Her
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageUploading, setImageUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const selectedSlide = useMemo(
-    () => slides.find((slide) => slide.id === editingId) ?? null,
-    [editingId, slides],
-  );
 
   const startEditing = (slide: HeroSlide) => {
     setEditingId(slide.id);

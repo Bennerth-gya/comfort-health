@@ -44,11 +44,21 @@ async function resolveOrder(reference: string, receiptToken: string | undefined)
       error: null,
     };
   } catch (error) {
+    console.error(`[OrderSuccess] Verification error for reference ${reference}:`, error);
+
     const fallback = await getOrder(reference);
-    const message =
-      error instanceof PaymentFlowError || error instanceof Error
-        ? error.message
-        : "We could not verify this payment yet.";
+    
+    let message = "We could not verify this payment yet.";
+    if (error instanceof PaymentFlowError) {
+      message = error.message;
+    } else if (error instanceof Error) {
+      const errStr = error.message.toLowerCase();
+      if (errStr.includes("transaction") || errStr.includes("timeout") || errStr.includes("expired") || errStr.includes("prisma")) {
+        message = "Your payment was received, but we encountered a temporary delay confirming your order. Please refresh this page in a few moments, or check your email for confirmation.";
+      } else {
+        message = "An unexpected error occurred while verifying your order. Please refresh the page or contact support if the issue persists.";
+      }
+    }
 
     return {
       order: fallback,

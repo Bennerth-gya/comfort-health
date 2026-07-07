@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Pencil,
   Trash2,
@@ -12,10 +12,11 @@ import {
   X,
   Package,
 } from "lucide-react";
+import type { DosageGuide } from "@/lib/dosage-guide";
 import EditProductModal from "./EditProductModal";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
-type Product = {
+export type Product = {
   id: string;
   name: string;
   description?: string | null;
@@ -24,6 +25,8 @@ type Product = {
   price: number;
   quantity: number;
   lowStock?: number | null;
+  dosage?: string | null;
+  dosageGuide?: DosageGuide | null;
   manufacturer?: string | null;
   imageUrl?: string | null;
   activeListing?: boolean;
@@ -111,8 +114,112 @@ const CATEGORIES = [
   "Women's Care",
   "Flu & Cold",
   "Vitamins & Supplements",
+  "Skincare",
+  "Antibiotics",
   "General Health",
+  "Other",
 ];
+
+export function filterInventoryLocally(
+  products: Product[],
+  query: string,
+  categoryFilter: string | null,
+  statusFilter: string | null,
+  minPrice: number | null,
+  maxPrice: number | null,
+): Product[] {
+  let filtered = products;
+
+  // 1. Search Query filtering
+  if (query) {
+    const tokens = query
+      .toLowerCase()
+      .split(/[\s,/+]+/)
+      .map((token) => token.trim())
+      .filter((token) => token.length > 0);
+
+    if (tokens.length > 0) {
+      filtered = filtered
+        .map((product) => {
+          let score = 0;
+          const name = product.name.toLowerCase();
+          const description = (product.description ?? "").toLowerCase();
+          const sku = (product.sku ?? "").toLowerCase();
+          const manufacturer = (product.manufacturer ?? "").toLowerCase();
+          const category = (product.category ?? "").toLowerCase();
+          
+          const fullQuery = query.toLowerCase();
+          if (name === fullQuery) {
+            score += 100;
+          } else if (name.startsWith(fullQuery)) {
+            score += 50;
+          } else if (name.includes(fullQuery)) {
+            score += 20;
+          } else if (sku.includes(fullQuery)) {
+            score += 40;
+          }
+
+          for (const token of tokens) {
+            if (name.includes(token)) {
+              score += 10;
+              if (name.startsWith(token) || name.split(/\s+/).some((word) => word.startsWith(token))) {
+                score += 10;
+              }
+            }
+            if (sku.includes(token)) {
+              score += 15;
+            }
+            if (manufacturer.includes(token)) {
+              score += 10;
+            }
+            if (category.includes(token)) {
+              score += 5;
+            }
+            if (description.includes(token)) {
+              score += 2;
+            }
+          }
+          return { product, score };
+        })
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map((item) => item.product);
+    }
+  }
+
+  // 2. Category filtering
+  if (categoryFilter) {
+    filtered = filtered.filter((p) => p.category === categoryFilter);
+  }
+
+  // 3. Status filtering
+  if (statusFilter) {
+    filtered = filtered.filter((p) => {
+      if (statusFilter === "out") {
+        return p.quantity <= 0;
+      }
+      if (statusFilter === "low") {
+        return p.quantity > 0 && p.lowStock !== null && p.lowStock !== undefined && p.quantity <= p.lowStock;
+      }
+      if (statusFilter === "in") {
+        return p.quantity > 0 && (p.lowStock === null || p.lowStock === undefined || p.quantity > p.lowStock);
+      }
+      return true;
+    });
+  }
+
+  // 4. Min Price filtering
+  if (typeof minPrice === "number") {
+    filtered = filtered.filter((p) => p.price >= minPrice);
+  }
+
+  // 5. Max Price filtering
+  if (typeof maxPrice === "number") {
+    filtered = filtered.filter((p) => p.price <= maxPrice);
+  }
+
+  return filtered;
+}
 
 export default function InventoryClient({
   initialRows,
@@ -126,7 +233,7 @@ export default function InventoryClient({
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const debounced = useDebounced(search, 350);
+  const debounced = useDebounced(search, 150);
   const [page, setPage] = useState(0);
   const [limit] = useState(20);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -137,13 +244,62 @@ export default function InventoryClient({
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
+  // Local memory cache pool of all loaded products
+  const allFetchedProducts = useRef<Map<string, Product>>(new Map());
+
+  // Seed the cache pool with initial products
+  const hasSeededRef = useRef(false);
+  if (!hasSeededRef.current && initialRows && initialRows.length > 0) {
+    initialRows.forEach((p) => {
+      allFetchedProducts.current.set(p.id, p);
+    });
+    hasSeededRef.current = true;
+  }
+
+  // Keep track of the parameters used for the last successful server-side fetch
+  const [lastFetchedParams, setLastFetchedParams] = useState({
+    search: "",
+    category: null as string | null,
+    statusFilter: null as string | null,
+    minPrice: null as number | null,
+    maxPrice: null as number | null,
+  });
+
+  // Check if current search/filters differ from what the server has loaded
+  const filtersChanged = useMemo(() => {
+    return (
+      search.trim() !== lastFetchedParams.search ||
+      category !== lastFetchedParams.category ||
+      statusFilter !== lastFetchedParams.statusFilter ||
+      minPrice !== lastFetchedParams.minPrice ||
+      maxPrice !== lastFetchedParams.maxPrice
+    );
+  }, [search, category, statusFilter, minPrice, maxPrice, lastFetchedParams]);
+
+  // Display state: instantly filter locally when inputs change, or fallback to server rows when loaded
+  const displayedRows = useMemo(() => {
+    const query = search.trim();
+    if (filtersChanged || loading) {
+      const pool = Array.from(allFetchedProducts.current.values());
+      return filterInventoryLocally(
+        pool,
+        query,
+        category,
+        statusFilter,
+        minPrice,
+        maxPrice
+      );
+    }
+    return rows;
+  }, [rows, loading, search, category, statusFilter, minPrice, maxPrice, filtersChanged]);
+
   const hasClientFilters = Boolean(
     debounced ||
-      category ||
-      statusFilter ||
-      typeof minPrice === "number" ||
-      typeof maxPrice === "number" ||
-      page > 0,
+    category ||
+    statusFilter ||
+    typeof minPrice === "number" ||
+    typeof maxPrice === "number" ||
+    page > 0,
   );
 
   const fetchProducts = useCallback(async () => {
@@ -164,7 +320,22 @@ export default function InventoryClient({
       if (!res.ok) {
         throw new Error(data?.error || "Failed to fetch");
       }
-      setRows(data.products || []);
+      const fetched = data.products || [];
+      setRows(fetched);
+      
+      // Update cache pool with newly fetched products
+      fetched.forEach((p) => {
+        allFetchedProducts.current.set(p.id, p);
+      });
+
+      // Update parameters that the server rows represent
+      setLastFetchedParams({
+        search: debounced,
+        category,
+        statusFilter,
+        minPrice,
+        maxPrice,
+      });
     } catch (err) {
       console.error(err);
       const message =
@@ -201,6 +372,7 @@ export default function InventoryClient({
       const updated = await res.json();
       if (!res.ok) throw new Error(updated?.error || "Failed to update");
       setRows((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+      allFetchedProducts.current.set(updated.id, updated);
     } catch (err) {
       console.error(err);
       throw err;
@@ -213,13 +385,14 @@ export default function InventoryClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Failed to delete");
       setRows((prev) => prev.filter((p) => p.id !== id));
+      allFetchedProducts.current.delete(id);
     } catch (err) {
       console.error(err);
       throw err;
     }
   }, []);
 
-  const filteredRows = useMemo(() => rows, [rows]);
+  const filteredRows = rows;
 
   const hasActiveFilters = !!(category || statusFilter || minPrice || maxPrice);
 
@@ -282,11 +455,10 @@ export default function InventoryClient({
           )}
           <button
             onClick={() => setShowFilters((v) => !v)}
-            className={`flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-medium transition ${
-              showFilters || hasActiveFilters
+            className={`flex h-10 items-center gap-2 rounded-lg border px-4 text-sm font-medium transition ${showFilters || hasActiveFilters
                 ? "border-emerald-300 bg-emerald-50 text-emerald-700"
                 : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-            }`}
+              }`}
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters
@@ -382,7 +554,7 @@ export default function InventoryClient({
                         </div>
                       </div>
                     </td>
-                    {[1,2,3,4,5,6].map((c) => (
+                    {[1, 2, 3, 4, 5, 6].map((c) => (
                       <td key={c} className="px-5 py-4">
                         <div className="h-3.5 w-16 rounded bg-slate-100" />
                       </td>
@@ -399,9 +571,9 @@ export default function InventoryClient({
                       <div className="max-w-md">
                         <p className="font-semibold text-slate-700">No products found</p>
                         {rows.length === 0 &&
-                        storefrontProductCount > 0 &&
-                        !search &&
-                        !hasActiveFilters ? (
+                          storefrontProductCount > 0 &&
+                          !search &&
+                          !hasActiveFilters ? (
                           <p className="mt-2 text-xs leading-relaxed text-slate-500">
                             The shop shows {storefrontProductCount} active listing
                             {storefrontProductCount === 1 ? "" : "s"} from other accounts

@@ -58,6 +58,22 @@ const defaultHeroSlides: HeroSlide[] = [
 
 const AUTO_ADVANCE_MS = 9_000;
 
+function safeCtaHref(value?: string | null) {
+  if (!value) return "/#full-catalog";
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+
+  try {
+    const url = new URL(value);
+    if (url.protocol === "https:") {
+      return value;
+    }
+  } catch {
+    return "/#full-catalog";
+  }
+
+  return "/#full-catalog";
+}
+
 export default function HeroSection({ slides }: HeroSectionProps) {
   const availableSlides = slides.length > 0 ? slides : defaultHeroSlides;
   const [current, setCurrent] = useState(0);
@@ -121,7 +137,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
 
                   {slide.ctaText ? (
                     <Link
-                      href={slide.ctaUrl ?? "/#full-catalog"}
+                      href={safeCtaHref(slide.ctaUrl)}
                       className="mt-8 inline-flex rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500"
                     >
                       {slide.ctaText}
