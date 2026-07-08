@@ -1,19 +1,85 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { HeartPulse, Pill, ShieldCheck, Truck } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
-import SiteHeader from "@/components/SiteHeader";
 import ProductCard from "@/app/components/ProductCard";
-import AiFab from "@/components/AiFab";
 import { prisma } from "@/lib/prisma";
+import SearchBar from "@/components/SearchBar";
 
 const categories = [
-  { name: "Pain Relief", icon: Pill },
-  { name: "Sexual Wellness", icon: HeartPulse },
-  { name: "Vitamins", icon: ShieldCheck },
-  { name: "Flu & Cold", icon: Pill },
+  { name: "All", href: "/" },
+  { name: "Pain Relief", href: "/shop-page?q=Pain%20Relief" },
+  { name: "Vitamins", href: "/shop-page?q=Vitamins" },
+  { name: "Sexual Wellness", href: "/shop-page?q=Sexual%20Wellness" },
+  { name: "Flu & Cold", href: "/shop-page?q=Flu%20%26%20Cold" },
+  { name: "First Aid", href: "/shop-page?q=First%20Aid" },
 ];
+
+function SectionHeader({
+  title,
+  href = "/shop-page",
+}: {
+  title: string;
+  href?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between px-3 pb-2.5 pt-4 md:px-0 md:pb-4 md:pt-8">
+      <h2 className="text-[17px] font-bold leading-tight text-[#0f2318] md:text-[22px]">
+        {title}
+      </h2>
+      <Link
+        href={href}
+        className="min-h-11 rounded-full px-1 py-3 text-[13px] font-medium leading-none text-[#15803d] active:opacity-70 md:hover:underline"
+      >
+        View all
+      </Link>
+    </div>
+  );
+}
+
+function AiHealthGuideCard() {
+  return (
+    <section className="px-3 pt-3 md:px-0 md:pt-6">
+      <div className="mx-auto flex min-h-[148px] items-center justify-between gap-3 rounded-2xl bg-gradient-to-br from-[#0f2318] to-[#15803d] p-4 text-white md:max-w-[900px] md:p-6">
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#4ade80]">
+            AI Health Guide
+          </p>
+          <h2 className="mt-1 text-[17px] font-bold leading-tight md:text-2xl">
+            Not sure what to take?
+          </h2>
+          <p className="mt-1.5 max-w-[220px] text-xs leading-[1.5] text-[#86efac] md:max-w-lg md:text-sm">
+            Describe your symptoms and we&apos;ll find the right product.
+          </p>
+          <Link
+            href="/ai-guide"
+            className="mt-3 inline-flex h-9 items-center justify-center rounded-full bg-white px-4 text-[13px] font-semibold text-[#15803d] transition-all duration-100 active:scale-[0.97] active:opacity-90"
+          >
+            Ask Comfort AI
+          </Link>
+        </div>
+        <svg
+          width="60"
+          height="60"
+          viewBox="0 0 60 60"
+          fill="none"
+          aria-hidden="true"
+          className="shrink-0 md:h-24 md:w-24"
+        >
+          <rect width="60" height="60" rx="18" fill="white" fillOpacity="0.14" />
+          <path
+            d="M17 20.5C17 17.5 19.5 15 22.5 15H38C41 15 43.5 17.5 43.5 20.5V31C43.5 34 41 36.5 38 36.5H29L21.5 43V36.5C19 36.1 17 33.9 17 31V20.5Z"
+            fill="white"
+          />
+          <path
+            d="M30 31.5L25.5 27.4C23.4 25.5 24.7 22 27.5 22C28.6 22 29.5 22.5 30 23.3C30.5 22.5 31.4 22 32.5 22C35.3 22 36.6 25.5 34.5 27.4L30 31.5Z"
+            fill="#15803d"
+          />
+        </svg>
+      </div>
+    </section>
+  );
+}
 
 async function getHomeData() {
   const [products, featuredProducts, heroSlides] = await Promise.all([
@@ -93,96 +159,80 @@ export default async function HomePage() {
   const showPlaceholder = displayProducts.length === 0;
 
   return (
-    <div className="min-h-screen bg-[#f8faf8]">
-      <SiteHeader />
+    <div className="min-h-screen bg-[#f8faf8] pb-4 md:pb-10">
+      <section className="px-3 pt-3 md:hidden">
+        <SearchBar />
+      </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-10">
+      <section className="pt-3 md:mx-auto md:max-w-7xl md:px-6 md:pt-6">
         <HeroSection slides={heroSlides} />
       </section>
 
       {loadError ? (
-        <section className="mx-auto max-w-7xl px-6 py-6">
-          <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
-            <h2 className="text-xl font-semibold">Unable to load products</h2>
-            <p className="mt-2 text-sm text-red-700">{loadError}</p>
+        <section className="px-3 pt-3">
+          <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-red-700">
+            <h2 className="text-[15px] font-semibold">Unable to load products</h2>
+            <p className="mt-1 text-sm leading-[1.5] text-red-700">{loadError}</p>
           </div>
         </section>
       ) : null}
 
-      <section className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-3xl font-bold text-gray-900">Shop by Category</h2>
-          <Link href="/shop-page" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
-            View all →
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
-          {categories.map((category) => {
-            const Icon = category.icon;
-            return (
-              <Link
-                key={category.name}
-                href={`/shop-page?q=${encodeURIComponent(category.name)}`}
-                className="rounded-3xl border border-gray-200 bg-white p-8 transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100">
-                  <Icon className="h-7 w-7 text-emerald-700" />
-                </div>
-                <h3 className="font-semibold text-gray-900">{category.name}</h3>
-              </Link>
-            );
-          })}
+      <section className="pt-3 md:mx-auto md:max-w-7xl md:px-6 md:pt-5">
+        <div className="scrollbar-hide flex gap-2 overflow-x-auto px-3 pb-1 md:px-0">
+          {categories.map((category, index) => (
+            <Link
+              key={category.name}
+              href={category.href}
+              className={`flex h-9 shrink-0 items-center rounded-full px-4 text-[13px] font-medium transition-all duration-100 active:scale-[0.97] active:opacity-90 md:h-10 md:hover:-translate-y-0.5 ${
+                index === 0
+                  ? "bg-[#15803d] text-white"
+                  : "border border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
+              }`}
+            >
+              {category.name}
+            </Link>
+          ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900">Featured Products</h2>
-          </div>
-          <Link href="/shop-page" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">
-            View all →
-          </Link>
-        </div>
+      <div className="md:mx-auto md:max-w-7xl md:px-6">
+        <AiHealthGuideCard />
+      </div>
 
-        <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-          {featuredDisplay.map((product) => (
+      <section className="md:mx-auto md:max-w-7xl md:px-6">
+        <SectionHeader title="Popular Products" />
+        <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
+          {featuredDisplay.map((product, index) => (
             <ProductCard
               key={product.id}
+              priority={index < 4}
               product={{
-                  id: product.id,
-                  name: product.name,
-                  price: Number(product.price),
-                  image: product.imageUrl,
-                  category: product.category,
-                  quantity: product.quantity,
-                  prescriptionRequired: product.prescriptionRequired,
-                }}
+                id: product.id,
+                name: product.name,
+                price: Number(product.price),
+                image: product.imageUrl,
+                category: product.category,
+                quantity: product.quantity,
+                prescriptionRequired: product.prescriptionRequired,
+              }}
             />
           ))}
           {showPlaceholder ? (
-            <div className="col-span-full rounded-3xl border border-dashed border-gray-200 bg-white p-10 text-center text-gray-500">
+            <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-6 text-center text-sm leading-[1.5] text-gray-500">
               No products available right now.
             </div>
           ) : null}
         </div>
       </section>
 
-      <section id="full-catalog" className="mx-auto max-w-7xl scroll-mt-24 px-6 py-16">
-        <div className="mb-12 text-center">
-          <h2 className="text-4xl font-bold text-gray-900">Browse Our Full Catalog</h2>
-          <p className="mt-4 text-lg text-gray-600">Discover all the health and wellness products we have available</p>
-        </div>
-
-        {showPlaceholder ? (
-          <div className="rounded-3xl border border-gray-200 bg-white p-12 text-center text-gray-500">
-            No products available at the moment.
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-6 lg:grid-cols-5">
-            {displayProducts.map((product) => (
+      {!showPlaceholder ? (
+        <section id="full-catalog" className="scroll-mt-24 md:mx-auto md:max-w-7xl md:px-6">
+          <SectionHeader title="All Medicines" />
+          <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
+            {displayProducts.map((product, index) => (
               <ProductCard
                 key={product.id}
+                priority={index < 4}
                 product={{
                   id: product.id,
                   name: product.name,
@@ -195,101 +245,8 @@ export default async function HomePage() {
               />
             ))}
           </div>
-        )}
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-10">
-        <div className="grid grid-cols-1 gap-6 rounded-[40px] bg-white p-10 shadow-sm lg:grid-cols-3">
-          <div className="flex gap-5">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100">
-              <ShieldCheck className="h-7 w-7 text-emerald-700" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Private & Discreet</h3>
-              <p className="mt-2 text-gray-600">Your privacy is fully protected with discreet packaging.</p>
-            </div>
-          </div>
-          <div className="flex gap-5">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100">
-              <Truck className="h-7 w-7 text-emerald-700" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Fast Campus Delivery</h3>
-              <p className="mt-2 text-gray-600">Quick medicine delivery directly to your hostel or campus.</p>
-            </div>
-          </div>
-          <div className="flex gap-5">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100">
-              <HeartPulse className="h-7 w-7 text-emerald-700" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900">Genuine Products</h3>
-              <p className="mt-2 text-gray-600">All medicines are sourced from trusted pharmacies.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-gray-200 bg-emerald-800">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-16 lg:grid-cols-4">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Comfi Health</h2>
-            <p className="mt-4 text-gray-300">Trusted online pharmacy for students and campus communities.</p>
-          </div>
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Quick Links</h3>
-            <ul className="space-y-3 text-gray-300">
-              <li>
-                <Link href="/" className="hover:text-white">
-                  Shop
-                </Link>
-              </li>
-              
-              <li>
-                <Link href="/cart" className="hover:text-white">
-                  Cart
-                </Link>
-              </li>
-              
-              <li>
-                <a href="mailto:support@comfihealth.com" className="hover:text-white">
-                  Contact
-                </a>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-white">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-white">
-                  Terms of Service
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Categories</h3>
-            <ul className="space-y-3 text-gray-300">
-              <li>Pain Relief</li>
-              <li>Sexual Wellness</li>
-              <li>Flu & Cold</li>
-              <li>Vitamins</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Contact</h3>
-            <ul className="space-y-3 text-gray-300">
-              <li>+233 53 735 5068</li>
-              <li>support@comfihealth.com</li>
-              <li>Tarkwa, Ghana</li>
-              <li>Join our whatsapp community</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <AiFab />
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -1,6 +1,4 @@
-import SiteHeader from "@/components/SiteHeader";
 import ShopSearchBar from "@/components/ShopSearchBar";
-import AiFab from "@/components/AiFab";
 import {
   DEFAULT_SHOP_PAGE_SIZE,
   normalizeShopSearchQuery,
@@ -53,23 +51,20 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   }));
 
   return (
-    <div className="min-h-screen bg-[#f8faf8]">
-      <SiteHeader />
-
-      <section className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Shop</h1>
-          <p className="mt-2 text-gray-600">
+    <div className="min-h-screen bg-[#f8faf8] md:pb-10">
+      <section className="px-3 py-3 md:mx-auto md:max-w-7xl md:px-6 md:py-8">
+        <div className="mb-3 px-1 md:mb-6 md:px-0">
+          <h1 className="text-[22px] font-bold leading-tight text-[#0f2318] md:text-3xl">Shop</h1>
+          <p className="mt-1 text-sm leading-[1.5] text-gray-500">
             {searchQuery ? (
               <>
                 Results for{" "}
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-[#0f2318]">
                   &ldquo;{searchQuery}&rdquo;
-                </span>{" "}
-                — results update as you type.
+                </span>
               </>
             ) : (
-              "Search our full catalog — results appear as you type."
+              "Search the full Comfort Health catalog."
             )}
           </p>
         </div>
@@ -85,8 +80,6 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           />
         </Suspense>
       </section>
-
-      <AiFab />
     </div>
   );
 }

@@ -2,15 +2,201 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Minus, Plus, ShoppingCart, Lock, ShieldCheck } from "lucide-react";
+import { useRef, useState } from "react";
+import { ArrowLeft, Lock, Minus, Plus, ShieldCheck, ShoppingCart, Trash2 } from "lucide-react";
 import PaystackCheckout from "@/app/components/PaystackCheckout";
-import { useCart } from "@/app/context/cartContext";
+import { type CartItem, useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 
-// Decorative barcode bars for the receipt footer — deterministic widths so
-// the layout doesn't shift between renders.
-const BARCODE_WIDTHS = [3, 1, 2, 1, 4, 1, 1, 3, 2, 1, 1, 4, 2, 1, 3, 1, 1, 2, 4, 1, 1, 3, 1, 2];
+function CartItemRow({
+  item,
+  onDecrease,
+  onIncrease,
+  onRemove,
+}: {
+  item: CartItem;
+  onDecrease: () => void;
+  onIncrease: () => void;
+  onRemove: () => void;
+}) {
+  const startXRef = useRef<number | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+
+  return (
+    <>
+      <div className="relative overflow-hidden border-b border-[#f3f4f6] md:hidden">
+        <button
+          type="button"
+          onClick={onRemove}
+          className="absolute bottom-0 right-0 top-0 flex w-24 items-center justify-center bg-red-500 text-sm font-semibold text-white"
+        >
+          Remove
+        </button>
+        <div
+          className="flex gap-3 bg-[#f8faf8] px-4 py-3.5 transition-transform duration-150"
+          style={{ transform: `translateX(${swipeOffset}px)` }}
+          onTouchStart={(event) => {
+            startXRef.current = event.touches[0]?.clientX ?? null;
+          }}
+          onTouchMove={(event) => {
+            const startX = startXRef.current;
+            const nextX = event.touches[0]?.clientX ?? null;
+            if (startX === null || nextX === null) return;
+            const delta = nextX - startX;
+            if (delta < 0) {
+              setSwipeOffset(Math.max(delta, -96));
+            }
+          }}
+          onTouchEnd={() => {
+            setSwipeOffset((current) => (current < -80 ? -88 : 0));
+            startXRef.current = null;
+          }}
+        >
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[10px] bg-[#f0fdf4]">
+            {item.image ? (
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                sizes="64px"
+                unoptimized={shouldUnoptimizeProductImage(item.image)}
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-[#15803d]">
+                <ShoppingCart className="h-5 w-5" />
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="line-clamp-2 text-sm font-bold leading-snug text-[#0f2318]">
+              {item.name}
+            </p>
+            <p className="mt-1 text-[11px] text-gray-500">
+              {item.category ?? "Uncategorized"}
+            </p>
+            <p className="mt-1 text-sm font-bold text-[#15803d]">
+              GHS {item.price.toFixed(2)}
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-col items-end justify-between gap-2">
+            <div className="flex items-center rounded-lg border border-[#e5e7eb] bg-white">
+              <button
+                type="button"
+                onClick={onDecrease}
+                className="flex h-8 w-8 items-center justify-center text-gray-600 active:bg-gray-50"
+                aria-label="Decrease quantity"
+              >
+                <Minus className="h-3.5 w-3.5" />
+              </button>
+              <span className="min-w-7 text-center text-xs font-bold text-[#0f2318]">
+                {item.quantity}
+              </span>
+              <button
+                type="button"
+                onClick={onIncrease}
+                className="flex h-8 w-8 items-center justify-center text-gray-600 active:bg-gray-50"
+                aria-label="Increase quantity"
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <p className="text-right text-xs font-semibold text-[#0f2318]">
+              GHS {(item.price * item.quantity).toFixed(2)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden grid-cols-[88px_minmax(0,1fr)_auto] gap-4 rounded-2xl border border-[#e5e7eb] bg-white p-5 md:grid">
+        <div className="relative h-[88px] w-[88px] overflow-hidden rounded-xl bg-[#f0fdf4]">
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt={item.name}
+              fill
+              sizes="88px"
+              unoptimized={shouldUnoptimizeProductImage(item.image)}
+              className="object-cover"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-[#15803d]">
+              <ShoppingCart className="h-6 w-6" />
+            </div>
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="text-[15px] font-bold text-[#0f2318]">{item.name}</p>
+          <p className="mt-1 text-xs text-gray-500">{item.category ?? "Uncategorized"}</p>
+          <p className="mt-3 text-sm font-bold text-[#15803d]">
+            GHS {item.price.toFixed(2)} / unit
+          </p>
+          <div className="mt-3 flex w-fit items-center rounded-lg border border-[#e5e7eb] bg-white">
+            <button
+              type="button"
+              onClick={onDecrease}
+              className="flex h-9 w-9 items-center justify-center rounded-l-lg text-gray-600 transition hover:bg-emerald-50"
+              aria-label="Decrease quantity"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <span className="min-w-8 text-center text-sm font-bold text-[#0f2318]">
+              {item.quantity}
+            </span>
+            <button
+              type="button"
+              onClick={onIncrease}
+              className="flex h-9 w-9 items-center justify-center rounded-r-lg text-gray-600 transition hover:bg-emerald-50"
+              aria-label="Increase quantity"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col items-end justify-between gap-4">
+          <button
+            type="button"
+            onClick={onRemove}
+            className="flex h-10 w-10 items-center justify-center rounded-full text-red-500 transition hover:bg-red-50"
+            aria-label={`Remove ${item.name}`}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+          <div className="text-right">
+            <p className="text-[11px] uppercase tracking-wide text-gray-400">Line total</p>
+            <p className="mt-1 text-base font-bold text-[#0f2318]">
+              GHS {(item.price * item.quantity).toFixed(2)}
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function SummaryRows({ subtotal }: { subtotal: number }) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between text-sm text-gray-600">
+        <span>Subtotal</span>
+        <span className="font-semibold text-[#0f2318]">GHS {subtotal.toFixed(2)}</span>
+      </div>
+      <div className="flex items-center justify-between text-sm text-gray-600">
+        <span>Delivery fee</span>
+        <span className="font-semibold text-[#15803d]">
+          {subtotal > 50 ? "Free" : "GHS 0.00"}
+        </span>
+      </div>
+      <div className="flex items-center justify-between border-t border-[#e5e7eb] pt-3">
+        <span className="text-base font-bold text-[#0f2318]">Total</span>
+        <span className="text-base font-bold text-[#0f2318]">
+          GHS {subtotal.toFixed(2)}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export default function CartPage() {
   const {
@@ -24,229 +210,135 @@ export default function CartPage() {
   } = useCart();
   const { pushToast } = useToast();
 
-  return (
-    <div className="min-h-screen bg-[#F6F4EE] px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+  const scrollToCheckout = () => {
+    document.getElementById("checkout-panel")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
-        {/* Header */}
-        <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-[#E6E1D3] bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+  return (
+    <div className="min-h-dvh bg-[#f8faf8] pb-[calc(76px+env(safe-area-inset-bottom,16px))] text-[#0f2318] md:pb-8">
+      <div className="mx-auto max-w-7xl md:px-6 md:py-8">
+        <header className="flex items-center justify-between px-4 py-4 md:px-0 md:pb-6 md:pt-0">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#B8842E]">
-              Comfort Health · Basket
-            </p>
-            <h1 className="mt-1.5 flex items-center gap-2.5 text-[22px] font-semibold tracking-tight text-[#1E2421]">
-              Review your basket
-              <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md bg-[#123A31] px-1.5 font-mono text-[12px] font-medium text-white">
-                {cartCount}
-              </span>
+            <Link
+              href="/"
+              className="mb-3 inline-flex min-h-11 items-center gap-2 rounded-full text-sm font-semibold text-[#15803d] md:hover:underline"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Continue shopping
+            </Link>
+            <h1 className="text-[22px] font-bold leading-tight md:text-3xl">
+              Your cart
             </h1>
-            <p className="mt-1 text-[13px] text-[#6B6459]">
+            <p className="mt-1 text-sm leading-[1.5] text-gray-500">
               {cartCount} item{cartCount === 1 ? "" : "s"} ready for checkout
             </p>
           </div>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 rounded-lg border border-[#E6E1D3] bg-[#F6F4EE] px-4 py-2 text-[13px] font-medium text-[#1E2421] transition hover:border-[#B8842E]/40 hover:bg-[#F6ECD9]"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Continue shopping
-          </Link>
-        </div>
+          <span className="flex h-11 min-w-11 items-center justify-center rounded-full bg-[#f0fdf4] px-3 text-sm font-bold text-[#15803d]">
+            {cartCount}
+          </span>
+        </header>
 
-        {/* Empty state */}
         {cart.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#D8D2C0] bg-white px-8 py-16 text-center">
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-dashed border-[#B8842E]/50 bg-[#F6ECD9] text-[#B8842E]">
+          <section className="mx-4 rounded-2xl border border-dashed border-[#bbf7d0] bg-white px-6 py-14 text-center md:mx-0">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#f0fdf4] text-[#15803d]">
               <ShoppingCart className="h-6 w-6" />
             </div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#B8842E]">Nothing filled yet</p>
-            <h2 className="mt-2 text-[18px] font-semibold text-[#1E2421]">Your basket is empty</h2>
-            <p className="mt-2 text-[13px] text-[#6B6459]">
-              Browse our products and add items to your basket to begin checkout.
+            <h2 className="text-[18px] font-bold text-[#0f2318]">Your cart is empty</h2>
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-[1.5] text-gray-500">
+              Browse medicines and wellness products to begin checkout.
             </p>
             <Link
               href="/"
-              className="mt-7 inline-flex rounded-lg bg-[#123A31] px-6 py-3 text-[13px] font-medium text-white transition hover:bg-[#0D2B25]"
+              className="mt-7 inline-flex h-11 items-center justify-center rounded-xl bg-[#15803d] px-5 text-sm font-bold text-white transition active:scale-[0.97] md:hover:bg-[#166534]"
             >
-              Continue shopping
+              Start shopping
             </Link>
-          </div>
+          </section>
         ) : (
-          <div className="grid gap-6 xl:grid-cols-[1.6fr_0.9fr]">
+          <div className="md:grid md:grid-cols-[65fr_35fr] md:gap-6">
+            <section className="md:min-w-0">
+              <div className="bg-white md:space-y-3 md:bg-transparent">
+                {cart.map((item) => (
+                  <CartItemRow
+                    key={item.id}
+                    item={item}
+                    onDecrease={() => decreaseQty(item.id)}
+                    onIncrease={() => increaseQty(item.id)}
+                    onRemove={() => removeFromCart(item.id)}
+                  />
+                ))}
+              </div>
+              <Link
+                href="/"
+                className="mx-4 mt-4 hidden text-sm font-semibold text-[#15803d] md:inline-flex md:hover:underline"
+              >
+                Continue shopping
+              </Link>
+            </section>
 
-            {/* Cart items */}
-            <div className="space-y-3">
-              {cart.map((item) => (
-                <div
-                  key={item.id}
-                  className="grid gap-4 rounded-2xl border border-[#E6E1D3] bg-white p-5 sm:grid-cols-[88px_1fr_auto]"
-                >
-                  {/* Image */}
-                  <div className="relative h-[84px] w-full overflow-hidden rounded-xl bg-[#F6ECD9] ring-1 ring-inset ring-[#B8842E]/15">
-                    {item.image ? (
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        unoptimized={shouldUnoptimizeProductImage(item.image)}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-[#B8842E]/50">
-                        <ShoppingCart className="h-6 w-6" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Details */}
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-[14px] font-semibold text-[#1E2421]">{item.name}</p>
-                      <span className="mt-1 inline-block border-l-2 border-[#B8842E] pl-1.5 font-mono text-[11px] uppercase tracking-wide text-[#6B6459]">
-                        {item.category ?? "Uncategorized"}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-md border border-[#E6E1D3] bg-[#F6F4EE] px-3 py-1.5 font-mono text-[12px] text-[#1E2421]">
-                        GHS {item.price.toFixed(2)} / unit
-                      </span>
-                      <div className="flex items-center gap-1 rounded-md border border-[#E6E1D3] bg-white px-1 py-1">
-                        <button
-                          type="button"
-                          onClick={() => decreaseQty(item.id)}
-                          className="flex h-7 w-7 items-center justify-center rounded text-[#1E2421] transition hover:bg-[#F6ECD9]"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <span className="min-w-[22px] text-center font-mono text-[13px] font-medium text-[#1E2421]">
-                          {item.quantity}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => increaseQty(item.id)}
-                          className="flex h-7 w-7 items-center justify-center rounded text-[#1E2421] transition hover:bg-[#F6ECD9]"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right col */}
-                  <div className="flex flex-col items-end justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={() => removeFromCart(item.id)}
-                      className="text-[12px] font-medium text-[#A6432E] transition hover:text-[#7E3122]"
-                    >
-                      Remove
-                    </button>
-                    <div className="text-right">
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-[#6B6459]">Line total</p>
-                      <p className="mt-0.5 font-mono text-[16px] font-semibold text-[#1E2421]">
-                        GHS {(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-4">
-
-              {/* Order summary — styled like a pharmacy receipt */}
-              <div className="relative">
-                <div className="pointer-events-none absolute -top-2 left-0 right-0 flex justify-between px-3">
-                  {Array.from({ length: 16 }).map((_, i) => (
-                    <span key={i} className="h-4 w-4 rounded-full bg-[#F6F4EE]" />
-                  ))}
-                </div>
-                <div className="rounded-2xl border border-[#E6E1D3] bg-white p-6 pt-8">
-                  <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#B8842E]">
-                    Order summary
-                  </p>
-                  <div className="mt-5 space-y-3">
-                    <div className="flex items-center justify-between text-[13px] text-[#6B6459]">
-                      <span>Subtotal</span>
-                      <span className="font-mono text-[#1E2421]">GHS {subtotal.toFixed(2)}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[13px] text-[#6B6459]">
-                      <span>Delivery</span>
-                      <span className="rounded-md bg-[#F6ECD9] px-2 py-0.5 font-mono text-[11px] font-medium text-[#8C6420]">
-                        Free
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-[13px] text-[#6B6459]">
-                      <span>Taxes</span>
-                      <span className="font-mono text-[#1E2421]">GHS 0.00</span>
-                    </div>
-                  </div>
-                  <div className="mt-5 flex items-center justify-between border-t border-dashed border-[#D8D2C0] pt-5">
-                    <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#6B6459]">Total due</span>
-                    <span className="font-mono text-[19px] font-semibold text-[#1E2421]">
-                      GHS {subtotal.toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* Decorative barcode footer */}
-                  <div className="mt-6 flex h-6 items-end gap-[2px] opacity-70">
-                    {BARCODE_WIDTHS.map((w, i) => (
-                      <span
-                        key={i}
-                        className="bg-[#1E2421]"
-                        style={{ width: `${w}px`, height: i % 5 === 0 ? "100%" : "70%" }}
-                      />
-                    ))}
-                  </div>
-                  <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-[#B0AA9C]">
-                    Comfort Health · Order pending
-                  </p>
+            <aside className="mt-3 px-4 md:sticky md:top-24 md:mt-0 md:self-start md:px-0">
+              <div className="rounded-[14px] bg-[#f9fafb] p-4 md:rounded-2xl md:border md:border-[#e5e7eb] md:bg-white md:p-6">
+                <h2 className="text-base font-bold text-[#0f2318] md:text-lg">
+                  Order summary
+                </h2>
+                <div className="mt-4">
+                  <SummaryRows subtotal={subtotal} />
                 </div>
               </div>
 
-              {/* Pay button */}
-              <PaystackCheckout
-                items={cart}
-                amount={subtotal}
-                buttonLabel="Pay with Paystack"
-                buttonClassName="w-full flex items-center justify-center gap-2 rounded-lg bg-[#123A31] px-5 py-3.5 text-[14px] font-medium text-white transition hover:bg-[#0D2B25] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B8842E]"
-                buttonIcon={<Lock className="h-4 w-4" />}
-              />
+              <div id="checkout-panel" className="mt-4 scroll-mt-24">
+                <PaystackCheckout
+                  items={cart}
+                  amount={subtotal}
+                  buttonLabel={`Checkout - GHS ${subtotal.toFixed(2)}`}
+                  buttonClassName="w-full flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#15803d] px-5 py-3.5 text-[14px] font-bold text-white transition active:scale-[0.98] hover:bg-[#166534] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d]"
+                  buttonIcon={<Lock className="h-4 w-4" />}
+                />
+              </div>
 
-              {/* Clear cart */}
               <button
                 type="button"
                 onClick={() => {
                   clearCart();
                   pushToast({
-                    title: "Basket cleared",
-                    description: "All items have been removed from your basket.",
+                    title: "Cart cleared",
+                    description: "All items have been removed from your cart.",
                     variant: "info",
                   });
                 }}
-                className="w-full rounded-lg border border-[#E6E1D3] bg-white px-5 py-3 text-[13px] font-medium text-[#1E2421] transition hover:bg-[#F6F4EE]"
+                className="mt-3 hidden w-full min-h-11 items-center justify-center rounded-xl border border-[#e5e7eb] bg-white px-5 text-sm font-semibold text-[#0f2318] transition hover:bg-gray-50 md:flex"
               >
-                Clear basket
+                Clear cart
               </button>
 
-              {/* Secure badge — stamp-style */}
-              <div className="flex items-start gap-3 rounded-2xl bg-[#123A31] p-4">
-                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-dashed border-white/40 text-white">
+              <div className="mt-4 flex items-start gap-3 rounded-2xl bg-[#0f2318] p-4">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-white">
                   <ShieldCheck className="h-4 w-4" />
                 </span>
                 <div>
-                  <p className="text-[13px] font-medium text-white">Secure checkout</p>
-                  <p className="mt-1 text-[12px] leading-relaxed text-white/70">
-                    Paystack encrypts and processes your payment. Comfort Health never stores your card details.
+                  <p className="text-sm font-semibold text-white">Secure checkout</p>
+                  <p className="mt-1 text-xs leading-[1.6] text-white/70">
+                    Paystack encrypts your payment details. Comfort Health never stores card data.
                   </p>
                 </div>
               </div>
-            </div>
+            </aside>
           </div>
         )}
       </div>
+
+      {cart.length > 0 ? (
+        <button
+          type="button"
+          onClick={scrollToCheckout}
+          className="safe-bottom fixed bottom-0 left-0 right-0 z-40 flex min-h-14 items-center justify-center bg-[#15803d] px-4 py-4 text-base font-bold text-white active:opacity-90 md:hidden"
+        >
+          Checkout - GHS {subtotal.toFixed(2)}
+        </button>
+      ) : null}
     </div>
   );
 }

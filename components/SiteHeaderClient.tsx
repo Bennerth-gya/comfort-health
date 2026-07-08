@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { HeartPulse, Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/app/context/cartContext";
-import { ReactNode } from "react";
+import { type FormEvent, type ReactNode, useState } from "react";
+import { useRouter } from "next/navigation";
 
 function CartIcon() {
   const { cartCount } = useCart();
@@ -11,13 +12,15 @@ function CartIcon() {
   return (
     <Link
       href="/cart"
-      className="relative rounded-xl border border-gray-200 p-3 hover:bg-gray-100"
+      className="relative flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/10"
       aria-label="Shopping cart"
     >
-      <ShoppingCart className="h-5 w-5 text-gray-700" />
-      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-xs text-white">
-        {cartCount}
-      </span>
+      <ShoppingCart className="h-5 w-5" />
+      {cartCount > 0 ? (
+        <span className="absolute right-0 top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#15803d] px-1 text-[10px] font-bold leading-none text-white ring-2 ring-[#1a2e22]">
+          {cartCount > 99 ? "99+" : cartCount}
+        </span>
+      ) : null}
     </Link>
   );
 }
@@ -27,31 +30,53 @@ interface SiteHeaderClientProps {
 }
 
 function HeaderContent({ adminNode }: SiteHeaderClientProps) {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const trimmed = query.trim();
+    router.push(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
+  }
+
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+    <header className="safe-top sticky top-0 z-50 hidden h-16 border-b border-[#254532] bg-[#1a2e22] md:flex">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-6 px-6">
         <Link href="/" className="flex min-w-0 items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600">
-            <HeartPulse className="h-6 w-6 text-white" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#15803d]">
+            <HeartPulse className="h-5 w-5 text-white" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-xl font-bold text-gray-900">Comfort Health</h1>
-            <p className="hidden text-xs text-gray-500 sm:block">
+            <h1 className="text-base font-bold leading-tight text-white">Comfort Health</h1>
+            <p className="text-[11px] leading-tight text-emerald-100/80">
               Good health with comfort
             </p>
           </div>
         </Link>
 
-        <Link
-          href="/shop-page"
-          className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800 sm:px-4 sm:py-2.5"
+        <form
+          onSubmit={submitSearch}
+          className="flex h-10 w-[400px] max-w-[42vw] items-center rounded-full border-[1.5px] border-[#d1fae5] bg-white px-4 shadow-sm"
+          role="search"
         >
-          <Search className="h-4 w-4" />
-          <span className="hidden sm:inline">Search products</span>
-          <span className="sm:hidden">Shop</span>
-        </Link>
+          <Search className="h-[18px] w-[18px] shrink-0 text-[#15803d]" aria-hidden="true" />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search medicines, vitamins..."
+            className="h-full min-w-0 flex-1 bg-transparent px-3 text-base text-[#0f2318] outline-none placeholder:text-gray-400"
+            aria-label="Search medicines, vitamins"
+          />
+        </form>
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="text-sm font-medium text-white underline-offset-4 transition hover:text-emerald-100 hover:underline"
+          >
+            Dashboard
+          </Link>
           {adminNode}
           <CartIcon />
         </div>

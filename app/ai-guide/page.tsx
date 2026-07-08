@@ -46,12 +46,16 @@ type SpeechRecognitionEventLike = {
   };
 };
 
+type SpeechRecognitionErrorEventLike = {
+  error?: string;
+};
+
 type SpeechRecognitionLike = {
   lang: string;
   interimResults: boolean;
   maxAlternatives: number;
   onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-  onerror: (() => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
   onend: (() => void) | null;
   start: () => void;
   stop: () => void;
@@ -59,6 +63,11 @@ type SpeechRecognitionLike = {
 };
 
 type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+
+type TranscriptionResponse = {
+  text?: string;
+  error?: string;
+};
 
 const OPENING_MESSAGE: Message = {
   id: "opening-message",
@@ -78,6 +87,13 @@ const QUICK_QUESTIONS = [
 ];
 
 const DISCLAIMER_SESSION_KEY = "disclaimer_seen";
+const AUDIO_MIME_TYPE_OPTIONS = [
+  "audio/webm;codecs=opus",
+  "audio/webm",
+  "audio/ogg;codecs=opus",
+  "audio/ogg",
+  "audio/mp4",
+];
 
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -137,6 +153,62 @@ function formatPrice(price: number) {
   return `GHS ${Number(price || 0).toFixed(2)}`;
 }
 
+function supportedAudioMimeType() {
+  if (typeof MediaRecorder === "undefined") {
+    return "";
+  }
+
+  return (
+    AUDIO_MIME_TYPE_OPTIONS.find((mimeType) =>
+      MediaRecorder.isTypeSupported(mimeType),
+    ) ?? ""
+  );
+}
+
+function audioFileExtension(mimeType: string) {
+  const type = mimeType.toLowerCase().split(";")[0]?.trim();
+
+  if (type === "audio/ogg") return "ogg";
+  if (type === "audio/mp4") return "mp4";
+  if (type === "audio/wav") return "wav";
+  if (type === "audio/mpeg" || type === "audio/mp3") return "mp3";
+  return "webm";
+}
+
+function speechRecognitionErrorMessage(error?: string) {
+  if (error === "not-allowed" || error === "service-not-allowed") {
+    return "Microphone permission was blocked.";
+  }
+
+  if (error === "no-speech") {
+    return "I could not hear anything clearly.";
+  }
+
+  if (error === "network") {
+    return "Voice input needs a network connection.";
+  }
+
+  return "Voice input could not start.";
+}
+
+function recordingErrorMessage(error: unknown) {
+  if (error instanceof DOMException) {
+    if (error.name === "NotAllowedError" || error.name === "SecurityError") {
+      return "Microphone permission was blocked.";
+    }
+
+    if (error.name === "NotFoundError") {
+      return "No microphone was found.";
+    }
+  }
+
+  if (!window.isSecureContext) {
+    return "Voice input needs HTTPS or localhost.";
+  }
+
+  return "Voice recording could not start.";
+}
+
 export default function AiGuidePage() {
   const router = useRouter();
   const user = stackClientApp.useUser();
@@ -145,11 +217,15 @@ export default function AiGuidePage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [addedProducts, setAddedProducts] = useState<Record<string, boolean>>({});
   const [chatToast, setChatToast] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const audioStreamRef = useRef<MediaStream | null>(null);
   const toastTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -179,6 +255,15 @@ export default function AiGuidePage() {
   useEffect(() => {
     return () => {
       recognitionRef.current?.abort();
+      const recorder = mediaRecorderRef.current;
+
+      if (recorder && recorder.state !== "inactive") {
+        recorder.onstop = null;
+        recorder.stop();
+      }
+
+      audioStreamRef.current?.getTracks().forEach((track) => track.stop());
+      audioStreamRef.current = null;
 
       if (toastTimerRef.current) {
         window.clearTimeout(toastTimerRef.current);
@@ -269,10 +354,132 @@ export default function AiGuidePage() {
     void sendMessage(input);
   }
 
-  function startVoiceInput() {
-    if (isRecording) {
-      recognitionRef.current?.stop();
+  function stopAudioStream() {
+    audioStreamRef.current?.getTracks().forEach((track) => track.stop());
+    audioStreamRef.current = null;
+  }
+
+  function stopVoiceRecording() {
+    const recorder = mediaRecorderRef.current;
+
+    if (recorder && recorder.state !== "inactive") {
+      recorder.stop();
+      return;
+    }
+
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
+    setIsRecording(false);
+  }
+
+  async function transcribeVoiceBlob(blob: Blob) {
+    const formData = new FormData();
+    const mimeType = blob.type || "audio/webm";
+
+    formData.append(
+      "audio",
+      blob,
+      `comfort-ai-voice.${audioFileExtension(mimeType)}`,
+    );
+
+    const response = await fetch("/api/ai-guide/transcribe", {
+      method: "POST",
+      body: formData,
+    });
+    const data = (await response.json().catch(() => ({}))) as TranscriptionResponse;
+
+    if (!response.ok) {
+      throw new Error(data.error ?? "Voice transcription failed.");
+    }
+
+    return data.text?.trim() ?? "";
+  }
+
+  async function startRecordedVoiceInput() {
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+      return false;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = supportedAudioMimeType();
+      const recorder = new MediaRecorder(
+        stream,
+        mimeType ? { mimeType } : undefined,
+      );
+
+      audioChunksRef.current = [];
+      audioStreamRef.current = stream;
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.onerror = () => {
+        showToast("Voice recording failed.");
+        setIsRecording(false);
+        mediaRecorderRef.current = null;
+        stopAudioStream();
+      };
+
+      recorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: recorder.mimeType || mimeType || "audio/webm",
+        });
+
+        setIsRecording(false);
+        mediaRecorderRef.current = null;
+        stopAudioStream();
+
+        if (audioBlob.size === 0) {
+          showToast("I could not hear anything clearly.");
+          return;
+        }
+
+        setIsTranscribing(true);
+        void transcribeVoiceBlob(audioBlob)
+          .then((transcript) => {
+            if (!transcript) {
+              showToast("I could not hear anything clearly.");
+              return;
+            }
+
+            setInput(transcript);
+            showToast("Voice captured");
+          })
+          .catch((error) => {
+            console.error(error);
+            showToast(
+              error instanceof Error
+                ? error.message
+                : "Voice transcription failed.",
+            );
+          })
+          .finally(() => {
+            setIsTranscribing(false);
+          });
+      };
+
+      recorder.start();
+      setIsRecording(true);
+      showToast("Listening... tap the mic again when done.");
+      return true;
+    } catch (error) {
+      console.error(error);
+      mediaRecorderRef.current = null;
+      stopAudioStream();
       setIsRecording(false);
+      showToast(recordingErrorMessage(error));
+      return true;
+    }
+  }
+
+  function startBrowserSpeechRecognition() {
+    if (isRecording) {
+      stopVoiceRecording();
       return;
     }
 
@@ -290,17 +497,20 @@ export default function AiGuidePage() {
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.lang = "en-GH";
+      recognition.lang = navigator.language?.startsWith("en")
+        ? navigator.language
+        : "en-US";
       recognition.interimResults = false;
       recognition.maxAlternatives = 1;
       recognition.onresult = (event) => {
         const transcript = event.results[0]?.[0]?.transcript?.trim();
         if (transcript) {
           setInput(transcript);
+          showToast("Voice captured");
         }
       };
-      recognition.onerror = () => {
-        showToast("Voice input could not start.");
+      recognition.onerror = (event) => {
+        showToast(speechRecognitionErrorMessage(event.error));
         setIsRecording(false);
       };
       recognition.onend = () => {
@@ -314,7 +524,27 @@ export default function AiGuidePage() {
     } catch {
       showToast("Voice input could not start.");
       setIsRecording(false);
+      recognitionRef.current = null;
     }
+  }
+
+  async function startVoiceInput() {
+    if (isTranscribing) {
+      return;
+    }
+
+    if (isRecording) {
+      stopVoiceRecording();
+      return;
+    }
+
+    const startedRecorder = await startRecordedVoiceInput();
+
+    if (startedRecorder) {
+      return;
+    }
+
+    startBrowserSpeechRecognition();
   }
 
   function handleAddToCart(product: RecommendedProduct, messageId: string) {
@@ -555,13 +785,16 @@ export default function AiGuidePage() {
 
               <button
                 type="button"
-                aria-label="Voice input"
-                onClick={startVoiceInput}
-                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#15803d] transition hover:bg-emerald-50"
+                aria-label={isRecording ? "Stop voice input" : "Voice input"}
+                disabled={isTranscribing}
+                onClick={() => void startVoiceInput()}
+                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#15803d] transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Mic className="h-4 w-4" aria-hidden="true" />
                 {isRecording ? (
                   <span className="ai-guide-recording absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
+                ) : isTranscribing ? (
+                  <span className="ai-guide-transcribing absolute right-1 top-1 h-2 w-2 rounded-full bg-[#15803d]" />
                 ) : null}
               </button>
 
@@ -620,9 +853,14 @@ export default function AiGuidePage() {
           animation: ai-guide-recording-pulse 0.9s infinite ease-out;
         }
 
+        .ai-guide-transcribing {
+          animation: ai-guide-recording-pulse 1s infinite ease-out;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .ai-guide-dot,
-          .ai-guide-recording {
+          .ai-guide-recording,
+          .ai-guide-transcribing {
             animation: none;
           }
         }

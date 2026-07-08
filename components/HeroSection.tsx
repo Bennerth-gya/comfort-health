@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 
 type HeroSlide = {
@@ -56,7 +55,7 @@ const defaultHeroSlides: HeroSlide[] = [
   },
 ];
 
-const AUTO_ADVANCE_MS = 9_000;
+const AUTO_ADVANCE_MS = 4_000;
 
 function safeCtaHref(value?: string | null) {
   if (!value) return "/#full-catalog";
@@ -77,106 +76,104 @@ function safeCtaHref(value?: string | null) {
 export default function HeroSection({ slides }: HeroSectionProps) {
   const availableSlides = slides.length > 0 ? slides : defaultHeroSlides;
   const [current, setCurrent] = useState(0);
+  const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrent((prev) => (prev === availableSlides.length - 1 ? 0 : prev + 1));
+      setCurrent((prev) => {
+        const next = prev === availableSlides.length - 1 ? 0 : prev + 1;
+        const scroller = scrollerRef.current;
+
+        if (scroller) {
+          scroller.scrollTo({
+            left: next * scroller.clientWidth,
+            behavior: "smooth",
+          });
+        }
+
+        return next;
+      });
     }, AUTO_ADVANCE_MS);
 
     return () => clearInterval(interval);
   }, [availableSlides.length]);
 
   const goTo = (index: number) => {
-    setCurrent((index + availableSlides.length) % availableSlides.length);
+    const next = (index + availableSlides.length) % availableSlides.length;
+    setCurrent(next);
+    const scroller = scrollerRef.current;
+    if (scroller) {
+      scroller.scrollTo({
+        left: next * scroller.clientWidth,
+        behavior: "smooth",
+      });
+    }
   };
 
-  const nextSlide = () => goTo(current + 1);
-  const prevSlide = () => goTo(current - 1);
+  const handleScroll = () => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const next = Math.round(scroller.scrollLeft / scroller.clientWidth);
+    if (next !== current) {
+      setCurrent(next);
+    }
+  };
 
   return (
-    <section className="relative w-full overflow-hidden rounded-3xl">
-      <div className="relative h-125 w-full overflow-hidden">
-        <div
-          className="flex h-full transition-transform duration-700 ease-in-out"
-          style={{ transform: `translateX(-${current * 100}%)` }}
-        >
-          {availableSlides.map((slide, index) => (
-            <div
-              key={slide.id}
-              className="relative h-full w-full shrink-0"
-              aria-hidden={index !== current}
-            >
-              <div className="absolute inset-0">
-                <Image
-                  src={slide.imageUrl}
-                  alt={slide.title}
-                  fill
-                  unoptimized={shouldUnoptimizeProductImage(slide.imageUrl)}
-                  className="object-cover"
-                  priority={index === 0}
-                  sizes="(max-width: 1280px) 100vw, 1280px"
-                />
-                <div className="absolute inset-0 bg-black/40" />
-              </div>
-
-              <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-8 lg:px-16">
-                <div className="max-w-2xl text-white">
-                  <p className="mb-4 inline-flex items-center rounded-full bg-emerald-600/20 px-4 py-1 text-sm font-medium text-emerald-100">
-                    Trusted Campus Pharmacy
-                  </p>
-
-                  <h1 className="whitespace-pre-line text-5xl font-bold leading-tight text-white drop-shadow-[0_15px_30px_rgba(0,0,0,0.35)]">
-                    {slide.title}
-                  </h1>
-
-                  {slide.subtitle ? (
-                    <p className="mt-6 max-w-xl text-lg leading-8 text-emerald-100/90">
-                      {slide.subtitle}
-                    </p>
-                  ) : null}
-
-                  {slide.ctaText ? (
-                    <Link
-                      href={safeCtaHref(slide.ctaUrl)}
-                      className="mt-8 inline-flex rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-500"
-                    >
-                      {slide.ctaText}
-                    </Link>
-                  ) : null}
-                </div>
-              </div>
+    <section className="relative mx-3 overflow-hidden rounded-2xl md:mx-0">
+      <div
+        ref={scrollerRef}
+        onScroll={handleScroll}
+        className="scrollbar-hide flex h-40 snap-x snap-mandatory overflow-x-auto scroll-smooth md:h-80"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
+        {availableSlides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className="relative h-full w-full shrink-0 snap-start overflow-hidden"
+            aria-hidden={index !== current}
+          >
+            <Image
+              src={slide.imageUrl}
+              alt={slide.title}
+              fill
+              unoptimized={shouldUnoptimizeProductImage(slide.imageUrl)}
+              className="object-cover"
+              priority={index === 0}
+              sizes="(max-width: 768px) calc(100vw - 24px), 960px"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10" />
+            <div className="relative z-10 flex h-full max-w-[74%] flex-col justify-center px-4 text-white md:max-w-xl md:px-8">
+              <h1 className="line-clamp-2 whitespace-pre-line text-xl font-bold leading-tight text-white md:text-3xl">
+                {slide.title}
+              </h1>
+              {slide.subtitle ? (
+                <p className="mt-1.5 line-clamp-2 text-[13px] leading-[1.5] text-emerald-50 md:text-base">
+                  {slide.subtitle}
+                </p>
+              ) : null}
+              {slide.ctaText ? (
+                <Link
+                  href={safeCtaHref(slide.ctaUrl)}
+              className="mt-3 inline-flex h-9 w-fit items-center justify-center rounded-full bg-[#15803d] px-4 text-[13px] font-semibold text-white transition-all duration-100 active:scale-[0.97] active:opacity-90"
+                >
+                  {slide.ctaText}
+                </Link>
+              ) : null}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      <button
-        type="button"
-        onClick={prevSlide}
-        aria-label="Previous slide"
-        className="absolute left-5 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100"
-      >
-        <ChevronLeft className="h-5 w-5 text-gray-700" />
-      </button>
-
-      <button
-        type="button"
-        onClick={nextSlide}
-        aria-label="Next slide"
-        className="absolute right-5 top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100"
-      >
-        <ChevronRight className="h-5 w-5 text-gray-700" />
-      </button>
-
-      <div className="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 gap-3">
+      <div className="absolute bottom-3 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1.5">
         {availableSlides.map((_, index) => (
           <button
             key={index}
             type="button"
             aria-label={`Go to slide ${index + 1}`}
             onClick={() => goTo(index)}
-            className={`h-3 rounded-full transition-all ${
-              current === index ? "w-8 bg-green-600" : "w-3 bg-gray-300"
+            className={`h-[5px] rounded-full transition-all duration-100 ${
+              current === index ? "w-[14px] bg-[#15803d]" : "w-[5px] bg-white/75"
             }`}
           />
         ))}

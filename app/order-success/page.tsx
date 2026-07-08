@@ -153,7 +153,7 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
 
   return (
     <div className="min-h-screen bg-[#f8faf8] px-4 py-10 sm:px-6 lg:px-8">
-      {isPaid ? <ClearCartOnPaid /> : null}
+      {isPaid && result.order ? <ClearCartOnPaid order={result.order} /> : null}
 
       <div className="mx-auto max-w-5xl rounded-4xl border border-gray-200 bg-white px-6 py-10 shadow-sm sm:px-10">
         <div className="flex flex-col gap-4 text-center">

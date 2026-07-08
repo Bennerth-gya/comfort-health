@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
-import { CheckCircle, Heart, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Share2 } from "lucide-react";
 import {
   type DosageGuide,
   dosageGuideEntries,
@@ -22,9 +23,52 @@ type ProductDetails = {
   dosage: string | null;
   dosageGuide: DosageGuide | null;
   manufacturer: string | null;
+  expiryDate: string | null;
   prescriptionRequired: boolean;
   quantity: number;
 };
+
+function QuantitySelector({
+  qty,
+  max,
+  disabled,
+  onChange,
+  className = "",
+}: {
+  qty: number;
+  max: number;
+  disabled: boolean;
+  onChange: (value: number) => void;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`flex h-11 min-w-[100px] items-center justify-between rounded-[10px] border border-[#e5e7eb] bg-white ${className}`}
+    >
+      <button
+        type="button"
+        onClick={() => onChange(Math.max(1, qty - 1))}
+        disabled={disabled}
+        className="flex h-11 w-11 items-center justify-center text-gray-600 transition-all duration-100 active:scale-[0.97] active:bg-gray-50 disabled:text-gray-300"
+        aria-label="Decrease quantity"
+      >
+        <Minus className="h-4 w-4" aria-hidden="true" />
+      </button>
+      <span className="min-w-7 text-center text-sm font-bold text-[#0f2318]">
+        {qty}
+      </span>
+      <button
+        type="button"
+        onClick={() => onChange(Math.min(max, qty + 1))}
+        disabled={disabled || qty >= max}
+        className="flex h-11 w-11 items-center justify-center text-gray-600 transition-all duration-100 active:scale-[0.97] active:bg-gray-50 disabled:text-gray-300"
+        aria-label="Increase quantity"
+      >
+        <Plus className="h-4 w-4" aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
 
 export default function ProductDetailsClient({
   product,
@@ -35,15 +79,25 @@ export default function ProductDetailsClient({
   const { pushToast } = useToast();
   const router = useRouter();
   const [qty, setQty] = useState(1);
+  const edgeSwipeStartX = useRef<number | null>(null);
   const isOutOfStock = product.quantity <= 0;
   const needsPrescription = product.prescriptionRequired;
   const canAddToCart = !isOutOfStock && !needsPrescription;
   const ageDosageEntries = dosageGuideEntries(product.dosageGuide);
+  const categoryHref = product.category
+    ? `/shop-page?q=${encodeURIComponent(product.category)}`
+    : "/shop-page";
 
-  const productFeatures = [
-    product.dosage ? `Dosage: ${product.dosage}` : "Dosage not available",
-    product.manufacturer ? `Manufacturer: ${product.manufacturer}` : "Trusted pharmacy",
-    product.prescriptionRequired ? "Requires prescription" : "No prescription needed",
+  const expiry = product.expiryDate
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        year: "numeric",
+      }).format(new Date(product.expiryDate))
+    : "Not listed";
+  const detailRows = [
+    { label: "Dosage", value: product.dosage ?? "Ask a pharmacist" },
+    { label: "Manufacturer", value: product.manufacturer ?? "Trusted pharmacy partner" },
+    { label: "Expiry", value: expiry },
   ];
 
   const guardCartAction = () => {
@@ -61,9 +115,9 @@ export default function ProductDetailsClient({
     return true;
   };
 
-  const handleAddToCart = () => {
+  const addSelectedQuantity = () => {
     if (guardCartAction()) {
-      return;
+      return false;
     }
 
     addToCart({
@@ -79,193 +133,219 @@ export default function ProductDetailsClient({
       description: `${product.name} has been added to your cart.`,
       variant: "success",
     });
+    return true;
   };
 
   const handleBuyNow = () => {
-    if (guardCartAction()) {
-      return;
+    if (addSelectedQuantity()) {
+      router.push("/cart");
     }
-
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: Number(product.price) || 0,
-      image: product.imageUrl ?? "",
-      category: product.category,
-      quantity: qty,
-    });
-    pushToast({
-      title: "Ready to checkout",
-      description: `We added ${product.name} to your cart.`,
-      variant: "info",
-    });
-    router.push("/cart");
   };
 
+  async function handleShare() {
+    const shareUrl = window.location.href;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: product.name,
+          text: `View ${product.name} on Comfort Health`,
+          url: shareUrl,
+        });
+        return;
+      }
+
+      await navigator.clipboard?.writeText(shareUrl);
+      pushToast({
+        title: "Link copied",
+        description: "Product link copied to clipboard.",
+        variant: "success",
+      });
+    } catch (error) {
+      if ((error as { name?: string }).name !== "AbortError") {
+        pushToast({
+          title: "Share unavailable",
+          description: "Please try again in a moment.",
+          variant: "info",
+        });
+      }
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-[#f8faf8] py-10">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="space-y-6">
-            <div className="overflow-hidden rounded-[28px] border border-gray-200 bg-white p-6">
-              <div className="flex items-center justify-between gap-4 pb-4">
-                <div>
-                  <p className="text-sm font-semibold text-gray-500">{product.category ?? "Uncategorized"}</p>
-                  <h1 className="mt-2 text-4xl font-bold text-gray-900">{product.name}</h1>
-                </div>
-                <button
-                  type="button"
-                  className="rounded-full border border-gray-200 p-3 text-gray-700 transition hover:bg-gray-100"
-                >
-                  <Heart className="h-5 w-5" />
-                </button>
+    <div
+      className="min-h-dvh bg-[#f8faf8] text-[#0f2318] md:px-6 md:py-8"
+      onTouchStart={(event) => {
+        const startX = event.touches[0]?.clientX ?? null;
+        edgeSwipeStartX.current = startX !== null && startX < 30 ? startX : null;
+      }}
+      onTouchEnd={(event) => {
+        const startX = edgeSwipeStartX.current;
+        const endX = event.changedTouches[0]?.clientX ?? null;
+        edgeSwipeStartX.current = null;
+
+        if (startX !== null && endX !== null && endX - startX > 80) {
+          router.back();
+        }
+      }}
+    >
+      <div className="mx-auto md:grid md:max-w-7xl md:grid-cols-[55fr_45fr] md:gap-8">
+        <section className="relative md:min-w-0">
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100 md:h-[480px] md:rounded-2xl">
+            {product.imageUrl ? (
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 55vw"
+                className="object-cover"
+                unoptimized={shouldUnoptimizeProductImage(product.imageUrl)}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-gray-200 text-sm text-gray-500">
+                No image available
               </div>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="absolute left-3 top-[calc(12px+env(safe-area-inset-top,0px))] flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#0f2318] shadow-md transition-all duration-100 active:scale-[0.97] active:opacity-90 md:hidden"
+          >
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => void handleShare()}
+            aria-label="Share product"
+            className="absolute right-3 top-[calc(12px+env(safe-area-inset-top,0px))] flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#0f2318] shadow-md transition-all duration-100 active:scale-[0.97] active:opacity-90 md:hidden"
+          >
+            <Share2 className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </section>
 
-              <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
-                {product.imageUrl ? (
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    unoptimized={shouldUnoptimizeProductImage(product.imageUrl)}
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center bg-gray-200 text-gray-500">
-                    No image available
-                  </div>
-                )}
+        <section className="px-4 py-5 md:sticky md:top-24 md:self-start md:px-0 md:py-0">
+          <nav className="mb-4 hidden text-xs text-gray-500 md:block" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-[#15803d]">Home</Link>
+            <span className="mx-2">/</span>
+            <Link href={categoryHref} className="hover:text-[#15803d]">
+              {product.category ?? "Shop"}
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-gray-700">{product.name}</span>
+          </nav>
+
+          <span className="inline-flex rounded-full bg-[#f0fdf4] px-3 py-1 text-xs font-semibold text-[#15803d]">
+            {product.category ?? "Uncategorized"}
+          </span>
+          <h1 className="mt-1.5 text-[22px] font-bold leading-tight text-[#0f2318] md:text-[28px]">
+            {product.name}
+          </h1>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <p className="text-2xl font-bold leading-tight text-[#15803d] md:text-[30px]">
+              GHS {product.price.toFixed(2)}
+            </p>
+            {needsPrescription ? (
+              <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">
+                Prescription required
+              </span>
+            ) : null}
+            {isOutOfStock ? (
+              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+                Out of stock
+              </span>
+            ) : null}
+          </div>
+
+          <p className="mt-5 text-sm leading-[1.7] text-[#4b5563] md:text-[15px]">
+            {product.description || "No description available."}
+          </p>
+
+          <div className="my-5 h-px bg-[#e5e7eb]" />
+
+          <div className="divide-y divide-[#f3f4f6] rounded-2xl bg-white md:border md:border-[#e5e7eb]">
+            {detailRows.map((row) => (
+              <div key={row.label} className="flex items-center justify-between gap-4 px-4 py-3">
+                <span className="text-xs font-medium text-gray-500">{row.label}</span>
+                <span className="text-right text-sm font-medium leading-[1.5] text-[#0f2318]">
+                  {row.value}
+                </span>
               </div>
-            </div>
+            ))}
+          </div>
 
-            <div className="rounded-[28px] border border-gray-200 bg-white p-6">
-              <p className="mb-3 text-sm font-semibold text-gray-900">Product Details</p>
-              <p className="text-sm leading-7 text-gray-600">{product.description || "No description available."}</p>
-
-              <div className="mt-6 space-y-3">
-                {productFeatures.map((feature) => (
-                  <div
-                    key={feature}
-                    className="flex items-center gap-3 rounded-3xl bg-emerald-50 px-4 py-3 text-sm text-gray-700"
-                  >
-                    <CheckCircle className="h-4 w-4 text-emerald-600" />
-                    <span>{feature}</span>
+          {ageDosageEntries.length > 0 ? (
+            <div className="mt-5">
+              <h2 className="text-[17px] font-bold text-[#0f2318]">Dosage by age</h2>
+              <div className="mt-3 divide-y divide-[#f3f4f6] rounded-2xl border border-[#e5e7eb] bg-white">
+                {ageDosageEntries.map((entry) => (
+                  <div key={entry.key} className="px-4 py-3">
+                    <p className="text-sm font-semibold text-[#0f2318]">{entry.label}</p>
+                    <p className="mt-1 text-sm leading-[1.6] text-gray-600">{entry.text}</p>
                   </div>
                 ))}
               </div>
+              <p className="mt-2 text-xs leading-[1.5] text-gray-500">
+                Follow the product label or pharmacist guidance before use.
+              </p>
+            </div>
+          ) : null}
 
-              {ageDosageEntries.length > 0 ? (
-                <div className="mt-6 border-t border-gray-100 pt-6">
-                  <p className="text-sm font-semibold text-gray-900">
-                    Dosage by age
-                  </p>
-                  <div className="mt-3 divide-y divide-gray-100 rounded-2xl border border-gray-200">
-                    {ageDosageEntries.map((entry) => (
-                      <div
-                        key={entry.key}
-                        className="grid gap-2 px-4 py-3 text-sm sm:grid-cols-[120px_1fr]"
-                      >
-                        <span className="font-semibold text-gray-900">
-                          {entry.label}
-                        </span>
-                        <span className="leading-6 text-gray-600">
-                          {entry.text}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-3 text-xs leading-5 text-gray-500">
-                    Follow the product label or pharmacist guidance before use.
-                  </p>
-                </div>
-              ) : null}
+          <div className="mt-6 hidden md:block">
+            <QuantitySelector
+              qty={qty}
+              max={product.quantity}
+              disabled={!canAddToCart}
+              onChange={setQty}
+              className="w-[132px]"
+            />
+            <div className="mt-4 flex gap-3">
+              <button
+                type="button"
+                onClick={addSelectedQuantity}
+                disabled={!canAddToCart}
+                className="flex h-12 flex-1 items-center justify-center rounded-xl border-2 border-[#15803d] bg-white px-4 text-[15px] font-semibold text-[#15803d] transition active:scale-[0.98] disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400 md:hover:bg-emerald-50"
+              >
+                {needsPrescription ? "Prescription required" : isOutOfStock ? "Out of stock" : "Add to cart"}
+              </button>
+              <button
+                type="button"
+                onClick={handleBuyNow}
+                disabled={!canAddToCart}
+                className="flex h-12 flex-1 items-center justify-center rounded-xl bg-[#15803d] px-4 text-[15px] font-bold text-white transition active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600 md:hover:bg-[#166534]"
+              >
+                Buy now
+              </button>
             </div>
           </div>
+        </section>
+      </div>
 
-          <div className="space-y-6">
-            <div className="rounded-[28px] border border-gray-200 bg-white p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Price</p>
-                  <p className="mt-2 text-4xl font-bold text-gray-900">GHS {product.price.toFixed(2)}</p>
-                </div>
-                <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
-                  <CheckCircle className="h-4 w-4" />
-                  {isOutOfStock ? "Out of stock" : `${product.quantity} in stock`}
-                </span>
-              </div>
-
-              {needsPrescription ? (
-                <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                  This product requires prescription review before checkout.
-                </div>
-              ) : null}
-
-              <div className="mt-8 space-y-6">
-                <div className="rounded-3xl border border-gray-200 bg-gray-50 p-4">
-                  <p className="text-sm text-gray-500">Quantity</p>
-                  <div className="mt-3 flex items-center gap-3 rounded-2xl border border-gray-200 bg-white p-1">
-                    <button
-                      type="button"
-                      onClick={() => setQty((prev) => Math.max(1, prev - 1))}
-                      disabled={!canAddToCart}
-                      className="flex h-12 w-12 items-center justify-center text-xl text-gray-600 transition hover:bg-gray-100"
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <div className="flex min-w-14 items-center justify-center text-lg font-semibold text-gray-900">{qty}</div>
-                    <button
-                      type="button"
-                      onClick={() => setQty((prev) => Math.min(product.quantity, prev + 1))}
-                      disabled={!canAddToCart || qty >= product.quantity}
-                      className="flex h-12 w-12 items-center justify-center text-xl text-gray-600 transition hover:bg-gray-100"
-                      aria-label="Increase quantity"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    disabled={!canAddToCart}
-                    className="flex items-center justify-center gap-2 rounded-3xl bg-emerald-600 px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-emerald-300/20 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600 disabled:shadow-none"
-                  >
-                    <ShoppingCart className="h-5 w-5" />{" "}
-                    {needsPrescription ? "Prescription Required" : isOutOfStock ? "Out of Stock" : "Add to cart"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleBuyNow}
-                    disabled={!canAddToCart}
-                    className="rounded-3xl border border-gray-200 bg-white px-5 py-4 text-sm font-semibold text-gray-900 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
-                  >
-                    Buy Now
-                  </button>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-3">
-                  {[
-                    { label: "Discreet Packaging Always" },
-                    { label: "Fast Campus Delivery" },
-                    { label: "Trusted Pharmacy Partners" },
-                  ].map(({ label }) => (
-                    <div
-                      key={label}
-                      className="flex items-center gap-3 rounded-3xl border border-gray-200 bg-white px-4 py-4 text-sm text-gray-600"
-                    >
-                      <CheckCircle className="h-5 w-5 text-emerald-600" />
-                      <span>{label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="safe-bottom sticky bottom-0 z-30 flex gap-2 border-t border-[#e5e7eb] bg-white px-4 py-3 md:hidden">
+        <QuantitySelector
+          qty={qty}
+          max={product.quantity}
+          disabled={!canAddToCart}
+          onChange={setQty}
+        />
+        <button
+          type="button"
+          onClick={addSelectedQuantity}
+          disabled={!canAddToCart}
+          className="flex h-11 flex-1 items-center justify-center rounded-xl border-2 border-[#15803d] bg-white px-3 text-sm font-semibold text-[#15803d] transition-all duration-100 active:scale-[0.97] active:opacity-90 disabled:cursor-not-allowed disabled:border-gray-300 disabled:text-gray-400"
+        >
+          Add to cart
+        </button>
+        <button
+          type="button"
+          onClick={handleBuyNow}
+          disabled={!canAddToCart}
+          className="flex h-11 flex-1 items-center justify-center rounded-xl bg-[#15803d] px-3 text-sm font-bold text-white transition-all duration-100 active:scale-[0.97] active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600"
+        >
+          Buy now
+        </button>
       </div>
     </div>
   );

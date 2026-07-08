@@ -213,7 +213,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const clearCart = useCallback(() => cartStore.setSnapshot(EMPTY_CART), []);
 
   const saveOrder = useCallback((order: OrderRecord) => {
-    ordersStore.setSnapshot([order, ...ordersStore.getSnapshot()]);
+    const currentOrders = ordersStore.getSnapshot();
+    ordersStore.setSnapshot([
+      order,
+      ...currentOrders.filter((item) => item.reference !== order.reference),
+    ]);
   }, []);
 
   const getOrderByReference = useCallback(

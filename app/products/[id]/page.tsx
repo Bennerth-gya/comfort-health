@@ -14,6 +14,7 @@ type ProductDetails = {
   dosage: string | null;
   dosageGuide: DosageGuide | null;
   manufacturer: string | null;
+  expiryDate: string | null;
   prescriptionRequired: boolean;
   quantity: number;
   activeListing: boolean;
@@ -42,6 +43,7 @@ export default async function ProductDetailsPage({
     dosage: string | null;
     dosageGuide: unknown;
     manufacturer: string | null;
+    expiryDate: Date | null;
     prescriptionRequired: boolean;
     quantity: number;
     activeListing: boolean;
@@ -60,6 +62,7 @@ export default async function ProductDetailsPage({
         dosage: true,
         dosageGuide: true,
         manufacturer: true,
+        expiryDate: true,
         prescriptionRequired: true,
         quantity: true,
         activeListing: true,
@@ -94,6 +97,7 @@ export default async function ProductDetailsPage({
   const productDetails: ProductDetails = {
     ...product,
     price: parseFloat(product.price.toString()),
+    expiryDate: product.expiryDate?.toISOString() ?? null,
     dosageGuide: normalizeDosageGuide(product.dosageGuide),
   };
 
