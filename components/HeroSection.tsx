@@ -39,7 +39,7 @@ const defaultHeroSlides: HeroSlide[] = [
   {
     id: "hero-3",
     imageUrl: "/hero/tablet-pharmacist.jpg",
-    title: "Join our campus wellness community",
+    title: "Join our community",
     subtitle:
       "Connect with pharmacists and get trusted health advice for student life.",
     ctaText: "Join Now",
