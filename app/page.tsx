@@ -5,6 +5,7 @@ import { HeartPulse, Pill, ShieldCheck, Truck } from "lucide-react";
 import HeroSection from "@/components/HeroSection";
 import SiteHeader from "@/components/SiteHeader";
 import ProductCard from "@/app/components/ProductCard";
+import AiFab from "@/components/AiFab";
 import { prisma } from "@/lib/prisma";
 
 const categories = [
@@ -287,6 +288,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <AiFab />
     </div>
   );
 }

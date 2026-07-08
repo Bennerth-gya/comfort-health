@@ -8,7 +8,7 @@ export default function BackButton() {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (!pathname || pathname === "/" || isAuthPath(pathname)) {
+  if (!pathname || pathname === "/" || pathname === "/ai-guide" || isAuthPath(pathname)) {
     return null;
   }
 

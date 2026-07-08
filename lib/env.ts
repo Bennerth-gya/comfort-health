@@ -39,6 +39,10 @@ export function assertProductionEnv() {
     missing.push("PAYSTACK_SECRET_KEY");
   }
 
+  if (!process.env.GROQ_API_KEY) {
+    missing.push("GROQ_API_KEY");
+  }
+
   const adminIds = csv(process.env.ADMIN_USER_IDS);
   const adminEmails = csv(process.env.ADMIN_EMAILS);
 

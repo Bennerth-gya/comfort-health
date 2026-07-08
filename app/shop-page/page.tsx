@@ -1,5 +1,6 @@
 import SiteHeader from "@/components/SiteHeader";
 import ShopSearchBar from "@/components/ShopSearchBar";
+import AiFab from "@/components/AiFab";
 import {
   DEFAULT_SHOP_PAGE_SIZE,
   normalizeShopSearchQuery,
@@ -84,6 +85,8 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           />
         </Suspense>
       </section>
+
+      <AiFab />
     </div>
   );
 }
