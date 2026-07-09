@@ -20,6 +20,16 @@ function shouldEnforceProductionEnv() {
   return true;
 }
 
+function hasDeploymentOrigin() {
+  return Boolean(
+    process.env.APP_URL ||
+      process.env.NEXT_PUBLIC_APP_URL ||
+      process.env.VERCEL_URL ||
+      process.env.VERCEL_BRANCH_URL ||
+      process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  );
+}
+
 export function assertProductionEnv() {
   if (!shouldEnforceProductionEnv()) {
     return;
@@ -61,12 +71,8 @@ export function assertProductionEnv() {
     );
   }
 
-  if (!process.env.APP_URL) {
-    missing.push("APP_URL");
-  }
-
-  if (!process.env.NEXT_PUBLIC_APP_URL) {
-    missing.push("NEXT_PUBLIC_APP_URL");
+  if (!hasDeploymentOrigin()) {
+    missing.push("APP_URL, NEXT_PUBLIC_APP_URL, or VERCEL_URL");
   }
 
   if (missing.length > 0) {

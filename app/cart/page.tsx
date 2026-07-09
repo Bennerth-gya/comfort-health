@@ -79,6 +79,14 @@ function CartItemRow({
             <p className="mt-1 text-sm font-bold text-[#15803d]">
               GHS {item.price.toFixed(2)}
             </p>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-red-600 transition hover:text-red-700"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Remove
+            </button>
           </div>
           <div className="flex shrink-0 flex-col items-end justify-between gap-2">
             <div className="flex items-center rounded-lg border border-[#e5e7eb] bg-white">
@@ -158,10 +166,11 @@ function CartItemRow({
           <button
             type="button"
             onClick={onRemove}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-red-500 transition hover:bg-red-50"
+            className="inline-flex items-center gap-2 rounded-full border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
             aria-label={`Remove ${item.name}`}
           >
             <Trash2 className="h-4 w-4" />
+            Remove
           </button>
           <div className="text-right">
             <p className="text-[11px] uppercase tracking-wide text-gray-400">Line total</p>
@@ -217,6 +226,15 @@ export default function CartPage() {
     });
   };
 
+  const handleRemoveItem = (item: CartItem) => {
+    removeFromCart(item.id);
+    pushToast({
+      title: "Item removed",
+      description: `${item.name} has been removed from your cart.`,
+      variant: "info",
+    });
+  };
+
   return (
     <div className="min-h-dvh bg-[#f8faf8] pb-[calc(76px+env(safe-area-inset-bottom,16px))] text-[#0f2318] md:pb-8">
       <div className="mx-auto max-w-7xl md:px-6 md:py-8">
@@ -267,7 +285,7 @@ export default function CartPage() {
                     item={item}
                     onDecrease={() => decreaseQty(item.id)}
                     onIncrease={() => increaseQty(item.id)}
-                    onRemove={() => removeFromCart(item.id)}
+                    onRemove={() => handleRemoveItem(item)}
                   />
                 ))}
               </div>

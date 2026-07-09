@@ -41,6 +41,18 @@ function toOrigin(value: string) {
   }
 }
 
+function vercelDeploymentOrigin(value: string | undefined) {
+  if (!value) {
+    return null;
+  }
+
+  const withProtocol = value.startsWith("http://") || value.startsWith("https://")
+    ? value
+    : `https://${value}`;
+
+  return toOrigin(withProtocol);
+}
+
 function configuredOrigins(request: Request) {
   const origins = new Set<string>();
   const requestUrl = new URL(request.url);
@@ -53,6 +65,17 @@ function configuredOrigins(request: Request) {
   for (const value of [process.env.APP_URL, process.env.NEXT_PUBLIC_APP_URL]) {
     if (value) {
       origins.add(toOrigin(value));
+    }
+  }
+
+  for (const value of [
+    process.env.VERCEL_URL,
+    process.env.VERCEL_BRANCH_URL,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  ]) {
+    const origin = vercelDeploymentOrigin(value);
+    if (origin) {
+      origins.add(origin);
     }
   }
 

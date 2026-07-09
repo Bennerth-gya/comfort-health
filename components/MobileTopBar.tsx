@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { HeartPulse, Search, ShoppingCart, UserCircle } from "lucide-react";
+import { HeartPulse, Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/app/context/cartContext";
 
 export default function MobileTopBar() {
@@ -30,15 +30,6 @@ export default function MobileTopBar() {
             aria-label="Search products"
           >
             <Search className="h-6 w-6" aria-hidden="true" />
-          </Link>
-          <Link
-            href="/account"
-            className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-all duration-100 active:scale-[0.97] active:bg-white/10 active:opacity-90"
-            aria-label="Account"
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-              <UserCircle className="h-6 w-6" aria-hidden="true" />
-            </span>
           </Link>
           <Link
             href="/cart"

@@ -1,4 +1,4 @@
-import Groq, { APIError } from "groq-sdk";
+import Groq, { APIError, toFile } from "groq-sdk";
 import { NextResponse } from "next/server";
 import {
   assertRequestBodySize,
@@ -9,6 +9,7 @@ import {
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
 const SUPPORTED_AUDIO_TYPES = [
@@ -24,6 +25,23 @@ const SUPPORTED_AUDIO_TYPES = [
   "video/mp4",
   "video/webm",
 ];
+const AUDIO_TYPE_ALIASES: Record<string, string> = {
+  "audio/wave": "audio/wav",
+  "audio/x-m4a": "audio/m4a",
+  "audio/x-wav": "audio/wav",
+  "audio/vnd.wave": "audio/wav",
+};
+const AUDIO_EXTENSION_TYPES: Record<string, string> = {
+  flac: "audio/flac",
+  m4a: "audio/m4a",
+  mp3: "audio/mpeg",
+  mp4: "audio/mp4",
+  mpeg: "audio/mpeg",
+  mpga: "audio/mpga",
+  ogg: "audio/ogg",
+  wav: "audio/wav",
+  webm: "audio/webm",
+};
 
 function isMultipartFormData(request: Request) {
   return request.headers
@@ -36,8 +54,32 @@ function baseMimeType(value: string) {
   return value.toLowerCase().split(";")[0]?.trim() ?? "";
 }
 
+function audioFileExtension(mimeType: string) {
+  const type = baseMimeType(mimeType);
+
+  if (type === "audio/flac") return "flac";
+  if (type === "audio/m4a") return "m4a";
+  if (type === "audio/mp4" || type === "video/mp4") return "mp4";
+  if (type === "audio/ogg") return "ogg";
+  if (type === "audio/wav") return "wav";
+  if (type === "audio/mpeg" || type === "audio/mp3") return "mp3";
+  return "webm";
+}
+
+function normalizedAudioMimeType(file: File) {
+  const baseType = baseMimeType(file.type);
+  const aliasType = AUDIO_TYPE_ALIASES[baseType] ?? baseType;
+
+  if (SUPPORTED_AUDIO_TYPES.includes(aliasType)) {
+    return aliasType;
+  }
+
+  const extension = file.name.toLowerCase().split(".").pop() ?? "";
+  return AUDIO_EXTENSION_TYPES[extension] ?? "";
+}
+
 function isSupportedAudioFile(file: File) {
-  return SUPPORTED_AUDIO_TYPES.includes(baseMimeType(file.type));
+  return Boolean(normalizedAudioMimeType(file));
 }
 
 export async function POST(request: Request) {
@@ -95,9 +137,15 @@ export async function POST(request: Request) {
       );
     }
 
+    const uploadMimeType = normalizedAudioMimeType(audio);
+    const uploadFile = await toFile(
+      await audio.arrayBuffer(),
+      audio.name || `comfort-ai-voice.${audioFileExtension(uploadMimeType)}`,
+      { type: uploadMimeType },
+    );
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     const transcription = await groq.audio.transcriptions.create({
-      file: audio,
+      file: uploadFile,
       model: "whisper-large-v3-turbo",
       language: "en",
       response_format: "json",

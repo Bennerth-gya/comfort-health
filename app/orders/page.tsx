@@ -121,7 +121,7 @@ function OrderCard({
             GHS {order.amount.toFixed(2)}
           </p>
           <Link
-            href="/account"
+            href="/orders"
             className="mt-1 inline-flex h-[34px] items-center justify-center rounded-lg border border-[#15803d] px-3 text-[13px] font-semibold text-[#15803d]"
           >
             Track order

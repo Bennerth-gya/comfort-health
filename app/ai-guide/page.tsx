@@ -35,13 +35,16 @@ type AiGuideResponse = {
 };
 
 type SpeechRecognitionResultLike = {
+  isFinal?: boolean;
   [index: number]: {
     transcript?: string;
-  };
+  } | undefined;
 };
 
 type SpeechRecognitionEventLike = {
+  resultIndex?: number;
   results: {
+    length: number;
     [index: number]: SpeechRecognitionResultLike | undefined;
   };
 };
@@ -51,6 +54,7 @@ type SpeechRecognitionErrorEventLike = {
 };
 
 type SpeechRecognitionLike = {
+  continuous: boolean;
   lang: string;
   interimResults: boolean;
   maxAlternatives: number;
@@ -94,6 +98,7 @@ const AUDIO_MIME_TYPE_OPTIONS = [
   "audio/ogg",
   "audio/mp4",
 ];
+const MAX_RECORDED_AUDIO_MS = 20_000;
 
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -175,6 +180,30 @@ function audioFileExtension(mimeType: string) {
   return "webm";
 }
 
+function getSpeechRecognitionConstructor() {
+  const speechWindow = window as Window & {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  };
+
+  return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+}
+
+function mergeVoiceText(base: string, transcript: string) {
+  const normalizedTranscript = transcript.replace(/\s+/g, " ").trim();
+  const normalizedBase = base.replace(/\s+/g, " ").trim();
+
+  if (!normalizedBase) {
+    return normalizedTranscript;
+  }
+
+  if (!normalizedTranscript) {
+    return normalizedBase;
+  }
+
+  return `${normalizedBase} ${normalizedTranscript}`.trim();
+}
+
 function speechRecognitionErrorMessage(error?: string) {
   if (error === "not-allowed" || error === "service-not-allowed") {
     return "Microphone permission was blocked.";
@@ -226,6 +255,11 @@ export default function AiGuidePage() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioStreamRef = useRef<MediaStream | null>(null);
+  const voiceBaseInputRef = useRef("");
+  const finalSpeechTranscriptRef = useRef("");
+  const speechHeardRef = useRef(false);
+  const speechRecognitionHadErrorRef = useRef(false);
+  const recorderStopTimerRef = useRef<number | null>(null);
   const toastTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -264,6 +298,10 @@ export default function AiGuidePage() {
 
       audioStreamRef.current?.getTracks().forEach((track) => track.stop());
       audioStreamRef.current = null;
+
+      if (recorderStopTimerRef.current) {
+        window.clearTimeout(recorderStopTimerRef.current);
+      }
 
       if (toastTimerRef.current) {
         window.clearTimeout(toastTimerRef.current);
@@ -359,10 +397,18 @@ export default function AiGuidePage() {
     audioStreamRef.current = null;
   }
 
+  function clearRecorderStopTimer() {
+    if (recorderStopTimerRef.current) {
+      window.clearTimeout(recorderStopTimerRef.current);
+      recorderStopTimerRef.current = null;
+    }
+  }
+
   function stopVoiceRecording() {
     const recorder = mediaRecorderRef.current;
 
     if (recorder && recorder.state !== "inactive") {
+      clearRecorderStopTimer();
       recorder.stop();
       return;
     }
@@ -401,6 +447,7 @@ export default function AiGuidePage() {
     }
 
     try {
+      voiceBaseInputRef.current = input;
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mimeType = supportedAudioMimeType();
       const recorder = new MediaRecorder(
@@ -419,6 +466,7 @@ export default function AiGuidePage() {
       };
 
       recorder.onerror = () => {
+        clearRecorderStopTimer();
         showToast("Voice recording failed.");
         setIsRecording(false);
         mediaRecorderRef.current = null;
@@ -426,6 +474,7 @@ export default function AiGuidePage() {
       };
 
       recorder.onstop = () => {
+        clearRecorderStopTimer();
         const audioBlob = new Blob(audioChunksRef.current, {
           type: recorder.mimeType || mimeType || "audio/webm",
         });
@@ -447,7 +496,7 @@ export default function AiGuidePage() {
               return;
             }
 
-            setInput(transcript);
+            setInput(mergeVoiceText(voiceBaseInputRef.current, transcript));
             showToast("Voice captured");
           })
           .catch((error) => {
@@ -463,12 +512,19 @@ export default function AiGuidePage() {
           });
       };
 
-      recorder.start();
+      recorder.start(1000);
       setIsRecording(true);
       showToast("Listening... tap the mic again when done.");
+      recorderStopTimerRef.current = window.setTimeout(() => {
+        if (recorder.state !== "inactive") {
+          recorder.stop();
+          showToast("Transcribing voice...");
+        }
+      }, MAX_RECORDED_AUDIO_MS);
       return true;
     } catch (error) {
       console.error(error);
+      clearRecorderStopTimer();
       mediaRecorderRef.current = null;
       stopAudioStream();
       setIsRecording(false);
@@ -478,21 +534,10 @@ export default function AiGuidePage() {
   }
 
   function startBrowserSpeechRecognition() {
-    if (isRecording) {
-      stopVoiceRecording();
-      return;
-    }
-
-    const speechWindow = window as Window & {
-      SpeechRecognition?: SpeechRecognitionConstructor;
-      webkitSpeechRecognition?: SpeechRecognitionConstructor;
-    };
-    const SpeechRecognition =
-      speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+    const SpeechRecognition = getSpeechRecognitionConstructor();
 
     if (!SpeechRecognition) {
-      showToast("Voice input is not supported in this browser.");
-      return;
+      return false;
     }
 
     try {
@@ -500,31 +545,67 @@ export default function AiGuidePage() {
       recognition.lang = navigator.language?.startsWith("en")
         ? navigator.language
         : "en-US";
-      recognition.interimResults = false;
+      recognition.continuous = false;
+      recognition.interimResults = true;
       recognition.maxAlternatives = 1;
+      voiceBaseInputRef.current = input;
+      finalSpeechTranscriptRef.current = "";
+      speechHeardRef.current = false;
+      speechRecognitionHadErrorRef.current = false;
       recognition.onresult = (event) => {
-        const transcript = event.results[0]?.[0]?.transcript?.trim();
-        if (transcript) {
-          setInput(transcript);
-          showToast("Voice captured");
+        let finalTranscript = "";
+        let interimTranscript = "";
+
+        for (let index = 0; index < event.results.length; index += 1) {
+          const result = event.results[index];
+          const transcript = result?.[0]?.transcript?.trim();
+
+          if (!transcript) {
+            continue;
+          }
+
+          speechHeardRef.current = true;
+
+          if (result?.isFinal) {
+            finalTranscript = mergeVoiceText(finalTranscript, transcript);
+          } else {
+            interimTranscript = mergeVoiceText(interimTranscript, transcript);
+          }
+        }
+
+        finalSpeechTranscriptRef.current = finalTranscript;
+        const visibleTranscript = mergeVoiceText(finalTranscript, interimTranscript);
+
+        if (visibleTranscript) {
+          setInput(mergeVoiceText(voiceBaseInputRef.current, visibleTranscript));
         }
       };
       recognition.onerror = (event) => {
+        speechRecognitionHadErrorRef.current = true;
         showToast(speechRecognitionErrorMessage(event.error));
         setIsRecording(false);
+        recognitionRef.current = null;
       };
       recognition.onend = () => {
         setIsRecording(false);
         recognitionRef.current = null;
+
+        if (speechHeardRef.current) {
+          showToast("Voice captured");
+        } else if (!speechRecognitionHadErrorRef.current) {
+          showToast("I could not hear anything clearly.");
+        }
       };
 
       recognitionRef.current = recognition;
       setIsRecording(true);
+      showToast("Listening... speak now.");
       recognition.start();
+      return true;
     } catch {
-      showToast("Voice input could not start.");
       setIsRecording(false);
       recognitionRef.current = null;
+      return false;
     }
   }
 
@@ -538,13 +619,17 @@ export default function AiGuidePage() {
       return;
     }
 
+    if (startBrowserSpeechRecognition()) {
+      return;
+    }
+
     const startedRecorder = await startRecordedVoiceInput();
 
     if (startedRecorder) {
       return;
     }
 
-    startBrowserSpeechRecognition();
+    showToast("Voice input is not supported in this browser.");
   }
 
   function handleAddToCart(product: RecommendedProduct, messageId: string) {
