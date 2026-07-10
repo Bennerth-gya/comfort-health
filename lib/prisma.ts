@@ -3,11 +3,8 @@ import "server-only";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { normalizePostgresSslMode } from "@/lib/database-url";
-import { assertProductionEnv } from "@/lib/env";
 import { PrismaClient } from "../generated/db";
 import type { PrismaClient as PrismaClientType } from "../generated/db";
-
-assertProductionEnv();
 
 const rawConnectionString =
   process.env.DATABASE_POOL_URL ?? process.env.DATABASE_URL;

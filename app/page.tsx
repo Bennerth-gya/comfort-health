@@ -3,7 +3,6 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/app/components/ProductCard";
-import { prisma } from "@/lib/prisma";
 import SearchBar from "@/components/SearchBar";
 
 const categories = [
@@ -82,6 +81,7 @@ function AiHealthGuideCard() {
 }
 
 async function getHomeData() {
+  const { prisma } = await import("@/lib/prisma");
   const [products, featuredProducts, heroSlides] = await Promise.all([
     prisma.product.findMany({
       where: { activeListing: true },

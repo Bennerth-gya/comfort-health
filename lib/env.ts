@@ -35,7 +35,22 @@ export function assertProductionEnv() {
     return;
   }
 
+  const { missing, errors } = getProductionEnvIssues();
+
+  if (errors.length > 0) {
+    throw new Error(errors.join(" "));
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required production environment variables: ${missing.join(", ")}`,
+    );
+  }
+}
+
+export function getProductionEnvIssues() {
   const missing: string[] = [];
+  const errors: string[] = [];
 
   if (!process.env.DATABASE_URL && !process.env.DATABASE_POOL_URL) {
     missing.push("DATABASE_URL or DATABASE_POOL_URL");
@@ -66,7 +81,7 @@ export function assertProductionEnv() {
     process.env.PAYSTACK_SECRET_KEY &&
     process.env.ORDER_RECEIPT_SECRET === process.env.PAYSTACK_SECRET_KEY
   ) {
-    throw new Error(
+    errors.push(
       "ORDER_RECEIPT_SECRET must be different from PAYSTACK_SECRET_KEY in production.",
     );
   }
@@ -75,9 +90,23 @@ export function assertProductionEnv() {
     missing.push("APP_URL, NEXT_PUBLIC_APP_URL, or VERCEL_URL");
   }
 
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing required production environment variables: ${missing.join(", ")}`,
-    );
+  return { missing, errors };
+}
+
+export function warnProductionEnv() {
+  if (!shouldEnforceProductionEnv()) {
+    return;
+  }
+
+  const { missing, errors } = getProductionEnvIssues();
+  const messages = [
+    missing.length > 0
+      ? `Missing production environment variables: ${missing.join(", ")}`
+      : null,
+    ...errors,
+  ].filter(Boolean);
+
+  if (messages.length > 0) {
+    console.error(messages.join(" "));
   }
 }
