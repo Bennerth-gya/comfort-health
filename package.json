@@ -33,6 +33,14 @@
     "resend": "^6.12.4",
     "zod": "^4.4.3"
   },
+  "overrides": {
+    "@stackframe/stack": {
+      "lucide-react": "$lucide-react"
+    },
+    "@stackframe/stack-ui": {
+      "lucide-react": "$lucide-react"
+    }
+  },
   "devDependencies": {
     "@next/env": "16.2.6",
     "@tailwindcss/postcss": "^4",

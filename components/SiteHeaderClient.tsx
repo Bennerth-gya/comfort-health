@@ -29,7 +29,7 @@ interface SiteHeaderClientProps {
   adminNode?: ReactNode;
 }
 
-function HeaderContent({ adminNode }: SiteHeaderClientProps) {
+export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -84,5 +84,3 @@ function HeaderContent({ adminNode }: SiteHeaderClientProps) {
     </header>
   );
 }
-
-export default HeaderContent;

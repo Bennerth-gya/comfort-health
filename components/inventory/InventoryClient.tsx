@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Pencil,
   Trash2,
@@ -33,6 +33,14 @@ export type Product = {
   isFeatured?: boolean;
   createAt?: string;
 };
+
+function seedProductCache(rows: Product[] | undefined) {
+  const cache: Record<string, Product> = {};
+  for (const product of rows ?? []) {
+    cache[product.id] = product;
+  }
+  return cache;
+}
 
 function useDebounced(value: string, delay = 300) {
   const [debounced, setDebounced] = useState(value);
@@ -244,17 +252,9 @@ export default function InventoryClient({
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Local memory cache pool of all loaded products
-  const allFetchedProducts = useRef<Map<string, Product>>(new Map());
-
-  // Seed the cache pool with initial products
-  const hasSeededRef = useRef(false);
-  if (!hasSeededRef.current && initialRows && initialRows.length > 0) {
-    initialRows.forEach((p) => {
-      allFetchedProducts.current.set(p.id, p);
-    });
-    hasSeededRef.current = true;
-  }
+  const [productCache, setProductCache] = useState<Record<string, Product>>(() =>
+    seedProductCache(initialRows),
+  );
 
   // Keep track of the parameters used for the last successful server-side fetch
   const [lastFetchedParams, setLastFetchedParams] = useState({
@@ -280,7 +280,7 @@ export default function InventoryClient({
   const displayedRows = useMemo(() => {
     const query = search.trim();
     if (filtersChanged || loading) {
-      const pool = Array.from(allFetchedProducts.current.values());
+      const pool = Object.values(productCache);
       return filterInventoryLocally(
         pool,
         query,
@@ -291,7 +291,7 @@ export default function InventoryClient({
       );
     }
     return rows;
-  }, [rows, loading, search, category, statusFilter, minPrice, maxPrice, filtersChanged]);
+  }, [rows, loading, search, category, statusFilter, minPrice, maxPrice, filtersChanged, productCache]);
 
   const hasClientFilters = Boolean(
     debounced ||
@@ -322,10 +322,13 @@ export default function InventoryClient({
       }
       const fetched = data.products || [];
       setRows(fetched);
-      
-      // Update cache pool with newly fetched products
-      fetched.forEach((p) => {
-        allFetchedProducts.current.set(p.id, p);
+
+      setProductCache((prev) => {
+        const next = { ...prev };
+        for (const product of fetched) {
+          next[product.id] = product;
+        }
+        return next;
       });
 
       // Update parameters that the server rows represent
@@ -372,7 +375,7 @@ export default function InventoryClient({
       const updated = await res.json();
       if (!res.ok) throw new Error(updated?.error || "Failed to update");
       setRows((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
-      allFetchedProducts.current.set(updated.id, updated);
+      setProductCache((prev) => ({ ...prev, [updated.id]: updated }));
     } catch (err) {
       console.error(err);
       throw err;
@@ -385,14 +388,18 @@ export default function InventoryClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Failed to delete");
       setRows((prev) => prev.filter((p) => p.id !== id));
-      allFetchedProducts.current.delete(id);
+      setProductCache((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
     } catch (err) {
       console.error(err);
       throw err;
     }
   }, []);
 
-  const filteredRows = rows;
+  const filteredRows = displayedRows;
 
   const hasActiveFilters = !!(category || statusFilter || minPrice || maxPrice);
 

@@ -5,7 +5,7 @@ import { HeartPulse, MessageCircleHeart, ShieldCheck, Truck } from "lucide-react
 
 export const metadata: Metadata = {
   title: "About Us | Comfi Health",
-  description: "Learn about Comfi Health, a Ghana-focused campus pharmacy storefront.",
+  description: "Learn about Comfort Health, a Ghana-focused campus pharmacy storefront.",
 };
 
 const highlights = [
@@ -46,13 +46,13 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-[#0f2318]/45" />
         <div className="relative mx-auto flex min-h-[360px] max-w-7xl flex-col justify-end px-4 pb-10 pt-16 md:min-h-[480px] md:px-6 md:pb-16">
           <p className="text-xs font-bold uppercase tracking-[0.08em] text-[#86efac]">
-            About Comfi Health
+            About Comfort Health
           </p>
           <h1 className="mt-3 max-w-3xl text-4xl font-bold leading-tight text-white md:text-6xl">
             Pharmacy shopping built for everyday campus health.
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-[#dcfce7] md:text-base">
-            Comfi Health helps Ghanaian students and nearby customers browse
+            Comfort Health helps Ghanaian students and nearby customers browse
             wellness products, ask for safe product guidance, and checkout with
             confidence from one simple storefront.
           </p>

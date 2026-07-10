@@ -26,18 +26,37 @@ function preparePrismaDatabaseUrl(connectionString: string | undefined) {
   }
 }
 
-const databaseUrl = preparePrismaDatabaseUrl(
-  process.env["DATABASE_DIRECT_URL"] ??
-    process.env["DATABASE_URL_UNPOOLED"] ??
-    process.env["DATABASE_POOL_URL"] ??
-    process.env["DATABASE_URL"],
-);
+const PLACEHOLDER_DATABASE_URL =
+  "postgresql://placeholder:placeholder@127.0.0.1:5432/placeholder?schema=public";
 
-if (!databaseUrl) {
+function isPrismaGenerateCommand() {
+  return process.argv.some((arg) => arg === "generate" || arg.endsWith("prisma"));
+}
+
+function resolveDatabaseUrl() {
+  const fromEnv = preparePrismaDatabaseUrl(
+    process.env["DATABASE_DIRECT_URL"] ??
+      process.env["DATABASE_URL_UNPOOLED"] ??
+      process.env["DATABASE_POOL_URL"] ??
+      process.env["DATABASE_URL"],
+  );
+
+  if (fromEnv) {
+    return fromEnv;
+  }
+
+  // `prisma generate` never connects to the database; allow install/build
+  // steps on hosts where runtime env vars are not injected yet.
+  if (isPrismaGenerateCommand()) {
+    return PLACEHOLDER_DATABASE_URL;
+  }
+
   throw new Error(
-    "DATABASE_DIRECT_URL, DATABASE_URL_UNPOOLED, DATABASE_URL, or DATABASE_POOL_URL is not set",
+    "DATABASE_DIRECT_URL, DATABASE_URL_UNPOOLED, DATABASE_POOL_URL, or DATABASE_URL is not set",
   );
 }
+
+const databaseUrl = resolveDatabaseUrl();
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
