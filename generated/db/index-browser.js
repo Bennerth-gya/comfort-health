@@ -162,7 +162,37 @@ exports.Prisma.OrderScalarFieldEnum = {
   status: 'status',
   paidAt: 'paidAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  fulfillmentStatus: 'fulfillmentStatus',
+  customerName: 'customerName',
+  customerPhone: 'customerPhone',
+  customerAddress: 'customerAddress',
+  riderId: 'riderId',
+  riderName: 'riderName',
+  riderPhone: 'riderPhone',
+  assignedAt: 'assignedAt',
+  pickedUpAt: 'pickedUpAt',
+  deliveredAt: 'deliveredAt',
+  estimatedTime: 'estimatedTime',
+  adminNotes: 'adminNotes',
+  notificationSent: 'notificationSent'
+};
+
+exports.Prisma.OrderStatusLogScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  status: 'status',
+  note: 'note',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RiderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  phone: 'phone',
+  whatsapp: 'whatsapp',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.OrderItemScalarFieldEnum = {
@@ -237,10 +267,22 @@ exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN'
 };
 
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PREPARING: 'PREPARING',
+  ASSIGNED: 'ASSIGNED',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
   Order: 'Order',
+  OrderStatusLog: 'OrderStatusLog',
+  Rider: 'Rider',
   OrderItem: 'OrderItem',
   PaymentTransaction: 'PaymentTransaction',
   HeroSlide: 'HeroSlide'

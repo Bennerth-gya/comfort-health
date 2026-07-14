@@ -12,13 +12,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AdminOrdersNavLink from "@/components/admin/AdminOrdersNavLink";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Orders", href: "/orders", icon: ShoppingBag },
   { name: "Inventory", href: "/inventory", icon: Package },
   { name: "Add product", href: "/add-products", icon: PlusCircle },
-];
+] as const;
 
 function isNavActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -62,6 +63,12 @@ export default function Sidebar() {
             </Link>
           );
         })}
+
+        <AdminOrdersNavLink
+          className="flex h-11 items-center gap-4 rounded-lg px-4 text-sm font-medium transition-colors"
+          activeClassName="bg-emerald-50 text-emerald-700"
+          inactiveClassName="text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+        />
 
         <Link
           href="/"

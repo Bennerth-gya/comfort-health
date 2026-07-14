@@ -40,6 +40,9 @@ export default function PaystackCheckout({
   buttonIcon,
 }: PaystackCheckoutProps) {
   const [email, setEmail] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -58,6 +61,8 @@ export default function PaystackCheckout({
   const getIdempotencyKey = () => {
     const signature = JSON.stringify({
       email: email.trim().toLowerCase(),
+      customerPhone: customerPhone.trim(),
+      customerAddress: customerAddress.trim(),
       items: checkoutItems,
     });
 
@@ -74,6 +79,16 @@ export default function PaystackCheckout({
   const handleCheckout = async () => {
     if (!email.trim()) {
       setErrorMessage("Please enter your email address to continue.");
+      return;
+    }
+
+    if (!customerPhone.trim()) {
+      setErrorMessage("Please enter your WhatsApp number so we can update you on your order.");
+      return;
+    }
+
+    if (!customerAddress.trim()) {
+      setErrorMessage("Please enter your delivery address (hostel, room, hall).");
       return;
     }
 
@@ -94,6 +109,9 @@ export default function PaystackCheckout({
         },
         body: JSON.stringify({
           email,
+          customerName: customerName.trim() || undefined,
+          customerPhone: customerPhone.trim(),
+          customerAddress: customerAddress.trim(),
           idempotencyKey: getIdempotencyKey(),
           items: checkoutItems,
         }),
@@ -138,6 +156,56 @@ export default function PaystackCheckout({
           onChange={(event) => setEmail(event.target.value)}
           placeholder="you@example.com"
           className="mt-3 w-full rounded-3xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-emerald-500 focus:bg-white"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="checkout-name" className="block text-sm font-semibold text-gray-900">
+          Full name <span className="font-normal text-gray-400">(optional)</span>
+        </label>
+        <input
+          id="checkout-name"
+          type="text"
+          value={customerName}
+          onChange={(event) => setCustomerName(event.target.value)}
+          placeholder="e.g. Kofi Mensah"
+          className="mt-3 w-full rounded-3xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-emerald-500 focus:bg-white"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="checkout-phone" className="block text-sm font-semibold text-gray-900">
+          WhatsApp number <span className="text-red-500">*</span>
+        </label>
+        <p className="mt-1 text-xs text-gray-500">
+          We'll send order updates to this number
+        </p>
+        <input
+          id="checkout-phone"
+          type="tel"
+          value={customerPhone}
+          onChange={(event) => setCustomerPhone(event.target.value)}
+          placeholder="e.g. 0244 123 456"
+          required
+          className="mt-2 w-full rounded-3xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-emerald-500 focus:bg-white"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="checkout-address" className="block text-sm font-semibold text-gray-900">
+          Delivery address <span className="text-red-500">*</span>
+        </label>
+        <p className="mt-1 text-xs text-gray-500">
+          Hostel name, room number, hall, or building
+        </p>
+        <input
+          id="checkout-address"
+          type="text"
+          value={customerAddress}
+          onChange={(event) => setCustomerAddress(event.target.value)}
+          placeholder="e.g. Commonwealth Hall, Room 204"
+          required
+          className="mt-2 w-full rounded-3xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-emerald-500 focus:bg-white"
         />
       </div>
 

@@ -1,149 +1,240 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
+import withBundleAnalyzer from '@next/bundle-analyzer'
 
-function csv(value: string | undefined) {
-  return (value ?? "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function originHost(value: string) {
-  try {
-    return new URL(value).hostname;
-  } catch {
-    return value;
-  }
-}
-
-const privateDevOriginHosts = [
-  "localhost",
-  "*.localhost",
-  "127.0.0.1",
-  "10.*.*.*",
-  "172.*.*.*",
-  "192.168.*.*",
-];
-
-function allowedDevOrigins() {
-  const hosts = new Set<string>(
-    process.env.NODE_ENV === "production" ? [] : privateDevOriginHosts,
-  );
-
-  for (const value of [
-    ...csv(process.env.ALLOWED_DEV_ORIGINS),
-    ...csv(process.env.ALLOWED_ORIGINS),
-    process.env.APP_URL,
-    process.env.NEXT_PUBLIC_APP_URL,
-  ]) {
-    if (value) {
-      hosts.add(originHost(value));
-    }
-  }
-
-  return hosts.size > 0 ? Array.from(hosts) : undefined;
-}
-
-function storageImagePattern() {
-  const publicUrl = process.env.S3_PUBLIC_URL;
-  if (!publicUrl) return null;
-
-  try {
-    const { protocol, hostname } = new URL(publicUrl);
-    if (protocol !== "https:" && protocol !== "http:") return null;
-
-    return {
-      protocol: protocol.replace(":", "") as "https" | "http",
-      hostname,
-      pathname: "/**" as const,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function storageCspHost() {
-  const hostname = storageImagePattern()?.hostname;
-  return hostname ? ` https://${hostname}` : "";
-}
-
-function productImageRemotePatterns() {
-  const patterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
-    {
-      protocol: "https",
-      hostname: "images.unsplash.com",
-      pathname: "/**",
-    },
-    {
-      protocol: "https",
-      hostname: "*.amazonaws.com",
-      pathname: "/**",
-    },
-    {
-      protocol: "https",
-      hostname: "*.r2.dev",
-      pathname: "/**",
-    },
-    {
-      protocol: "https",
-      hostname: "*.r2.cloudflarestorage.com",
-      pathname: "/**",
-    },
-  ];
-
-  const storage = storageImagePattern();
-  if (storage) {
-    patterns.push(storage);
-  }
-
-  return patterns;
-}
+const withAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: true,
+})
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: allowedDevOrigins(),
   turbopack: {
     root: __dirname,
   },
-  async headers() {
-    // Strict CSP breaks Next.js dev (HMR needs eval) and can block hydration → blank black page.
-    if (process.env.NODE_ENV !== "production") {
-      return [];
+
+  // ════════════════════════════════════════
+  // THE BUNDLE SIZE KILLER — THIS IS THE
+  // MOST IMPORTANT SECTION IN THIS FILE
+  // ════════════════════════════════════════
+  serverExternalPackages: [
+    'groq-sdk',
+    '@prisma/client',
+    'prisma',
+    'resend',
+    '@anthropic-ai/sdk',
+    'nodemailer',
+    'bcrypt',
+    'bcryptjs',
+    'jsonwebtoken',
+    'crypto',
+    'fs',
+    'path',
+    'os',
+    'stream',
+    'http',
+    'https',
+    'net',
+    'tls',
+    'child_process',
+    'dns',
+    'pg',
+    'pg-native',
+    'pg-pool',
+  ],
+
+  // ════════════════════════════════════════
+  // IMAGE OPTIMIZATION
+  // ════════════════════════════════════════
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 86400,
+    deviceSizes: [375, 390, 412, 768, 1024, 1280, 1920],
+    imageSizes: [32, 64, 128, 256, 384],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.amazonaws.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.r2.dev",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "*.r2.cloudflarestorage.com",
+        pathname: "/**",
+      },
+    ],
+  },
+
+  // ════════════════════════════════════════
+  // COMPILER OPTIMIZATIONS
+  // ════════════════════════════════════════
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production'
+      ? { exclude: ['error', 'warn'] }
+      : false,
+  },
+
+  // ════════════════════════════════════════
+  // WEBPACK CONFIGURATION
+  // ════════════════════════════════════════
+  webpack: (config, { isServer, dev }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        path: false,
+        os: false,
+        http: false,
+        https: false,
+        child_process: false,
+        dns: false,
+        pg: false,
+        'pg-native': false,
+        'fs/promises': false,
+        'stream/web': false,
+        'util/types': false,
+        perf_hooks: false,
+        async_hooks: false,
+        'node:crypto': false,
+        'node:fs': false,
+        'node:path': false,
+        'node:stream': false,
+        'node:http': false,
+        'node:https': false,
+        'node:os': false,
+        'node:net': false,
+        'node:tls': false,
+        'node:buffer': false,
+        'node:util': false,
+        'node:url': false,
+        'node:querystring': false,
+        'node:events': false,
+      }
     }
 
-    const contentSecurityPolicy = [
-      "default-src 'self'",
-      "base-uri 'self'",
-      "frame-ancestors 'self'",
-      "object-src 'none'",
-      "script-src 'self' 'unsafe-inline' https://js.paystack.co https://*.stack-auth.com https://*.built-with-stack-auth.com",
-      "style-src 'self' 'unsafe-inline'",
-      // `https:` allows product/CDN images loaded directly (unoptimized remote URLs).
-      `img-src 'self' data: blob: https: https://images.unsplash.com https://*.stack-auth.com https://*.built-with-stack-auth.com${storageCspHost()}`,
-      "font-src 'self' data:",
-      "connect-src 'self' https://api.paystack.co https://api.stack-auth.com https://api1.stack-auth.com https://api2.stack-auth.com https://app.stack-auth.com https://*.stack-auth.com",
-      "frame-src 'self' https://checkout.paystack.com https://*.paystack.co https://*.built-with-stack-auth.com",
-      "form-action 'self' https://checkout.paystack.com https://*.paystack.co",
-      "upgrade-insecure-requests",
-    ].join("; ");
+    if (!isServer && !dev) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          minSize: 10000,
+          maxSize: 200000,
+          minChunks: 1,
+          maxAsyncRequests: 30,
+          maxInitialRequests: 30,
+          cacheGroups: {
+            react: {
+              name: 'chunk-react',
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+              chunks: 'all',
+              priority: 50,
+              enforce: true,
+            },
+            lucide: {
+              name: 'chunk-lucide',
+              test: /[\\/]node_modules[\\/]lucide-react[\\/]/,
+              chunks: 'all',
+              priority: 40,
+              enforce: true,
+            },
+            stackAuth: {
+              name: 'chunk-stack-auth',
+              test: /[\\/]node_modules[\\/]@stackframe[\\/]/,
+              chunks: 'all',
+              priority: 35,
+            },
+            vendor: {
+              name: 'chunk-vendors',
+              test: /[\\/]node_modules[\\/]/,
+              chunks: 'all',
+              priority: 10,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      }
+    }
+
+    return config
+  },
+
+  // ════════════════════════════════════════
+  // CACHE-CONTROL HEADERS
+  // ════════════════════════════════════════
+  async headers() {
+    if (process.env.NODE_ENV !== 'production') {
+      return []
+    }
 
     return [
       {
-        source: "/:path*",
+        source: '/_next/static/:path*',
         headers: [
-          { key: "Content-Security-Policy", value: contentSecurityPolicy },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(self), geolocation=()" },
-          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
         ],
       },
-    ];
+      {
+        source: '/hero/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+      {
+        source: '/:path*.{jpg,jpeg,png,webp,avif,svg,ico}',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, stale-while-revalidate=2592000',
+          },
+        ],
+      },
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ]
   },
-  images: {
-    remotePatterns: productImageRemotePatterns(),
-    dangerouslyAllowSVG: false,
-    qualities: [75],
-  },
-};
 
-export default nextConfig;
+  // ════════════════════════════════════════
+  // GENERAL SETTINGS
+  // ════════════════════════════════════════
+  compress: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+}
+
+export default withAnalyzer(nextConfig)

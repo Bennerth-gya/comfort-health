@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { createReceiptToken } from "@/lib/payment-security";
 import { CheckoutRequestSchema, validationMessage } from "@/lib/validation";
 import type { Prisma } from "@/generated/db";
+import { OrderStatus } from "@/generated/db";
 
 export {
   createReceiptToken,
@@ -52,6 +53,7 @@ type PaystackVerifyResponse = {
     currency?: string;
     paid_at?: string | null;
     gateway_response?: string;
+    metadata?: Record<string, unknown>;
   };
 };
 
@@ -220,7 +222,8 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
     throw new PaymentFlowError(validationMessage(parsed.error));
   }
 
-  const { email, idempotencyKey, items: requestedItems } = parsed.data;
+  const { email, idempotencyKey, items: requestedItems, customerPhone, customerAddress, customerName } =
+    parsed.data;
   const existing = await existingCheckoutResponse(idempotencyKey);
   if (existing) {
     return existing;
@@ -304,6 +307,9 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
         idempotencyKey,
         sellerId,
         email,
+        customerName: customerName ?? null,
+        customerPhone,
+        customerAddress,
         amount: toMoney(amountPesewas),
         currency: CURRENCY,
         items: {
@@ -356,6 +362,21 @@ export async function createPaystackCheckout(request: Request, body: unknown) {
         source: "Comfi Health checkout",
         orderId: order.id,
         itemCount: order.items.length,
+        phone: customerPhone,
+        address: customerAddress,
+        customerName: customerName ?? email.split("@")[0],
+        custom_fields: [
+          {
+            display_name: "Phone",
+            variable_name: "phone",
+            value: customerPhone,
+          },
+          {
+            display_name: "Address",
+            variable_name: "address",
+            value: customerAddress,
+          },
+        ],
       },
     }),
   });
@@ -419,6 +440,82 @@ async function fetchPaystackVerification(reference: string) {
   }
 
   return data;
+}
+
+function paystackMetadataValue(metadata: unknown, key: string) {
+  if (!isRecord(metadata)) {
+    return undefined;
+  }
+
+  const direct = metadata[key];
+  if (typeof direct === "string" && direct.trim()) {
+    return direct.trim();
+  }
+
+  const customFields = metadata.custom_fields;
+  if (Array.isArray(customFields)) {
+    for (const field of customFields) {
+      if (
+        isRecord(field) &&
+        field.variable_name === key &&
+        typeof field.value === "string" &&
+        field.value.trim()
+      ) {
+        return field.value.trim();
+      }
+    }
+  }
+
+  return undefined;
+}
+
+async function handlePaidOrderSideEffects(
+  order: Prisma.OrderGetPayload<{ include: { items: true } }>,
+  metadata: unknown,
+) {
+  if (order.notificationSent) {
+    return;
+  }
+
+  const customerPhone =
+    order.customerPhone ?? paystackMetadataValue(metadata, "phone") ?? undefined;
+  const customerAddress =
+    order.customerAddress ?? paystackMetadataValue(metadata, "address") ?? undefined;
+  const customerName =
+    order.customerName ??
+    paystackMetadataValue(metadata, "customerName") ??
+    order.email.split("@")[0] ??
+    "Customer";
+
+  await prisma.order.update({
+    where: { id: order.id },
+    data: {
+      customerPhone,
+      customerAddress,
+      customerName,
+      notificationSent: true,
+    },
+  });
+
+  const { notifyNewOrder, toOrderNotificationPayload } = await import(
+    "@/lib/notifications"
+  );
+  const { checkLowStock } = await import("@/lib/stockAlerts");
+
+  const payload = toOrderNotificationPayload({
+    ...order,
+    customerName,
+    customerPhone,
+    customerAddress,
+  });
+
+  notifyNewOrder(payload).catch((error) => {
+    console.error("Failed to send new order notifications", error);
+  });
+
+  checkLowStock(order.items.map((item) => item.productId)).catch((error) => {
+    console.error("Failed to check low stock", error);
+  });
 }
 
 function paystackPayload(data: PaystackVerifyResponse): Prisma.InputJsonObject {
@@ -565,7 +662,14 @@ export async function finalizeVerifiedPayment(reference: string, verification?: 
         where: { id: order.id },
         data: {
           status: needsFulfillmentReview ? "paid_fulfillment_review" : "paid",
+          fulfillmentStatus: OrderStatus.CONFIRMED,
           paidAt,
+          statusHistory: {
+            create: {
+              status: OrderStatus.CONFIRMED,
+              note: "Payment confirmed via Paystack",
+            },
+          },
           payment: {
             update: {
               status: needsFulfillmentReview ? "success_fulfillment_review" : "success",
@@ -586,6 +690,8 @@ export async function finalizeVerifiedPayment(reference: string, verification?: 
       return {
         order: publicOrder(paidOrder),
         shouldSendReceipt: true,
+        rawOrder: paidOrder,
+        paystackMetadata: transaction.metadata ?? null,
       };
     },
     {
@@ -596,6 +702,9 @@ export async function finalizeVerifiedPayment(reference: string, verification?: 
 
   if (result.shouldSendReceipt) {
     await sendReceipt(result.order);
+    if ("rawOrder" in result && result.rawOrder) {
+      await handlePaidOrderSideEffects(result.rawOrder, result.paystackMetadata);
+    }
   }
 
   return result.order;

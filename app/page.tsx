@@ -1,6 +1,7 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 import Link from "next/link";
+import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/app/components/ProductCard";
 import SearchBar from "@/components/SearchBar";
@@ -80,6 +81,43 @@ function AiHealthGuideCard() {
   );
 }
 
+function ProductCardSkeleton() {
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+      <div className="aspect-square skeleton" />
+      <div className="p-3 space-y-2">
+        <div className="h-3 skeleton rounded w-3/4" />
+        <div className="h-3 skeleton rounded w-1/2" />
+        <div className="h-4 skeleton rounded w-1/3 mt-1" />
+        <div className="h-9 skeleton rounded-lg mt-3" />
+      </div>
+    </div>
+  );
+}
+
+function ProductGridSkeleton() {
+  return (
+    <>
+      <section className="md:mx-auto md:max-w-7xl md:px-6">
+        <SectionHeader title="Popular Products" />
+        <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      </section>
+      <section className="scroll-mt-24 md:mx-auto md:max-w-7xl md:px-6">
+        <SectionHeader title="All Medicines" />
+        <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+
 async function getHomeData() {
   const { prisma } = await import("@/lib/prisma");
   const [products, featuredProducts, heroSlides] = await Promise.all([
@@ -134,8 +172,7 @@ async function getHomeData() {
   return { products, featuredProducts, heroSlides };
 }
 
-
-export default async function HomePage() {
+async function HomeContent() {
   let products = [] as Awaited<ReturnType<typeof getHomeData>>["products"];
   let featuredProducts = [] as Awaited<ReturnType<typeof getHomeData>>["featuredProducts"];
   let heroSlides = [] as Awaited<ReturnType<typeof getHomeData>>["heroSlides"];
@@ -159,11 +196,7 @@ export default async function HomePage() {
   const showPlaceholder = displayProducts.length === 0;
 
   return (
-    <div className="min-h-screen bg-[#f8faf8] pb-4 md:pb-10">
-      <section className="px-3 pt-3 md:hidden">
-        <SearchBar />
-      </section>
-
+    <>
       <section className="pt-3 md:mx-auto md:max-w-7xl md:px-6 md:pt-6">
         <HeroSection slides={heroSlides} />
       </section>
@@ -247,6 +280,20 @@ export default async function HomePage() {
           </div>
         </section>
       ) : null}
+    </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <div className="min-h-screen bg-[#f8faf8] pb-4 md:pb-10">
+      <section className="px-3 pt-3 md:hidden">
+        <SearchBar />
+      </section>
+      
+      <Suspense fallback={<ProductGridSkeleton />}>
+        <HomeContent />
+      </Suspense>
     </div>
   );
 }

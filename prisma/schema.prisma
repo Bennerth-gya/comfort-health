@@ -17,6 +17,16 @@ enum UserRole {
   ADMIN
 }
 
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  ASSIGNED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
 model User {
   id        String   @id // Stack user ID
   email     String?
@@ -77,14 +87,56 @@ model Order {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  items   OrderItem[]
-  payment PaymentTransaction?
+  fulfillmentStatus OrderStatus @default(PENDING)
+  customerName      String?
+  customerPhone     String?
+  customerAddress   String?
+  riderId           String?
+  riderName         String?
+  riderPhone        String?
+  assignedAt        DateTime?
+  pickedUpAt        DateTime?
+  deliveredAt       DateTime?
+  estimatedTime     Int?
+  adminNotes        String?
+  notificationSent  Boolean     @default(false)
+
+  items         OrderItem[]
+  payment       PaymentTransaction?
+  statusHistory OrderStatusLog[]
+  rider         Rider?              @relation(fields: [riderId], references: [id], onDelete: SetNull)
 
   @@index([email, createdAt])
   @@index([sellerId, createdAt])
   @@index([sellerId, status, createdAt])
   @@index([status, createdAt])
+  @@index([fulfillmentStatus, createdAt])
   @@map("orders")
+}
+
+model OrderStatusLog {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([orderId, createdAt])
+  @@map("order_status_log")
+}
+
+model Rider {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  whatsapp  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  orders Order[]
+
+  @@map("riders")
 }
 
 model OrderItem {

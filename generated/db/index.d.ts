@@ -29,6 +29,16 @@ export type Product = $Result.DefaultSelection<Prisma.$ProductPayload>
  */
 export type Order = $Result.DefaultSelection<Prisma.$OrderPayload>
 /**
+ * Model OrderStatusLog
+ * 
+ */
+export type OrderStatusLog = $Result.DefaultSelection<Prisma.$OrderStatusLogPayload>
+/**
+ * Model Rider
+ * 
+ */
+export type Rider = $Result.DefaultSelection<Prisma.$RiderPayload>
+/**
  * Model OrderItem
  * 
  */
@@ -55,11 +65,28 @@ export namespace $Enums {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
+
+export const OrderStatus: {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PREPARING: 'PREPARING',
+  ASSIGNED: 'ASSIGNED',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
 
 export const UserRole: typeof $Enums.UserRole
+
+export type OrderStatus = $Enums.OrderStatus
+
+export const OrderStatus: typeof $Enums.OrderStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -211,6 +238,26 @@ export class PrismaClient<
     * ```
     */
   get order(): Prisma.OrderDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.orderStatusLog`: Exposes CRUD operations for the **OrderStatusLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OrderStatusLogs
+    * const orderStatusLogs = await prisma.orderStatusLog.findMany()
+    * ```
+    */
+  get orderStatusLog(): Prisma.OrderStatusLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.rider`: Exposes CRUD operations for the **Rider** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Riders
+    * const riders = await prisma.rider.findMany()
+    * ```
+    */
+  get rider(): Prisma.RiderDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.orderItem`: Exposes CRUD operations for the **OrderItem** model.
@@ -678,6 +725,8 @@ export namespace Prisma {
     User: 'User',
     Product: 'Product',
     Order: 'Order',
+    OrderStatusLog: 'OrderStatusLog',
+    Rider: 'Rider',
     OrderItem: 'OrderItem',
     PaymentTransaction: 'PaymentTransaction',
     HeroSlide: 'HeroSlide'
@@ -696,7 +745,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "order" | "orderItem" | "paymentTransaction" | "heroSlide"
+      modelProps: "user" | "product" | "order" | "orderStatusLog" | "rider" | "orderItem" | "paymentTransaction" | "heroSlide"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -919,6 +968,154 @@ export namespace Prisma {
           count: {
             args: Prisma.OrderCountArgs<ExtArgs>
             result: $Utils.Optional<OrderCountAggregateOutputType> | number
+          }
+        }
+      }
+      OrderStatusLog: {
+        payload: Prisma.$OrderStatusLogPayload<ExtArgs>
+        fields: Prisma.OrderStatusLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OrderStatusLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OrderStatusLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>
+          }
+          findFirst: {
+            args: Prisma.OrderStatusLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OrderStatusLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>
+          }
+          findMany: {
+            args: Prisma.OrderStatusLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>[]
+          }
+          create: {
+            args: Prisma.OrderStatusLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>
+          }
+          createMany: {
+            args: Prisma.OrderStatusLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OrderStatusLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>[]
+          }
+          delete: {
+            args: Prisma.OrderStatusLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>
+          }
+          update: {
+            args: Prisma.OrderStatusLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.OrderStatusLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OrderStatusLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OrderStatusLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.OrderStatusLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OrderStatusLogPayload>
+          }
+          aggregate: {
+            args: Prisma.OrderStatusLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOrderStatusLog>
+          }
+          groupBy: {
+            args: Prisma.OrderStatusLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OrderStatusLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OrderStatusLogCountArgs<ExtArgs>
+            result: $Utils.Optional<OrderStatusLogCountAggregateOutputType> | number
+          }
+        }
+      }
+      Rider: {
+        payload: Prisma.$RiderPayload<ExtArgs>
+        fields: Prisma.RiderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RiderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RiderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>
+          }
+          findFirst: {
+            args: Prisma.RiderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RiderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>
+          }
+          findMany: {
+            args: Prisma.RiderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>[]
+          }
+          create: {
+            args: Prisma.RiderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>
+          }
+          createMany: {
+            args: Prisma.RiderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RiderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>[]
+          }
+          delete: {
+            args: Prisma.RiderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>
+          }
+          update: {
+            args: Prisma.RiderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>
+          }
+          deleteMany: {
+            args: Prisma.RiderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RiderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RiderUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>[]
+          }
+          upsert: {
+            args: Prisma.RiderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RiderPayload>
+          }
+          aggregate: {
+            args: Prisma.RiderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRider>
+          }
+          groupBy: {
+            args: Prisma.RiderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RiderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RiderCountArgs<ExtArgs>
+            result: $Utils.Optional<RiderCountAggregateOutputType> | number
           }
         }
       }
@@ -1255,6 +1452,8 @@ export namespace Prisma {
     user?: UserOmit
     product?: ProductOmit
     order?: OrderOmit
+    orderStatusLog?: OrderStatusLogOmit
+    rider?: RiderOmit
     orderItem?: OrderItemOmit
     paymentTransaction?: PaymentTransactionOmit
     heroSlide?: HeroSlideOmit
@@ -1370,10 +1569,12 @@ export namespace Prisma {
 
   export type OrderCountOutputType = {
     items: number
+    statusHistory: number
   }
 
   export type OrderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | OrderCountOutputTypeCountItemsArgs
+    statusHistory?: boolean | OrderCountOutputTypeCountStatusHistoryArgs
   }
 
   // Custom InputTypes
@@ -1392,6 +1593,44 @@ export namespace Prisma {
    */
   export type OrderCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderItemWhereInput
+  }
+
+  /**
+   * OrderCountOutputType without action
+   */
+  export type OrderCountOutputTypeCountStatusHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderStatusLogWhereInput
+  }
+
+
+  /**
+   * Count Type RiderCountOutputType
+   */
+
+  export type RiderCountOutputType = {
+    orders: number
+  }
+
+  export type RiderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    orders?: boolean | RiderCountOutputTypeCountOrdersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RiderCountOutputType without action
+   */
+  export type RiderCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RiderCountOutputType
+     */
+    select?: RiderCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RiderCountOutputType without action
+   */
+  export type RiderCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderWhereInput
   }
 
 
@@ -3725,10 +3964,12 @@ export namespace Prisma {
 
   export type OrderAvgAggregateOutputType = {
     amount: Decimal | null
+    estimatedTime: number | null
   }
 
   export type OrderSumAggregateOutputType = {
     amount: Decimal | null
+    estimatedTime: number | null
   }
 
   export type OrderMinAggregateOutputType = {
@@ -3743,6 +3984,19 @@ export namespace Prisma {
     paidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    fulfillmentStatus: $Enums.OrderStatus | null
+    customerName: string | null
+    customerPhone: string | null
+    customerAddress: string | null
+    riderId: string | null
+    riderName: string | null
+    riderPhone: string | null
+    assignedAt: Date | null
+    pickedUpAt: Date | null
+    deliveredAt: Date | null
+    estimatedTime: number | null
+    adminNotes: string | null
+    notificationSent: boolean | null
   }
 
   export type OrderMaxAggregateOutputType = {
@@ -3757,6 +4011,19 @@ export namespace Prisma {
     paidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    fulfillmentStatus: $Enums.OrderStatus | null
+    customerName: string | null
+    customerPhone: string | null
+    customerAddress: string | null
+    riderId: string | null
+    riderName: string | null
+    riderPhone: string | null
+    assignedAt: Date | null
+    pickedUpAt: Date | null
+    deliveredAt: Date | null
+    estimatedTime: number | null
+    adminNotes: string | null
+    notificationSent: boolean | null
   }
 
   export type OrderCountAggregateOutputType = {
@@ -3771,16 +4038,31 @@ export namespace Prisma {
     paidAt: number
     createdAt: number
     updatedAt: number
+    fulfillmentStatus: number
+    customerName: number
+    customerPhone: number
+    customerAddress: number
+    riderId: number
+    riderName: number
+    riderPhone: number
+    assignedAt: number
+    pickedUpAt: number
+    deliveredAt: number
+    estimatedTime: number
+    adminNotes: number
+    notificationSent: number
     _all: number
   }
 
 
   export type OrderAvgAggregateInputType = {
     amount?: true
+    estimatedTime?: true
   }
 
   export type OrderSumAggregateInputType = {
     amount?: true
+    estimatedTime?: true
   }
 
   export type OrderMinAggregateInputType = {
@@ -3795,6 +4077,19 @@ export namespace Prisma {
     paidAt?: true
     createdAt?: true
     updatedAt?: true
+    fulfillmentStatus?: true
+    customerName?: true
+    customerPhone?: true
+    customerAddress?: true
+    riderId?: true
+    riderName?: true
+    riderPhone?: true
+    assignedAt?: true
+    pickedUpAt?: true
+    deliveredAt?: true
+    estimatedTime?: true
+    adminNotes?: true
+    notificationSent?: true
   }
 
   export type OrderMaxAggregateInputType = {
@@ -3809,6 +4104,19 @@ export namespace Prisma {
     paidAt?: true
     createdAt?: true
     updatedAt?: true
+    fulfillmentStatus?: true
+    customerName?: true
+    customerPhone?: true
+    customerAddress?: true
+    riderId?: true
+    riderName?: true
+    riderPhone?: true
+    assignedAt?: true
+    pickedUpAt?: true
+    deliveredAt?: true
+    estimatedTime?: true
+    adminNotes?: true
+    notificationSent?: true
   }
 
   export type OrderCountAggregateInputType = {
@@ -3823,6 +4131,19 @@ export namespace Prisma {
     paidAt?: true
     createdAt?: true
     updatedAt?: true
+    fulfillmentStatus?: true
+    customerName?: true
+    customerPhone?: true
+    customerAddress?: true
+    riderId?: true
+    riderName?: true
+    riderPhone?: true
+    assignedAt?: true
+    pickedUpAt?: true
+    deliveredAt?: true
+    estimatedTime?: true
+    adminNotes?: true
+    notificationSent?: true
     _all?: true
   }
 
@@ -3924,6 +4245,19 @@ export namespace Prisma {
     paidAt: Date | null
     createdAt: Date
     updatedAt: Date
+    fulfillmentStatus: $Enums.OrderStatus
+    customerName: string | null
+    customerPhone: string | null
+    customerAddress: string | null
+    riderId: string | null
+    riderName: string | null
+    riderPhone: string | null
+    assignedAt: Date | null
+    pickedUpAt: Date | null
+    deliveredAt: Date | null
+    estimatedTime: number | null
+    adminNotes: string | null
+    notificationSent: boolean
     _count: OrderCountAggregateOutputType | null
     _avg: OrderAvgAggregateOutputType | null
     _sum: OrderSumAggregateOutputType | null
@@ -3957,8 +4291,23 @@ export namespace Prisma {
     paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    fulfillmentStatus?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerAddress?: boolean
+    riderId?: boolean
+    riderName?: boolean
+    riderPhone?: boolean
+    assignedAt?: boolean
+    pickedUpAt?: boolean
+    deliveredAt?: boolean
+    estimatedTime?: boolean
+    adminNotes?: boolean
+    notificationSent?: boolean
     items?: boolean | Order$itemsArgs<ExtArgs>
     payment?: boolean | Order$paymentArgs<ExtArgs>
+    statusHistory?: boolean | Order$statusHistoryArgs<ExtArgs>
+    rider?: boolean | Order$riderArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -3974,6 +4323,20 @@ export namespace Prisma {
     paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    fulfillmentStatus?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerAddress?: boolean
+    riderId?: boolean
+    riderName?: boolean
+    riderPhone?: boolean
+    assignedAt?: boolean
+    pickedUpAt?: boolean
+    deliveredAt?: boolean
+    estimatedTime?: boolean
+    adminNotes?: boolean
+    notificationSent?: boolean
+    rider?: boolean | Order$riderArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -3988,6 +4351,20 @@ export namespace Prisma {
     paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    fulfillmentStatus?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerAddress?: boolean
+    riderId?: boolean
+    riderName?: boolean
+    riderPhone?: boolean
+    assignedAt?: boolean
+    pickedUpAt?: boolean
+    deliveredAt?: boolean
+    estimatedTime?: boolean
+    adminNotes?: boolean
+    notificationSent?: boolean
+    rider?: boolean | Order$riderArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
   export type OrderSelectScalar = {
@@ -4002,22 +4379,43 @@ export namespace Prisma {
     paidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    fulfillmentStatus?: boolean
+    customerName?: boolean
+    customerPhone?: boolean
+    customerAddress?: boolean
+    riderId?: boolean
+    riderName?: boolean
+    riderPhone?: boolean
+    assignedAt?: boolean
+    pickedUpAt?: boolean
+    deliveredAt?: boolean
+    estimatedTime?: boolean
+    adminNotes?: boolean
+    notificationSent?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reference" | "idempotencyKey" | "sellerId" | "email" | "amount" | "currency" | "status" | "paidAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reference" | "idempotencyKey" | "sellerId" | "email" | "amount" | "currency" | "status" | "paidAt" | "createdAt" | "updatedAt" | "fulfillmentStatus" | "customerName" | "customerPhone" | "customerAddress" | "riderId" | "riderName" | "riderPhone" | "assignedAt" | "pickedUpAt" | "deliveredAt" | "estimatedTime" | "adminNotes" | "notificationSent", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | Order$itemsArgs<ExtArgs>
     payment?: boolean | Order$paymentArgs<ExtArgs>
+    statusHistory?: boolean | Order$statusHistoryArgs<ExtArgs>
+    rider?: boolean | Order$riderArgs<ExtArgs>
     _count?: boolean | OrderCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type OrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type OrderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    rider?: boolean | Order$riderArgs<ExtArgs>
+  }
+  export type OrderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    rider?: boolean | Order$riderArgs<ExtArgs>
+  }
 
   export type $OrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Order"
     objects: {
       items: Prisma.$OrderItemPayload<ExtArgs>[]
       payment: Prisma.$PaymentTransactionPayload<ExtArgs> | null
+      statusHistory: Prisma.$OrderStatusLogPayload<ExtArgs>[]
+      rider: Prisma.$RiderPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4031,6 +4429,19 @@ export namespace Prisma {
       paidAt: Date | null
       createdAt: Date
       updatedAt: Date
+      fulfillmentStatus: $Enums.OrderStatus
+      customerName: string | null
+      customerPhone: string | null
+      customerAddress: string | null
+      riderId: string | null
+      riderName: string | null
+      riderPhone: string | null
+      assignedAt: Date | null
+      pickedUpAt: Date | null
+      deliveredAt: Date | null
+      estimatedTime: number | null
+      adminNotes: string | null
+      notificationSent: boolean
     }, ExtArgs["result"]["order"]>
     composites: {}
   }
@@ -4427,6 +4838,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     items<T extends Order$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payment<T extends Order$paymentArgs<ExtArgs> = {}>(args?: Subset<T, Order$paymentArgs<ExtArgs>>): Prisma__PaymentTransactionClient<$Result.GetResult<Prisma.$PaymentTransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    statusHistory<T extends Order$statusHistoryArgs<ExtArgs> = {}>(args?: Subset<T, Order$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    rider<T extends Order$riderArgs<ExtArgs> = {}>(args?: Subset<T, Order$riderArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4467,6 +4880,19 @@ export namespace Prisma {
     readonly paidAt: FieldRef<"Order", 'DateTime'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
+    readonly fulfillmentStatus: FieldRef<"Order", 'OrderStatus'>
+    readonly customerName: FieldRef<"Order", 'String'>
+    readonly customerPhone: FieldRef<"Order", 'String'>
+    readonly customerAddress: FieldRef<"Order", 'String'>
+    readonly riderId: FieldRef<"Order", 'String'>
+    readonly riderName: FieldRef<"Order", 'String'>
+    readonly riderPhone: FieldRef<"Order", 'String'>
+    readonly assignedAt: FieldRef<"Order", 'DateTime'>
+    readonly pickedUpAt: FieldRef<"Order", 'DateTime'>
+    readonly deliveredAt: FieldRef<"Order", 'DateTime'>
+    readonly estimatedTime: FieldRef<"Order", 'Int'>
+    readonly adminNotes: FieldRef<"Order", 'String'>
+    readonly notificationSent: FieldRef<"Order", 'Boolean'>
   }
     
 
@@ -4721,6 +5147,10 @@ export namespace Prisma {
      */
     data: OrderCreateManyInput | OrderCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4791,6 +5221,10 @@ export namespace Prisma {
      * Limit how many Orders to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -4903,6 +5337,49 @@ export namespace Prisma {
   }
 
   /**
+   * Order.statusHistory
+   */
+  export type Order$statusHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    where?: OrderStatusLogWhereInput
+    orderBy?: OrderStatusLogOrderByWithRelationInput | OrderStatusLogOrderByWithRelationInput[]
+    cursor?: OrderStatusLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderStatusLogScalarFieldEnum | OrderStatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * Order.rider
+   */
+  export type Order$riderArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    where?: RiderWhereInput
+  }
+
+  /**
    * Order without action
    */
   export type OrderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4918,6 +5395,2157 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: OrderInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model OrderStatusLog
+   */
+
+  export type AggregateOrderStatusLog = {
+    _count: OrderStatusLogCountAggregateOutputType | null
+    _min: OrderStatusLogMinAggregateOutputType | null
+    _max: OrderStatusLogMaxAggregateOutputType | null
+  }
+
+  export type OrderStatusLogMinAggregateOutputType = {
+    id: string | null
+    orderId: string | null
+    status: $Enums.OrderStatus | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type OrderStatusLogMaxAggregateOutputType = {
+    id: string | null
+    orderId: string | null
+    status: $Enums.OrderStatus | null
+    note: string | null
+    createdAt: Date | null
+  }
+
+  export type OrderStatusLogCountAggregateOutputType = {
+    id: number
+    orderId: number
+    status: number
+    note: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type OrderStatusLogMinAggregateInputType = {
+    id?: true
+    orderId?: true
+    status?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type OrderStatusLogMaxAggregateInputType = {
+    id?: true
+    orderId?: true
+    status?: true
+    note?: true
+    createdAt?: true
+  }
+
+  export type OrderStatusLogCountAggregateInputType = {
+    id?: true
+    orderId?: true
+    status?: true
+    note?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type OrderStatusLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OrderStatusLog to aggregate.
+     */
+    where?: OrderStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderStatusLogs to fetch.
+     */
+    orderBy?: OrderStatusLogOrderByWithRelationInput | OrderStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OrderStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderStatusLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OrderStatusLogs
+    **/
+    _count?: true | OrderStatusLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OrderStatusLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OrderStatusLogMaxAggregateInputType
+  }
+
+  export type GetOrderStatusLogAggregateType<T extends OrderStatusLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateOrderStatusLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOrderStatusLog[P]>
+      : GetScalarType<T[P], AggregateOrderStatusLog[P]>
+  }
+
+
+
+
+  export type OrderStatusLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderStatusLogWhereInput
+    orderBy?: OrderStatusLogOrderByWithAggregationInput | OrderStatusLogOrderByWithAggregationInput[]
+    by: OrderStatusLogScalarFieldEnum[] | OrderStatusLogScalarFieldEnum
+    having?: OrderStatusLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OrderStatusLogCountAggregateInputType | true
+    _min?: OrderStatusLogMinAggregateInputType
+    _max?: OrderStatusLogMaxAggregateInputType
+  }
+
+  export type OrderStatusLogGroupByOutputType = {
+    id: string
+    orderId: string
+    status: $Enums.OrderStatus
+    note: string | null
+    createdAt: Date
+    _count: OrderStatusLogCountAggregateOutputType | null
+    _min: OrderStatusLogMinAggregateOutputType | null
+    _max: OrderStatusLogMaxAggregateOutputType | null
+  }
+
+  type GetOrderStatusLogGroupByPayload<T extends OrderStatusLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OrderStatusLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OrderStatusLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OrderStatusLogGroupByOutputType[P]>
+            : GetScalarType<T[P], OrderStatusLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OrderStatusLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orderId?: boolean
+    status?: boolean
+    note?: boolean
+    createdAt?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["orderStatusLog"]>
+
+  export type OrderStatusLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orderId?: boolean
+    status?: boolean
+    note?: boolean
+    createdAt?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["orderStatusLog"]>
+
+  export type OrderStatusLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    orderId?: boolean
+    status?: boolean
+    note?: boolean
+    createdAt?: boolean
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["orderStatusLog"]>
+
+  export type OrderStatusLogSelectScalar = {
+    id?: boolean
+    orderId?: boolean
+    status?: boolean
+    note?: boolean
+    createdAt?: boolean
+  }
+
+  export type OrderStatusLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderId" | "status" | "note" | "createdAt", ExtArgs["result"]["orderStatusLog"]>
+  export type OrderStatusLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }
+  export type OrderStatusLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }
+  export type OrderStatusLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    order?: boolean | OrderDefaultArgs<ExtArgs>
+  }
+
+  export type $OrderStatusLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OrderStatusLog"
+    objects: {
+      order: Prisma.$OrderPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      orderId: string
+      status: $Enums.OrderStatus
+      note: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["orderStatusLog"]>
+    composites: {}
+  }
+
+  type OrderStatusLogGetPayload<S extends boolean | null | undefined | OrderStatusLogDefaultArgs> = $Result.GetResult<Prisma.$OrderStatusLogPayload, S>
+
+  type OrderStatusLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OrderStatusLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OrderStatusLogCountAggregateInputType | true
+    }
+
+  export interface OrderStatusLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OrderStatusLog'], meta: { name: 'OrderStatusLog' } }
+    /**
+     * Find zero or one OrderStatusLog that matches the filter.
+     * @param {OrderStatusLogFindUniqueArgs} args - Arguments to find a OrderStatusLog
+     * @example
+     * // Get one OrderStatusLog
+     * const orderStatusLog = await prisma.orderStatusLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OrderStatusLogFindUniqueArgs>(args: SelectSubset<T, OrderStatusLogFindUniqueArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OrderStatusLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OrderStatusLogFindUniqueOrThrowArgs} args - Arguments to find a OrderStatusLog
+     * @example
+     * // Get one OrderStatusLog
+     * const orderStatusLog = await prisma.orderStatusLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OrderStatusLogFindUniqueOrThrowArgs>(args: SelectSubset<T, OrderStatusLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OrderStatusLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderStatusLogFindFirstArgs} args - Arguments to find a OrderStatusLog
+     * @example
+     * // Get one OrderStatusLog
+     * const orderStatusLog = await prisma.orderStatusLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OrderStatusLogFindFirstArgs>(args?: SelectSubset<T, OrderStatusLogFindFirstArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OrderStatusLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderStatusLogFindFirstOrThrowArgs} args - Arguments to find a OrderStatusLog
+     * @example
+     * // Get one OrderStatusLog
+     * const orderStatusLog = await prisma.orderStatusLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OrderStatusLogFindFirstOrThrowArgs>(args?: SelectSubset<T, OrderStatusLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OrderStatusLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderStatusLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OrderStatusLogs
+     * const orderStatusLogs = await prisma.orderStatusLog.findMany()
+     * 
+     * // Get first 10 OrderStatusLogs
+     * const orderStatusLogs = await prisma.orderStatusLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const orderStatusLogWithIdOnly = await prisma.orderStatusLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OrderStatusLogFindManyArgs>(args?: SelectSubset<T, OrderStatusLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OrderStatusLog.
+     * @param {OrderStatusLogCreateArgs} args - Arguments to create a OrderStatusLog.
+     * @example
+     * // Create one OrderStatusLog
+     * const OrderStatusLog = await prisma.orderStatusLog.create({
+     *   data: {
+     *     // ... data to create a OrderStatusLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends OrderStatusLogCreateArgs>(args: SelectSubset<T, OrderStatusLogCreateArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OrderStatusLogs.
+     * @param {OrderStatusLogCreateManyArgs} args - Arguments to create many OrderStatusLogs.
+     * @example
+     * // Create many OrderStatusLogs
+     * const orderStatusLog = await prisma.orderStatusLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OrderStatusLogCreateManyArgs>(args?: SelectSubset<T, OrderStatusLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OrderStatusLogs and returns the data saved in the database.
+     * @param {OrderStatusLogCreateManyAndReturnArgs} args - Arguments to create many OrderStatusLogs.
+     * @example
+     * // Create many OrderStatusLogs
+     * const orderStatusLog = await prisma.orderStatusLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OrderStatusLogs and only return the `id`
+     * const orderStatusLogWithIdOnly = await prisma.orderStatusLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OrderStatusLogCreateManyAndReturnArgs>(args?: SelectSubset<T, OrderStatusLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OrderStatusLog.
+     * @param {OrderStatusLogDeleteArgs} args - Arguments to delete one OrderStatusLog.
+     * @example
+     * // Delete one OrderStatusLog
+     * const OrderStatusLog = await prisma.orderStatusLog.delete({
+     *   where: {
+     *     // ... filter to delete one OrderStatusLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OrderStatusLogDeleteArgs>(args: SelectSubset<T, OrderStatusLogDeleteArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OrderStatusLog.
+     * @param {OrderStatusLogUpdateArgs} args - Arguments to update one OrderStatusLog.
+     * @example
+     * // Update one OrderStatusLog
+     * const orderStatusLog = await prisma.orderStatusLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OrderStatusLogUpdateArgs>(args: SelectSubset<T, OrderStatusLogUpdateArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OrderStatusLogs.
+     * @param {OrderStatusLogDeleteManyArgs} args - Arguments to filter OrderStatusLogs to delete.
+     * @example
+     * // Delete a few OrderStatusLogs
+     * const { count } = await prisma.orderStatusLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OrderStatusLogDeleteManyArgs>(args?: SelectSubset<T, OrderStatusLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OrderStatusLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderStatusLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OrderStatusLogs
+     * const orderStatusLog = await prisma.orderStatusLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OrderStatusLogUpdateManyArgs>(args: SelectSubset<T, OrderStatusLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OrderStatusLogs and returns the data updated in the database.
+     * @param {OrderStatusLogUpdateManyAndReturnArgs} args - Arguments to update many OrderStatusLogs.
+     * @example
+     * // Update many OrderStatusLogs
+     * const orderStatusLog = await prisma.orderStatusLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OrderStatusLogs and only return the `id`
+     * const orderStatusLogWithIdOnly = await prisma.orderStatusLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OrderStatusLogUpdateManyAndReturnArgs>(args: SelectSubset<T, OrderStatusLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OrderStatusLog.
+     * @param {OrderStatusLogUpsertArgs} args - Arguments to update or create a OrderStatusLog.
+     * @example
+     * // Update or create a OrderStatusLog
+     * const orderStatusLog = await prisma.orderStatusLog.upsert({
+     *   create: {
+     *     // ... data to create a OrderStatusLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OrderStatusLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OrderStatusLogUpsertArgs>(args: SelectSubset<T, OrderStatusLogUpsertArgs<ExtArgs>>): Prisma__OrderStatusLogClient<$Result.GetResult<Prisma.$OrderStatusLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OrderStatusLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderStatusLogCountArgs} args - Arguments to filter OrderStatusLogs to count.
+     * @example
+     * // Count the number of OrderStatusLogs
+     * const count = await prisma.orderStatusLog.count({
+     *   where: {
+     *     // ... the filter for the OrderStatusLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends OrderStatusLogCountArgs>(
+      args?: Subset<T, OrderStatusLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OrderStatusLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OrderStatusLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderStatusLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OrderStatusLogAggregateArgs>(args: Subset<T, OrderStatusLogAggregateArgs>): Prisma.PrismaPromise<GetOrderStatusLogAggregateType<T>>
+
+    /**
+     * Group by OrderStatusLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OrderStatusLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OrderStatusLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OrderStatusLogGroupByArgs['orderBy'] }
+        : { orderBy?: OrderStatusLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OrderStatusLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOrderStatusLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OrderStatusLog model
+   */
+  readonly fields: OrderStatusLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OrderStatusLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OrderStatusLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    order<T extends OrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrderDefaultArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OrderStatusLog model
+   */
+  interface OrderStatusLogFieldRefs {
+    readonly id: FieldRef<"OrderStatusLog", 'String'>
+    readonly orderId: FieldRef<"OrderStatusLog", 'String'>
+    readonly status: FieldRef<"OrderStatusLog", 'OrderStatus'>
+    readonly note: FieldRef<"OrderStatusLog", 'String'>
+    readonly createdAt: FieldRef<"OrderStatusLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OrderStatusLog findUnique
+   */
+  export type OrderStatusLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderStatusLog to fetch.
+     */
+    where: OrderStatusLogWhereUniqueInput
+  }
+
+  /**
+   * OrderStatusLog findUniqueOrThrow
+   */
+  export type OrderStatusLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderStatusLog to fetch.
+     */
+    where: OrderStatusLogWhereUniqueInput
+  }
+
+  /**
+   * OrderStatusLog findFirst
+   */
+  export type OrderStatusLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderStatusLog to fetch.
+     */
+    where?: OrderStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderStatusLogs to fetch.
+     */
+    orderBy?: OrderStatusLogOrderByWithRelationInput | OrderStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OrderStatusLogs.
+     */
+    cursor?: OrderStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderStatusLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OrderStatusLogs.
+     */
+    distinct?: OrderStatusLogScalarFieldEnum | OrderStatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * OrderStatusLog findFirstOrThrow
+   */
+  export type OrderStatusLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderStatusLog to fetch.
+     */
+    where?: OrderStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderStatusLogs to fetch.
+     */
+    orderBy?: OrderStatusLogOrderByWithRelationInput | OrderStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OrderStatusLogs.
+     */
+    cursor?: OrderStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderStatusLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OrderStatusLogs.
+     */
+    distinct?: OrderStatusLogScalarFieldEnum | OrderStatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * OrderStatusLog findMany
+   */
+  export type OrderStatusLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter, which OrderStatusLogs to fetch.
+     */
+    where?: OrderStatusLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OrderStatusLogs to fetch.
+     */
+    orderBy?: OrderStatusLogOrderByWithRelationInput | OrderStatusLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OrderStatusLogs.
+     */
+    cursor?: OrderStatusLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OrderStatusLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OrderStatusLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OrderStatusLogs.
+     */
+    distinct?: OrderStatusLogScalarFieldEnum | OrderStatusLogScalarFieldEnum[]
+  }
+
+  /**
+   * OrderStatusLog create
+   */
+  export type OrderStatusLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a OrderStatusLog.
+     */
+    data: XOR<OrderStatusLogCreateInput, OrderStatusLogUncheckedCreateInput>
+  }
+
+  /**
+   * OrderStatusLog createMany
+   */
+  export type OrderStatusLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OrderStatusLogs.
+     */
+    data: OrderStatusLogCreateManyInput | OrderStatusLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OrderStatusLog createManyAndReturn
+   */
+  export type OrderStatusLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many OrderStatusLogs.
+     */
+    data: OrderStatusLogCreateManyInput | OrderStatusLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OrderStatusLog update
+   */
+  export type OrderStatusLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a OrderStatusLog.
+     */
+    data: XOR<OrderStatusLogUpdateInput, OrderStatusLogUncheckedUpdateInput>
+    /**
+     * Choose, which OrderStatusLog to update.
+     */
+    where: OrderStatusLogWhereUniqueInput
+  }
+
+  /**
+   * OrderStatusLog updateMany
+   */
+  export type OrderStatusLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OrderStatusLogs.
+     */
+    data: XOR<OrderStatusLogUpdateManyMutationInput, OrderStatusLogUncheckedUpdateManyInput>
+    /**
+     * Filter which OrderStatusLogs to update
+     */
+    where?: OrderStatusLogWhereInput
+    /**
+     * Limit how many OrderStatusLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OrderStatusLog updateManyAndReturn
+   */
+  export type OrderStatusLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * The data used to update OrderStatusLogs.
+     */
+    data: XOR<OrderStatusLogUpdateManyMutationInput, OrderStatusLogUncheckedUpdateManyInput>
+    /**
+     * Filter which OrderStatusLogs to update
+     */
+    where?: OrderStatusLogWhereInput
+    /**
+     * Limit how many OrderStatusLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * OrderStatusLog upsert
+   */
+  export type OrderStatusLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the OrderStatusLog to update in case it exists.
+     */
+    where: OrderStatusLogWhereUniqueInput
+    /**
+     * In case the OrderStatusLog found by the `where` argument doesn't exist, create a new OrderStatusLog with this data.
+     */
+    create: XOR<OrderStatusLogCreateInput, OrderStatusLogUncheckedCreateInput>
+    /**
+     * In case the OrderStatusLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OrderStatusLogUpdateInput, OrderStatusLogUncheckedUpdateInput>
+  }
+
+  /**
+   * OrderStatusLog delete
+   */
+  export type OrderStatusLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+    /**
+     * Filter which OrderStatusLog to delete.
+     */
+    where: OrderStatusLogWhereUniqueInput
+  }
+
+  /**
+   * OrderStatusLog deleteMany
+   */
+  export type OrderStatusLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OrderStatusLogs to delete
+     */
+    where?: OrderStatusLogWhereInput
+    /**
+     * Limit how many OrderStatusLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OrderStatusLog without action
+   */
+  export type OrderStatusLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderStatusLog
+     */
+    select?: OrderStatusLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderStatusLog
+     */
+    omit?: OrderStatusLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderStatusLogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Rider
+   */
+
+  export type AggregateRider = {
+    _count: RiderCountAggregateOutputType | null
+    _min: RiderMinAggregateOutputType | null
+    _max: RiderMaxAggregateOutputType | null
+  }
+
+  export type RiderMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    phone: string | null
+    whatsapp: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type RiderMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    phone: string | null
+    whatsapp: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+  }
+
+  export type RiderCountAggregateOutputType = {
+    id: number
+    name: number
+    phone: number
+    whatsapp: number
+    isActive: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RiderMinAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    whatsapp?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type RiderMaxAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    whatsapp?: true
+    isActive?: true
+    createdAt?: true
+  }
+
+  export type RiderCountAggregateInputType = {
+    id?: true
+    name?: true
+    phone?: true
+    whatsapp?: true
+    isActive?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RiderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Rider to aggregate.
+     */
+    where?: RiderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Riders to fetch.
+     */
+    orderBy?: RiderOrderByWithRelationInput | RiderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RiderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Riders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Riders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Riders
+    **/
+    _count?: true | RiderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RiderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RiderMaxAggregateInputType
+  }
+
+  export type GetRiderAggregateType<T extends RiderAggregateArgs> = {
+        [P in keyof T & keyof AggregateRider]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRider[P]>
+      : GetScalarType<T[P], AggregateRider[P]>
+  }
+
+
+
+
+  export type RiderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RiderWhereInput
+    orderBy?: RiderOrderByWithAggregationInput | RiderOrderByWithAggregationInput[]
+    by: RiderScalarFieldEnum[] | RiderScalarFieldEnum
+    having?: RiderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RiderCountAggregateInputType | true
+    _min?: RiderMinAggregateInputType
+    _max?: RiderMaxAggregateInputType
+  }
+
+  export type RiderGroupByOutputType = {
+    id: string
+    name: string
+    phone: string
+    whatsapp: string
+    isActive: boolean
+    createdAt: Date
+    _count: RiderCountAggregateOutputType | null
+    _min: RiderMinAggregateOutputType | null
+    _max: RiderMaxAggregateOutputType | null
+  }
+
+  type GetRiderGroupByPayload<T extends RiderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RiderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RiderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RiderGroupByOutputType[P]>
+            : GetScalarType<T[P], RiderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RiderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    whatsapp?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    orders?: boolean | Rider$ordersArgs<ExtArgs>
+    _count?: boolean | RiderCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rider"]>
+
+  export type RiderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    whatsapp?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["rider"]>
+
+  export type RiderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    whatsapp?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["rider"]>
+
+  export type RiderSelectScalar = {
+    id?: boolean
+    name?: boolean
+    phone?: boolean
+    whatsapp?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+  }
+
+  export type RiderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "phone" | "whatsapp" | "isActive" | "createdAt", ExtArgs["result"]["rider"]>
+  export type RiderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    orders?: boolean | Rider$ordersArgs<ExtArgs>
+    _count?: boolean | RiderCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type RiderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type RiderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $RiderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Rider"
+    objects: {
+      orders: Prisma.$OrderPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      phone: string
+      whatsapp: string
+      isActive: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["rider"]>
+    composites: {}
+  }
+
+  type RiderGetPayload<S extends boolean | null | undefined | RiderDefaultArgs> = $Result.GetResult<Prisma.$RiderPayload, S>
+
+  type RiderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RiderFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RiderCountAggregateInputType | true
+    }
+
+  export interface RiderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Rider'], meta: { name: 'Rider' } }
+    /**
+     * Find zero or one Rider that matches the filter.
+     * @param {RiderFindUniqueArgs} args - Arguments to find a Rider
+     * @example
+     * // Get one Rider
+     * const rider = await prisma.rider.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RiderFindUniqueArgs>(args: SelectSubset<T, RiderFindUniqueArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Rider that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RiderFindUniqueOrThrowArgs} args - Arguments to find a Rider
+     * @example
+     * // Get one Rider
+     * const rider = await prisma.rider.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RiderFindUniqueOrThrowArgs>(args: SelectSubset<T, RiderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Rider that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RiderFindFirstArgs} args - Arguments to find a Rider
+     * @example
+     * // Get one Rider
+     * const rider = await prisma.rider.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RiderFindFirstArgs>(args?: SelectSubset<T, RiderFindFirstArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Rider that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RiderFindFirstOrThrowArgs} args - Arguments to find a Rider
+     * @example
+     * // Get one Rider
+     * const rider = await prisma.rider.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RiderFindFirstOrThrowArgs>(args?: SelectSubset<T, RiderFindFirstOrThrowArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Riders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RiderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Riders
+     * const riders = await prisma.rider.findMany()
+     * 
+     * // Get first 10 Riders
+     * const riders = await prisma.rider.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const riderWithIdOnly = await prisma.rider.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RiderFindManyArgs>(args?: SelectSubset<T, RiderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Rider.
+     * @param {RiderCreateArgs} args - Arguments to create a Rider.
+     * @example
+     * // Create one Rider
+     * const Rider = await prisma.rider.create({
+     *   data: {
+     *     // ... data to create a Rider
+     *   }
+     * })
+     * 
+     */
+    create<T extends RiderCreateArgs>(args: SelectSubset<T, RiderCreateArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Riders.
+     * @param {RiderCreateManyArgs} args - Arguments to create many Riders.
+     * @example
+     * // Create many Riders
+     * const rider = await prisma.rider.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RiderCreateManyArgs>(args?: SelectSubset<T, RiderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Riders and returns the data saved in the database.
+     * @param {RiderCreateManyAndReturnArgs} args - Arguments to create many Riders.
+     * @example
+     * // Create many Riders
+     * const rider = await prisma.rider.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Riders and only return the `id`
+     * const riderWithIdOnly = await prisma.rider.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RiderCreateManyAndReturnArgs>(args?: SelectSubset<T, RiderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Rider.
+     * @param {RiderDeleteArgs} args - Arguments to delete one Rider.
+     * @example
+     * // Delete one Rider
+     * const Rider = await prisma.rider.delete({
+     *   where: {
+     *     // ... filter to delete one Rider
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RiderDeleteArgs>(args: SelectSubset<T, RiderDeleteArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Rider.
+     * @param {RiderUpdateArgs} args - Arguments to update one Rider.
+     * @example
+     * // Update one Rider
+     * const rider = await prisma.rider.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RiderUpdateArgs>(args: SelectSubset<T, RiderUpdateArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Riders.
+     * @param {RiderDeleteManyArgs} args - Arguments to filter Riders to delete.
+     * @example
+     * // Delete a few Riders
+     * const { count } = await prisma.rider.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RiderDeleteManyArgs>(args?: SelectSubset<T, RiderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Riders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RiderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Riders
+     * const rider = await prisma.rider.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RiderUpdateManyArgs>(args: SelectSubset<T, RiderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Riders and returns the data updated in the database.
+     * @param {RiderUpdateManyAndReturnArgs} args - Arguments to update many Riders.
+     * @example
+     * // Update many Riders
+     * const rider = await prisma.rider.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Riders and only return the `id`
+     * const riderWithIdOnly = await prisma.rider.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RiderUpdateManyAndReturnArgs>(args: SelectSubset<T, RiderUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Rider.
+     * @param {RiderUpsertArgs} args - Arguments to update or create a Rider.
+     * @example
+     * // Update or create a Rider
+     * const rider = await prisma.rider.upsert({
+     *   create: {
+     *     // ... data to create a Rider
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Rider we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RiderUpsertArgs>(args: SelectSubset<T, RiderUpsertArgs<ExtArgs>>): Prisma__RiderClient<$Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Riders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RiderCountArgs} args - Arguments to filter Riders to count.
+     * @example
+     * // Count the number of Riders
+     * const count = await prisma.rider.count({
+     *   where: {
+     *     // ... the filter for the Riders we want to count
+     *   }
+     * })
+    **/
+    count<T extends RiderCountArgs>(
+      args?: Subset<T, RiderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RiderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Rider.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RiderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RiderAggregateArgs>(args: Subset<T, RiderAggregateArgs>): Prisma.PrismaPromise<GetRiderAggregateType<T>>
+
+    /**
+     * Group by Rider.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RiderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RiderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RiderGroupByArgs['orderBy'] }
+        : { orderBy?: RiderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RiderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRiderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Rider model
+   */
+  readonly fields: RiderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Rider.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RiderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    orders<T extends Rider$ordersArgs<ExtArgs> = {}>(args?: Subset<T, Rider$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Rider model
+   */
+  interface RiderFieldRefs {
+    readonly id: FieldRef<"Rider", 'String'>
+    readonly name: FieldRef<"Rider", 'String'>
+    readonly phone: FieldRef<"Rider", 'String'>
+    readonly whatsapp: FieldRef<"Rider", 'String'>
+    readonly isActive: FieldRef<"Rider", 'Boolean'>
+    readonly createdAt: FieldRef<"Rider", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Rider findUnique
+   */
+  export type RiderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * Filter, which Rider to fetch.
+     */
+    where: RiderWhereUniqueInput
+  }
+
+  /**
+   * Rider findUniqueOrThrow
+   */
+  export type RiderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * Filter, which Rider to fetch.
+     */
+    where: RiderWhereUniqueInput
+  }
+
+  /**
+   * Rider findFirst
+   */
+  export type RiderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * Filter, which Rider to fetch.
+     */
+    where?: RiderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Riders to fetch.
+     */
+    orderBy?: RiderOrderByWithRelationInput | RiderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Riders.
+     */
+    cursor?: RiderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Riders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Riders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Riders.
+     */
+    distinct?: RiderScalarFieldEnum | RiderScalarFieldEnum[]
+  }
+
+  /**
+   * Rider findFirstOrThrow
+   */
+  export type RiderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * Filter, which Rider to fetch.
+     */
+    where?: RiderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Riders to fetch.
+     */
+    orderBy?: RiderOrderByWithRelationInput | RiderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Riders.
+     */
+    cursor?: RiderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Riders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Riders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Riders.
+     */
+    distinct?: RiderScalarFieldEnum | RiderScalarFieldEnum[]
+  }
+
+  /**
+   * Rider findMany
+   */
+  export type RiderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * Filter, which Riders to fetch.
+     */
+    where?: RiderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Riders to fetch.
+     */
+    orderBy?: RiderOrderByWithRelationInput | RiderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Riders.
+     */
+    cursor?: RiderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Riders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Riders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Riders.
+     */
+    distinct?: RiderScalarFieldEnum | RiderScalarFieldEnum[]
+  }
+
+  /**
+   * Rider create
+   */
+  export type RiderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Rider.
+     */
+    data: XOR<RiderCreateInput, RiderUncheckedCreateInput>
+  }
+
+  /**
+   * Rider createMany
+   */
+  export type RiderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Riders.
+     */
+    data: RiderCreateManyInput | RiderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Rider createManyAndReturn
+   */
+  export type RiderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * The data used to create many Riders.
+     */
+    data: RiderCreateManyInput | RiderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Rider update
+   */
+  export type RiderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Rider.
+     */
+    data: XOR<RiderUpdateInput, RiderUncheckedUpdateInput>
+    /**
+     * Choose, which Rider to update.
+     */
+    where: RiderWhereUniqueInput
+  }
+
+  /**
+   * Rider updateMany
+   */
+  export type RiderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Riders.
+     */
+    data: XOR<RiderUpdateManyMutationInput, RiderUncheckedUpdateManyInput>
+    /**
+     * Filter which Riders to update
+     */
+    where?: RiderWhereInput
+    /**
+     * Limit how many Riders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Rider updateManyAndReturn
+   */
+  export type RiderUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * The data used to update Riders.
+     */
+    data: XOR<RiderUpdateManyMutationInput, RiderUncheckedUpdateManyInput>
+    /**
+     * Filter which Riders to update
+     */
+    where?: RiderWhereInput
+    /**
+     * Limit how many Riders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Rider upsert
+   */
+  export type RiderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Rider to update in case it exists.
+     */
+    where: RiderWhereUniqueInput
+    /**
+     * In case the Rider found by the `where` argument doesn't exist, create a new Rider with this data.
+     */
+    create: XOR<RiderCreateInput, RiderUncheckedCreateInput>
+    /**
+     * In case the Rider was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RiderUpdateInput, RiderUncheckedUpdateInput>
+  }
+
+  /**
+   * Rider delete
+   */
+  export type RiderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
+    /**
+     * Filter which Rider to delete.
+     */
+    where: RiderWhereUniqueInput
+  }
+
+  /**
+   * Rider deleteMany
+   */
+  export type RiderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Riders to delete
+     */
+    where?: RiderWhereInput
+    /**
+     * Limit how many Riders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Rider.orders
+   */
+  export type Rider$ordersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Order
+     */
+    select?: OrderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Order
+     */
+    omit?: OrderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderInclude<ExtArgs> | null
+    where?: OrderWhereInput
+    orderBy?: OrderOrderByWithRelationInput | OrderOrderByWithRelationInput[]
+    cursor?: OrderWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderScalarFieldEnum | OrderScalarFieldEnum[]
+  }
+
+  /**
+   * Rider without action
+   */
+  export type RiderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Rider
+     */
+    select?: RiderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Rider
+     */
+    omit?: RiderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RiderInclude<ExtArgs> | null
   }
 
 
@@ -8457,10 +11085,46 @@ export namespace Prisma {
     status: 'status',
     paidAt: 'paidAt',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    fulfillmentStatus: 'fulfillmentStatus',
+    customerName: 'customerName',
+    customerPhone: 'customerPhone',
+    customerAddress: 'customerAddress',
+    riderId: 'riderId',
+    riderName: 'riderName',
+    riderPhone: 'riderPhone',
+    assignedAt: 'assignedAt',
+    pickedUpAt: 'pickedUpAt',
+    deliveredAt: 'deliveredAt',
+    estimatedTime: 'estimatedTime',
+    adminNotes: 'adminNotes',
+    notificationSent: 'notificationSent'
   };
 
   export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+  export const OrderStatusLogScalarFieldEnum: {
+    id: 'id',
+    orderId: 'orderId',
+    status: 'status',
+    note: 'note',
+    createdAt: 'createdAt'
+  };
+
+  export type OrderStatusLogScalarFieldEnum = (typeof OrderStatusLogScalarFieldEnum)[keyof typeof OrderStatusLogScalarFieldEnum]
+
+
+  export const RiderScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    phone: 'phone',
+    whatsapp: 'whatsapp',
+    isActive: 'isActive',
+    createdAt: 'createdAt'
+  };
+
+  export type RiderScalarFieldEnum = (typeof RiderScalarFieldEnum)[keyof typeof RiderScalarFieldEnum]
 
 
   export const OrderItemScalarFieldEnum: {
@@ -8648,6 +11312,20 @@ export namespace Prisma {
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
+   * Reference to a field of type 'OrderStatus'
+   */
+  export type EnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'OrderStatus[]'
+   */
+  export type ListEnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus[]'>
     
 
 
@@ -8867,8 +11545,23 @@ export namespace Prisma {
     paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
+    fulfillmentStatus?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
+    customerName?: StringNullableFilter<"Order"> | string | null
+    customerPhone?: StringNullableFilter<"Order"> | string | null
+    customerAddress?: StringNullableFilter<"Order"> | string | null
+    riderId?: StringNullableFilter<"Order"> | string | null
+    riderName?: StringNullableFilter<"Order"> | string | null
+    riderPhone?: StringNullableFilter<"Order"> | string | null
+    assignedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    pickedUpAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    deliveredAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    estimatedTime?: IntNullableFilter<"Order"> | number | null
+    adminNotes?: StringNullableFilter<"Order"> | string | null
+    notificationSent?: BoolFilter<"Order"> | boolean
     items?: OrderItemListRelationFilter
     payment?: XOR<PaymentTransactionNullableScalarRelationFilter, PaymentTransactionWhereInput> | null
+    statusHistory?: OrderStatusLogListRelationFilter
+    rider?: XOR<RiderNullableScalarRelationFilter, RiderWhereInput> | null
   }
 
   export type OrderOrderByWithRelationInput = {
@@ -8883,8 +11576,23 @@ export namespace Prisma {
     paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    fulfillmentStatus?: SortOrder
+    customerName?: SortOrderInput | SortOrder
+    customerPhone?: SortOrderInput | SortOrder
+    customerAddress?: SortOrderInput | SortOrder
+    riderId?: SortOrderInput | SortOrder
+    riderName?: SortOrderInput | SortOrder
+    riderPhone?: SortOrderInput | SortOrder
+    assignedAt?: SortOrderInput | SortOrder
+    pickedUpAt?: SortOrderInput | SortOrder
+    deliveredAt?: SortOrderInput | SortOrder
+    estimatedTime?: SortOrderInput | SortOrder
+    adminNotes?: SortOrderInput | SortOrder
+    notificationSent?: SortOrder
     items?: OrderItemOrderByRelationAggregateInput
     payment?: PaymentTransactionOrderByWithRelationInput
+    statusHistory?: OrderStatusLogOrderByRelationAggregateInput
+    rider?: RiderOrderByWithRelationInput
   }
 
   export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -8902,8 +11610,23 @@ export namespace Prisma {
     paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
+    fulfillmentStatus?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
+    customerName?: StringNullableFilter<"Order"> | string | null
+    customerPhone?: StringNullableFilter<"Order"> | string | null
+    customerAddress?: StringNullableFilter<"Order"> | string | null
+    riderId?: StringNullableFilter<"Order"> | string | null
+    riderName?: StringNullableFilter<"Order"> | string | null
+    riderPhone?: StringNullableFilter<"Order"> | string | null
+    assignedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    pickedUpAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    deliveredAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    estimatedTime?: IntNullableFilter<"Order"> | number | null
+    adminNotes?: StringNullableFilter<"Order"> | string | null
+    notificationSent?: BoolFilter<"Order"> | boolean
     items?: OrderItemListRelationFilter
     payment?: XOR<PaymentTransactionNullableScalarRelationFilter, PaymentTransactionWhereInput> | null
+    statusHistory?: OrderStatusLogListRelationFilter
+    rider?: XOR<RiderNullableScalarRelationFilter, RiderWhereInput> | null
   }, "id" | "reference" | "idempotencyKey">
 
   export type OrderOrderByWithAggregationInput = {
@@ -8918,6 +11641,19 @@ export namespace Prisma {
     paidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    fulfillmentStatus?: SortOrder
+    customerName?: SortOrderInput | SortOrder
+    customerPhone?: SortOrderInput | SortOrder
+    customerAddress?: SortOrderInput | SortOrder
+    riderId?: SortOrderInput | SortOrder
+    riderName?: SortOrderInput | SortOrder
+    riderPhone?: SortOrderInput | SortOrder
+    assignedAt?: SortOrderInput | SortOrder
+    pickedUpAt?: SortOrderInput | SortOrder
+    deliveredAt?: SortOrderInput | SortOrder
+    estimatedTime?: SortOrderInput | SortOrder
+    adminNotes?: SortOrderInput | SortOrder
+    notificationSent?: SortOrder
     _count?: OrderCountOrderByAggregateInput
     _avg?: OrderAvgOrderByAggregateInput
     _max?: OrderMaxOrderByAggregateInput
@@ -8940,6 +11676,134 @@ export namespace Prisma {
     paidAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
+    fulfillmentStatus?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
+    customerName?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    customerPhone?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    customerAddress?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    riderId?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    riderName?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    riderPhone?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    assignedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    pickedUpAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    deliveredAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    estimatedTime?: IntNullableWithAggregatesFilter<"Order"> | number | null
+    adminNotes?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    notificationSent?: BoolWithAggregatesFilter<"Order"> | boolean
+  }
+
+  export type OrderStatusLogWhereInput = {
+    AND?: OrderStatusLogWhereInput | OrderStatusLogWhereInput[]
+    OR?: OrderStatusLogWhereInput[]
+    NOT?: OrderStatusLogWhereInput | OrderStatusLogWhereInput[]
+    id?: StringFilter<"OrderStatusLog"> | string
+    orderId?: StringFilter<"OrderStatusLog"> | string
+    status?: EnumOrderStatusFilter<"OrderStatusLog"> | $Enums.OrderStatus
+    note?: StringNullableFilter<"OrderStatusLog"> | string | null
+    createdAt?: DateTimeFilter<"OrderStatusLog"> | Date | string
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+  }
+
+  export type OrderStatusLogOrderByWithRelationInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    order?: OrderOrderByWithRelationInput
+  }
+
+  export type OrderStatusLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OrderStatusLogWhereInput | OrderStatusLogWhereInput[]
+    OR?: OrderStatusLogWhereInput[]
+    NOT?: OrderStatusLogWhereInput | OrderStatusLogWhereInput[]
+    orderId?: StringFilter<"OrderStatusLog"> | string
+    status?: EnumOrderStatusFilter<"OrderStatusLog"> | $Enums.OrderStatus
+    note?: StringNullableFilter<"OrderStatusLog"> | string | null
+    createdAt?: DateTimeFilter<"OrderStatusLog"> | Date | string
+    order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
+  }, "id">
+
+  export type OrderStatusLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    note?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: OrderStatusLogCountOrderByAggregateInput
+    _max?: OrderStatusLogMaxOrderByAggregateInput
+    _min?: OrderStatusLogMinOrderByAggregateInput
+  }
+
+  export type OrderStatusLogScalarWhereWithAggregatesInput = {
+    AND?: OrderStatusLogScalarWhereWithAggregatesInput | OrderStatusLogScalarWhereWithAggregatesInput[]
+    OR?: OrderStatusLogScalarWhereWithAggregatesInput[]
+    NOT?: OrderStatusLogScalarWhereWithAggregatesInput | OrderStatusLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"OrderStatusLog"> | string
+    orderId?: StringWithAggregatesFilter<"OrderStatusLog"> | string
+    status?: EnumOrderStatusWithAggregatesFilter<"OrderStatusLog"> | $Enums.OrderStatus
+    note?: StringNullableWithAggregatesFilter<"OrderStatusLog"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"OrderStatusLog"> | Date | string
+  }
+
+  export type RiderWhereInput = {
+    AND?: RiderWhereInput | RiderWhereInput[]
+    OR?: RiderWhereInput[]
+    NOT?: RiderWhereInput | RiderWhereInput[]
+    id?: StringFilter<"Rider"> | string
+    name?: StringFilter<"Rider"> | string
+    phone?: StringFilter<"Rider"> | string
+    whatsapp?: StringFilter<"Rider"> | string
+    isActive?: BoolFilter<"Rider"> | boolean
+    createdAt?: DateTimeFilter<"Rider"> | Date | string
+    orders?: OrderListRelationFilter
+  }
+
+  export type RiderOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    whatsapp?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    orders?: OrderOrderByRelationAggregateInput
+  }
+
+  export type RiderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: RiderWhereInput | RiderWhereInput[]
+    OR?: RiderWhereInput[]
+    NOT?: RiderWhereInput | RiderWhereInput[]
+    name?: StringFilter<"Rider"> | string
+    phone?: StringFilter<"Rider"> | string
+    whatsapp?: StringFilter<"Rider"> | string
+    isActive?: BoolFilter<"Rider"> | boolean
+    createdAt?: DateTimeFilter<"Rider"> | Date | string
+    orders?: OrderListRelationFilter
+  }, "id">
+
+  export type RiderOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    whatsapp?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    _count?: RiderCountOrderByAggregateInput
+    _max?: RiderMaxOrderByAggregateInput
+    _min?: RiderMinOrderByAggregateInput
+  }
+
+  export type RiderScalarWhereWithAggregatesInput = {
+    AND?: RiderScalarWhereWithAggregatesInput | RiderScalarWhereWithAggregatesInput[]
+    OR?: RiderScalarWhereWithAggregatesInput[]
+    NOT?: RiderScalarWhereWithAggregatesInput | RiderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Rider"> | string
+    name?: StringWithAggregatesFilter<"Rider"> | string
+    phone?: StringWithAggregatesFilter<"Rider"> | string
+    whatsapp?: StringWithAggregatesFilter<"Rider"> | string
+    isActive?: BoolWithAggregatesFilter<"Rider"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Rider"> | Date | string
   }
 
   export type OrderItemWhereInput = {
@@ -9436,8 +12300,22 @@ export namespace Prisma {
     paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
     items?: OrderItemCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
+    statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
+    rider?: RiderCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateInput = {
@@ -9452,8 +12330,22 @@ export namespace Prisma {
     paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderId?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
+    statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderUpdateInput = {
@@ -9468,8 +12360,22 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
+    rider?: RiderUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateInput = {
@@ -9484,8 +12390,22 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderId?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderCreateManyInput = {
@@ -9500,6 +12420,19 @@ export namespace Prisma {
     paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderId?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
   }
 
   export type OrderUpdateManyMutationInput = {
@@ -9514,6 +12447,18 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type OrderUncheckedUpdateManyInput = {
@@ -9528,6 +12473,141 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderId?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type OrderStatusLogCreateInput = {
+    id?: string
+    status: $Enums.OrderStatus
+    note?: string | null
+    createdAt?: Date | string
+    order: OrderCreateNestedOneWithoutStatusHistoryInput
+  }
+
+  export type OrderStatusLogUncheckedCreateInput = {
+    id?: string
+    orderId: string
+    status: $Enums.OrderStatus
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type OrderStatusLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    order?: OrderUpdateOneRequiredWithoutStatusHistoryNestedInput
+  }
+
+  export type OrderStatusLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderStatusLogCreateManyInput = {
+    id?: string
+    orderId: string
+    status: $Enums.OrderStatus
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type OrderStatusLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderStatusLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    orderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RiderCreateInput = {
+    id?: string
+    name: string
+    phone: string
+    whatsapp: string
+    isActive?: boolean
+    createdAt?: Date | string
+    orders?: OrderCreateNestedManyWithoutRiderInput
+  }
+
+  export type RiderUncheckedCreateInput = {
+    id?: string
+    name: string
+    phone: string
+    whatsapp: string
+    isActive?: boolean
+    createdAt?: Date | string
+    orders?: OrderUncheckedCreateNestedManyWithoutRiderInput
+  }
+
+  export type RiderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    whatsapp?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUpdateManyWithoutRiderNestedInput
+  }
+
+  export type RiderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    whatsapp?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    orders?: OrderUncheckedUpdateManyWithoutRiderNestedInput
+  }
+
+  export type RiderCreateManyInput = {
+    id?: string
+    name: string
+    phone: string
+    whatsapp: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type RiderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    whatsapp?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RiderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    whatsapp?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type OrderItemCreateInput = {
@@ -10217,9 +13297,31 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type EnumOrderStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
+  }
+
   export type PaymentTransactionNullableScalarRelationFilter = {
     is?: PaymentTransactionWhereInput | null
     isNot?: PaymentTransactionWhereInput | null
+  }
+
+  export type OrderStatusLogListRelationFilter = {
+    every?: OrderStatusLogWhereInput
+    some?: OrderStatusLogWhereInput
+    none?: OrderStatusLogWhereInput
+  }
+
+  export type RiderNullableScalarRelationFilter = {
+    is?: RiderWhereInput | null
+    isNot?: RiderWhereInput | null
+  }
+
+  export type OrderStatusLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type OrderCountOrderByAggregateInput = {
@@ -10234,10 +13336,24 @@ export namespace Prisma {
     paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    fulfillmentStatus?: SortOrder
+    customerName?: SortOrder
+    customerPhone?: SortOrder
+    customerAddress?: SortOrder
+    riderId?: SortOrder
+    riderName?: SortOrder
+    riderPhone?: SortOrder
+    assignedAt?: SortOrder
+    pickedUpAt?: SortOrder
+    deliveredAt?: SortOrder
+    estimatedTime?: SortOrder
+    adminNotes?: SortOrder
+    notificationSent?: SortOrder
   }
 
   export type OrderAvgOrderByAggregateInput = {
     amount?: SortOrder
+    estimatedTime?: SortOrder
   }
 
   export type OrderMaxOrderByAggregateInput = {
@@ -10252,6 +13368,19 @@ export namespace Prisma {
     paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    fulfillmentStatus?: SortOrder
+    customerName?: SortOrder
+    customerPhone?: SortOrder
+    customerAddress?: SortOrder
+    riderId?: SortOrder
+    riderName?: SortOrder
+    riderPhone?: SortOrder
+    assignedAt?: SortOrder
+    pickedUpAt?: SortOrder
+    deliveredAt?: SortOrder
+    estimatedTime?: SortOrder
+    adminNotes?: SortOrder
+    notificationSent?: SortOrder
   }
 
   export type OrderMinOrderByAggregateInput = {
@@ -10266,15 +13395,100 @@ export namespace Prisma {
     paidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    fulfillmentStatus?: SortOrder
+    customerName?: SortOrder
+    customerPhone?: SortOrder
+    customerAddress?: SortOrder
+    riderId?: SortOrder
+    riderName?: SortOrder
+    riderPhone?: SortOrder
+    assignedAt?: SortOrder
+    pickedUpAt?: SortOrder
+    deliveredAt?: SortOrder
+    estimatedTime?: SortOrder
+    adminNotes?: SortOrder
+    notificationSent?: SortOrder
   }
 
   export type OrderSumOrderByAggregateInput = {
     amount?: SortOrder
+    estimatedTime?: SortOrder
+  }
+
+  export type EnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrderStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrderStatusFilter<$PrismaModel>
+    _max?: NestedEnumOrderStatusFilter<$PrismaModel>
   }
 
   export type OrderScalarRelationFilter = {
     is?: OrderWhereInput
     isNot?: OrderWhereInput
+  }
+
+  export type OrderStatusLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OrderStatusLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OrderStatusLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    orderId?: SortOrder
+    status?: SortOrder
+    note?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OrderListRelationFilter = {
+    every?: OrderWhereInput
+    some?: OrderWhereInput
+    none?: OrderWhereInput
+  }
+
+  export type OrderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RiderCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    whatsapp?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RiderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    whatsapp?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RiderMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    phone?: SortOrder
+    whatsapp?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type ProductScalarRelationFilter = {
@@ -10537,6 +13751,19 @@ export namespace Prisma {
     connect?: PaymentTransactionWhereUniqueInput
   }
 
+  export type OrderStatusLogCreateNestedManyWithoutOrderInput = {
+    create?: XOR<OrderStatusLogCreateWithoutOrderInput, OrderStatusLogUncheckedCreateWithoutOrderInput> | OrderStatusLogCreateWithoutOrderInput[] | OrderStatusLogUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderStatusLogCreateOrConnectWithoutOrderInput | OrderStatusLogCreateOrConnectWithoutOrderInput[]
+    createMany?: OrderStatusLogCreateManyOrderInputEnvelope
+    connect?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+  }
+
+  export type RiderCreateNestedOneWithoutOrdersInput = {
+    create?: XOR<RiderCreateWithoutOrdersInput, RiderUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: RiderCreateOrConnectWithoutOrdersInput
+    connect?: RiderWhereUniqueInput
+  }
+
   export type OrderItemUncheckedCreateNestedManyWithoutOrderInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -10548,6 +13775,17 @@ export namespace Prisma {
     create?: XOR<PaymentTransactionCreateWithoutOrderInput, PaymentTransactionUncheckedCreateWithoutOrderInput>
     connectOrCreate?: PaymentTransactionCreateOrConnectWithoutOrderInput
     connect?: PaymentTransactionWhereUniqueInput
+  }
+
+  export type OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput = {
+    create?: XOR<OrderStatusLogCreateWithoutOrderInput, OrderStatusLogUncheckedCreateWithoutOrderInput> | OrderStatusLogCreateWithoutOrderInput[] | OrderStatusLogUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderStatusLogCreateOrConnectWithoutOrderInput | OrderStatusLogCreateOrConnectWithoutOrderInput[]
+    createMany?: OrderStatusLogCreateManyOrderInputEnvelope
+    connect?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+  }
+
+  export type EnumOrderStatusFieldUpdateOperationsInput = {
+    set?: $Enums.OrderStatus
   }
 
   export type OrderItemUpdateManyWithoutOrderNestedInput = {
@@ -10574,6 +13812,30 @@ export namespace Prisma {
     update?: XOR<XOR<PaymentTransactionUpdateToOneWithWhereWithoutOrderInput, PaymentTransactionUpdateWithoutOrderInput>, PaymentTransactionUncheckedUpdateWithoutOrderInput>
   }
 
+  export type OrderStatusLogUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<OrderStatusLogCreateWithoutOrderInput, OrderStatusLogUncheckedCreateWithoutOrderInput> | OrderStatusLogCreateWithoutOrderInput[] | OrderStatusLogUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderStatusLogCreateOrConnectWithoutOrderInput | OrderStatusLogCreateOrConnectWithoutOrderInput[]
+    upsert?: OrderStatusLogUpsertWithWhereUniqueWithoutOrderInput | OrderStatusLogUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: OrderStatusLogCreateManyOrderInputEnvelope
+    set?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    disconnect?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    delete?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    connect?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    update?: OrderStatusLogUpdateWithWhereUniqueWithoutOrderInput | OrderStatusLogUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: OrderStatusLogUpdateManyWithWhereWithoutOrderInput | OrderStatusLogUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: OrderStatusLogScalarWhereInput | OrderStatusLogScalarWhereInput[]
+  }
+
+  export type RiderUpdateOneWithoutOrdersNestedInput = {
+    create?: XOR<RiderCreateWithoutOrdersInput, RiderUncheckedCreateWithoutOrdersInput>
+    connectOrCreate?: RiderCreateOrConnectWithoutOrdersInput
+    upsert?: RiderUpsertWithoutOrdersInput
+    disconnect?: RiderWhereInput | boolean
+    delete?: RiderWhereInput | boolean
+    connect?: RiderWhereUniqueInput
+    update?: XOR<XOR<RiderUpdateToOneWithWhereWithoutOrdersInput, RiderUpdateWithoutOrdersInput>, RiderUncheckedUpdateWithoutOrdersInput>
+  }
+
   export type OrderItemUncheckedUpdateManyWithoutOrderNestedInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -10596,6 +13858,76 @@ export namespace Prisma {
     delete?: PaymentTransactionWhereInput | boolean
     connect?: PaymentTransactionWhereUniqueInput
     update?: XOR<XOR<PaymentTransactionUpdateToOneWithWhereWithoutOrderInput, PaymentTransactionUpdateWithoutOrderInput>, PaymentTransactionUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput = {
+    create?: XOR<OrderStatusLogCreateWithoutOrderInput, OrderStatusLogUncheckedCreateWithoutOrderInput> | OrderStatusLogCreateWithoutOrderInput[] | OrderStatusLogUncheckedCreateWithoutOrderInput[]
+    connectOrCreate?: OrderStatusLogCreateOrConnectWithoutOrderInput | OrderStatusLogCreateOrConnectWithoutOrderInput[]
+    upsert?: OrderStatusLogUpsertWithWhereUniqueWithoutOrderInput | OrderStatusLogUpsertWithWhereUniqueWithoutOrderInput[]
+    createMany?: OrderStatusLogCreateManyOrderInputEnvelope
+    set?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    disconnect?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    delete?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    connect?: OrderStatusLogWhereUniqueInput | OrderStatusLogWhereUniqueInput[]
+    update?: OrderStatusLogUpdateWithWhereUniqueWithoutOrderInput | OrderStatusLogUpdateWithWhereUniqueWithoutOrderInput[]
+    updateMany?: OrderStatusLogUpdateManyWithWhereWithoutOrderInput | OrderStatusLogUpdateManyWithWhereWithoutOrderInput[]
+    deleteMany?: OrderStatusLogScalarWhereInput | OrderStatusLogScalarWhereInput[]
+  }
+
+  export type OrderCreateNestedOneWithoutStatusHistoryInput = {
+    create?: XOR<OrderCreateWithoutStatusHistoryInput, OrderUncheckedCreateWithoutStatusHistoryInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutStatusHistoryInput
+    connect?: OrderWhereUniqueInput
+  }
+
+  export type OrderUpdateOneRequiredWithoutStatusHistoryNestedInput = {
+    create?: XOR<OrderCreateWithoutStatusHistoryInput, OrderUncheckedCreateWithoutStatusHistoryInput>
+    connectOrCreate?: OrderCreateOrConnectWithoutStatusHistoryInput
+    upsert?: OrderUpsertWithoutStatusHistoryInput
+    connect?: OrderWhereUniqueInput
+    update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutStatusHistoryInput, OrderUpdateWithoutStatusHistoryInput>, OrderUncheckedUpdateWithoutStatusHistoryInput>
+  }
+
+  export type OrderCreateNestedManyWithoutRiderInput = {
+    create?: XOR<OrderCreateWithoutRiderInput, OrderUncheckedCreateWithoutRiderInput> | OrderCreateWithoutRiderInput[] | OrderUncheckedCreateWithoutRiderInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutRiderInput | OrderCreateOrConnectWithoutRiderInput[]
+    createMany?: OrderCreateManyRiderInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type OrderUncheckedCreateNestedManyWithoutRiderInput = {
+    create?: XOR<OrderCreateWithoutRiderInput, OrderUncheckedCreateWithoutRiderInput> | OrderCreateWithoutRiderInput[] | OrderUncheckedCreateWithoutRiderInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutRiderInput | OrderCreateOrConnectWithoutRiderInput[]
+    createMany?: OrderCreateManyRiderInputEnvelope
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type OrderUpdateManyWithoutRiderNestedInput = {
+    create?: XOR<OrderCreateWithoutRiderInput, OrderUncheckedCreateWithoutRiderInput> | OrderCreateWithoutRiderInput[] | OrderUncheckedCreateWithoutRiderInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutRiderInput | OrderCreateOrConnectWithoutRiderInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutRiderInput | OrderUpsertWithWhereUniqueWithoutRiderInput[]
+    createMany?: OrderCreateManyRiderInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutRiderInput | OrderUpdateWithWhereUniqueWithoutRiderInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutRiderInput | OrderUpdateManyWithWhereWithoutRiderInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
+  }
+
+  export type OrderUncheckedUpdateManyWithoutRiderNestedInput = {
+    create?: XOR<OrderCreateWithoutRiderInput, OrderUncheckedCreateWithoutRiderInput> | OrderCreateWithoutRiderInput[] | OrderUncheckedCreateWithoutRiderInput[]
+    connectOrCreate?: OrderCreateOrConnectWithoutRiderInput | OrderCreateOrConnectWithoutRiderInput[]
+    upsert?: OrderUpsertWithWhereUniqueWithoutRiderInput | OrderUpsertWithWhereUniqueWithoutRiderInput[]
+    createMany?: OrderCreateManyRiderInputEnvelope
+    set?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    disconnect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    delete?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+    update?: OrderUpdateWithWhereUniqueWithoutRiderInput | OrderUpdateWithWhereUniqueWithoutRiderInput[]
+    updateMany?: OrderUpdateManyWithWhereWithoutRiderInput | OrderUpdateManyWithWhereWithoutRiderInput[]
+    deleteMany?: OrderScalarWhereInput | OrderScalarWhereInput[]
   }
 
   export type OrderCreateNestedOneWithoutItemsInput = {
@@ -10908,6 +14240,23 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedEnumOrderStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
+  }
+
+  export type NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel> | $Enums.OrderStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumOrderStatusFilter<$PrismaModel>
+    _max?: NestedEnumOrderStatusFilter<$PrismaModel>
+  }
+
   export type OrderItemCreateWithoutProductInput = {
     id?: string
     name: string
@@ -11040,6 +14389,53 @@ export namespace Prisma {
     create: XOR<PaymentTransactionCreateWithoutOrderInput, PaymentTransactionUncheckedCreateWithoutOrderInput>
   }
 
+  export type OrderStatusLogCreateWithoutOrderInput = {
+    id?: string
+    status: $Enums.OrderStatus
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type OrderStatusLogUncheckedCreateWithoutOrderInput = {
+    id?: string
+    status: $Enums.OrderStatus
+    note?: string | null
+    createdAt?: Date | string
+  }
+
+  export type OrderStatusLogCreateOrConnectWithoutOrderInput = {
+    where: OrderStatusLogWhereUniqueInput
+    create: XOR<OrderStatusLogCreateWithoutOrderInput, OrderStatusLogUncheckedCreateWithoutOrderInput>
+  }
+
+  export type OrderStatusLogCreateManyOrderInputEnvelope = {
+    data: OrderStatusLogCreateManyOrderInput | OrderStatusLogCreateManyOrderInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RiderCreateWithoutOrdersInput = {
+    id?: string
+    name: string
+    phone: string
+    whatsapp: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type RiderUncheckedCreateWithoutOrdersInput = {
+    id?: string
+    name: string
+    phone: string
+    whatsapp: string
+    isActive?: boolean
+    createdAt?: Date | string
+  }
+
+  export type RiderCreateOrConnectWithoutOrdersInput = {
+    where: RiderWhereUniqueInput
+    create: XOR<RiderCreateWithoutOrdersInput, RiderUncheckedCreateWithoutOrdersInput>
+  }
+
   export type OrderItemUpsertWithWhereUniqueWithoutOrderInput = {
     where: OrderItemWhereUniqueInput
     update: XOR<OrderItemUpdateWithoutOrderInput, OrderItemUncheckedUpdateWithoutOrderInput>
@@ -11099,6 +14495,308 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type OrderStatusLogUpsertWithWhereUniqueWithoutOrderInput = {
+    where: OrderStatusLogWhereUniqueInput
+    update: XOR<OrderStatusLogUpdateWithoutOrderInput, OrderStatusLogUncheckedUpdateWithoutOrderInput>
+    create: XOR<OrderStatusLogCreateWithoutOrderInput, OrderStatusLogUncheckedCreateWithoutOrderInput>
+  }
+
+  export type OrderStatusLogUpdateWithWhereUniqueWithoutOrderInput = {
+    where: OrderStatusLogWhereUniqueInput
+    data: XOR<OrderStatusLogUpdateWithoutOrderInput, OrderStatusLogUncheckedUpdateWithoutOrderInput>
+  }
+
+  export type OrderStatusLogUpdateManyWithWhereWithoutOrderInput = {
+    where: OrderStatusLogScalarWhereInput
+    data: XOR<OrderStatusLogUpdateManyMutationInput, OrderStatusLogUncheckedUpdateManyWithoutOrderInput>
+  }
+
+  export type OrderStatusLogScalarWhereInput = {
+    AND?: OrderStatusLogScalarWhereInput | OrderStatusLogScalarWhereInput[]
+    OR?: OrderStatusLogScalarWhereInput[]
+    NOT?: OrderStatusLogScalarWhereInput | OrderStatusLogScalarWhereInput[]
+    id?: StringFilter<"OrderStatusLog"> | string
+    orderId?: StringFilter<"OrderStatusLog"> | string
+    status?: EnumOrderStatusFilter<"OrderStatusLog"> | $Enums.OrderStatus
+    note?: StringNullableFilter<"OrderStatusLog"> | string | null
+    createdAt?: DateTimeFilter<"OrderStatusLog"> | Date | string
+  }
+
+  export type RiderUpsertWithoutOrdersInput = {
+    update: XOR<RiderUpdateWithoutOrdersInput, RiderUncheckedUpdateWithoutOrdersInput>
+    create: XOR<RiderCreateWithoutOrdersInput, RiderUncheckedCreateWithoutOrdersInput>
+    where?: RiderWhereInput
+  }
+
+  export type RiderUpdateToOneWithWhereWithoutOrdersInput = {
+    where?: RiderWhereInput
+    data: XOR<RiderUpdateWithoutOrdersInput, RiderUncheckedUpdateWithoutOrdersInput>
+  }
+
+  export type RiderUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    whatsapp?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RiderUncheckedUpdateWithoutOrdersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    phone?: StringFieldUpdateOperationsInput | string
+    whatsapp?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderCreateWithoutStatusHistoryInput = {
+    id?: string
+    reference: string
+    idempotencyKey?: string | null
+    sellerId?: string | null
+    email: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: string
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+    payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
+    rider?: RiderCreateNestedOneWithoutOrdersInput
+  }
+
+  export type OrderUncheckedCreateWithoutStatusHistoryInput = {
+    id?: string
+    reference: string
+    idempotencyKey?: string | null
+    sellerId?: string | null
+    email: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: string
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderId?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+    payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutStatusHistoryInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutStatusHistoryInput, OrderUncheckedCreateWithoutStatusHistoryInput>
+  }
+
+  export type OrderUpsertWithoutStatusHistoryInput = {
+    update: XOR<OrderUpdateWithoutStatusHistoryInput, OrderUncheckedUpdateWithoutStatusHistoryInput>
+    create: XOR<OrderCreateWithoutStatusHistoryInput, OrderUncheckedCreateWithoutStatusHistoryInput>
+    where?: OrderWhereInput
+  }
+
+  export type OrderUpdateToOneWithWhereWithoutStatusHistoryInput = {
+    where?: OrderWhereInput
+    data: XOR<OrderUpdateWithoutStatusHistoryInput, OrderUncheckedUpdateWithoutStatusHistoryInput>
+  }
+
+  export type OrderUpdateWithoutStatusHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+    payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
+    rider?: RiderUpdateOneWithoutOrdersNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderId?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
+  }
+
+  export type OrderCreateWithoutRiderInput = {
+    id?: string
+    reference: string
+    idempotencyKey?: string | null
+    sellerId?: string | null
+    email: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: string
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
+    items?: OrderItemCreateNestedManyWithoutOrderInput
+    payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
+    statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderUncheckedCreateWithoutRiderInput = {
+    id?: string
+    reference: string
+    idempotencyKey?: string | null
+    sellerId?: string | null
+    email: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: string
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
+    items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+    payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
+    statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
+  }
+
+  export type OrderCreateOrConnectWithoutRiderInput = {
+    where: OrderWhereUniqueInput
+    create: XOR<OrderCreateWithoutRiderInput, OrderUncheckedCreateWithoutRiderInput>
+  }
+
+  export type OrderCreateManyRiderInputEnvelope = {
+    data: OrderCreateManyRiderInput | OrderCreateManyRiderInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type OrderUpsertWithWhereUniqueWithoutRiderInput = {
+    where: OrderWhereUniqueInput
+    update: XOR<OrderUpdateWithoutRiderInput, OrderUncheckedUpdateWithoutRiderInput>
+    create: XOR<OrderCreateWithoutRiderInput, OrderUncheckedCreateWithoutRiderInput>
+  }
+
+  export type OrderUpdateWithWhereUniqueWithoutRiderInput = {
+    where: OrderWhereUniqueInput
+    data: XOR<OrderUpdateWithoutRiderInput, OrderUncheckedUpdateWithoutRiderInput>
+  }
+
+  export type OrderUpdateManyWithWhereWithoutRiderInput = {
+    where: OrderScalarWhereInput
+    data: XOR<OrderUpdateManyMutationInput, OrderUncheckedUpdateManyWithoutRiderInput>
+  }
+
+  export type OrderScalarWhereInput = {
+    AND?: OrderScalarWhereInput | OrderScalarWhereInput[]
+    OR?: OrderScalarWhereInput[]
+    NOT?: OrderScalarWhereInput | OrderScalarWhereInput[]
+    id?: StringFilter<"Order"> | string
+    reference?: StringFilter<"Order"> | string
+    idempotencyKey?: StringNullableFilter<"Order"> | string | null
+    sellerId?: StringNullableFilter<"Order"> | string | null
+    email?: StringFilter<"Order"> | string
+    amount?: DecimalFilter<"Order"> | Decimal | DecimalJsLike | number | string
+    currency?: StringFilter<"Order"> | string
+    status?: StringFilter<"Order"> | string
+    paidAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    createdAt?: DateTimeFilter<"Order"> | Date | string
+    updatedAt?: DateTimeFilter<"Order"> | Date | string
+    fulfillmentStatus?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
+    customerName?: StringNullableFilter<"Order"> | string | null
+    customerPhone?: StringNullableFilter<"Order"> | string | null
+    customerAddress?: StringNullableFilter<"Order"> | string | null
+    riderId?: StringNullableFilter<"Order"> | string | null
+    riderName?: StringNullableFilter<"Order"> | string | null
+    riderPhone?: StringNullableFilter<"Order"> | string | null
+    assignedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    pickedUpAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    deliveredAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    estimatedTime?: IntNullableFilter<"Order"> | number | null
+    adminNotes?: StringNullableFilter<"Order"> | string | null
+    notificationSent?: BoolFilter<"Order"> | boolean
+  }
+
   export type OrderCreateWithoutItemsInput = {
     id?: string
     reference: string
@@ -11111,7 +14809,21 @@ export namespace Prisma {
     paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
     payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
+    statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
+    rider?: RiderCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateWithoutItemsInput = {
@@ -11126,7 +14838,21 @@ export namespace Prisma {
     paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderId?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
     payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
+    statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutItemsInput = {
@@ -11208,7 +14934,21 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
     payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
+    rider?: RiderUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutItemsInput = {
@@ -11223,7 +14963,21 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderId?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
     payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type ProductUpsertWithoutOrderItemsInput = {
@@ -11295,7 +15049,21 @@ export namespace Prisma {
     paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
     items?: OrderItemCreateNestedManyWithoutOrderInput
+    statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
+    rider?: RiderCreateNestedOneWithoutOrdersInput
   }
 
   export type OrderUncheckedCreateWithoutPaymentInput = {
@@ -11310,7 +15078,21 @@ export namespace Prisma {
     paidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderId?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
+    statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
   }
 
   export type OrderCreateOrConnectWithoutPaymentInput = {
@@ -11341,7 +15123,21 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
     items?: OrderItemUpdateManyWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
+    rider?: RiderUpdateOneWithoutOrdersNestedInput
   }
 
   export type OrderUncheckedUpdateWithoutPaymentInput = {
@@ -11356,7 +15152,21 @@ export namespace Prisma {
     paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderId?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
   }
 
   export type OrderItemCreateManyProductInput = {
@@ -11414,6 +15224,13 @@ export namespace Prisma {
     category?: string | null
   }
 
+  export type OrderStatusLogCreateManyOrderInput = {
+    id?: string
+    status: $Enums.OrderStatus
+    note?: string | null
+    createdAt?: Date | string
+  }
+
   export type OrderItemUpdateWithoutOrderInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -11445,6 +15262,137 @@ export namespace Prisma {
     lineTotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type OrderStatusLogUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderStatusLogUncheckedUpdateWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderStatusLogUncheckedUpdateManyWithoutOrderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    note?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OrderCreateManyRiderInput = {
+    id?: string
+    reference: string
+    idempotencyKey?: string | null
+    sellerId?: string | null
+    email: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    status?: string
+    paidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    fulfillmentStatus?: $Enums.OrderStatus
+    customerName?: string | null
+    customerPhone?: string | null
+    customerAddress?: string | null
+    riderName?: string | null
+    riderPhone?: string | null
+    assignedAt?: Date | string | null
+    pickedUpAt?: Date | string | null
+    deliveredAt?: Date | string | null
+    estimatedTime?: number | null
+    adminNotes?: string | null
+    notificationSent?: boolean
+  }
+
+  export type OrderUpdateWithoutRiderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    items?: OrderItemUpdateManyWithoutOrderNestedInput
+    payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateWithoutRiderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+    payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
+    statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
+  }
+
+  export type OrderUncheckedUpdateManyWithoutRiderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    idempotencyKey?: NullableStringFieldUpdateOperationsInput | string | null
+    sellerId?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    paidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    fulfillmentStatus?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+    customerName?: NullableStringFieldUpdateOperationsInput | string | null
+    customerPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    customerAddress?: NullableStringFieldUpdateOperationsInput | string | null
+    riderName?: NullableStringFieldUpdateOperationsInput | string | null
+    riderPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pickedUpAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    deliveredAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
+    adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    notificationSent?: BoolFieldUpdateOperationsInput | boolean
   }
 
 

@@ -223,6 +223,14 @@ const CheckoutItemSchema = z.object({
 export const CheckoutRequestSchema = z
   .object({
     email: z.string().trim().email().toLowerCase(),
+    customerName: z.string().trim().min(2).max(120).optional(),
+    customerPhone: z
+      .string()
+      .trim()
+      .min(9)
+      .max(20)
+      .regex(/^[0-9+\s()-]+$/, "Enter a valid phone number."),
+    customerAddress: z.string().trim().min(3).max(240),
     idempotencyKey: z
       .string()
       .trim()
@@ -312,6 +320,24 @@ export const PublicProductListQuerySchema = z.object({
     .preprocess(emptyToUndefined, z.string().trim().max(100))
     .optional(),
 });
+
+export const OrderStatusUpdateSchema = z
+  .object({
+    status: z.enum([
+      "PENDING",
+      "CONFIRMED",
+      "PREPARING",
+      "ASSIGNED",
+      "OUT_FOR_DELIVERY",
+      "DELIVERED",
+      "CANCELLED",
+    ]),
+    riderName: z.string().trim().min(2).max(120).optional(),
+    riderPhone: z.string().trim().min(9).max(20).optional(),
+    riderApiKey: z.string().trim().min(8).max(120).optional(),
+    note: z.string().trim().max(500).optional(),
+  })
+  .strict();
 
 export function validationMessage(error: z.ZodError) {
   return error.issues[0]?.message ?? "Invalid request payload.";
