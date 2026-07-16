@@ -211,7 +211,7 @@ export default function SearchPageClient({
               ref={inputRef}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search medicines, vitamins..."
+              placeholder="Search through medicines..."
               enterKeyHint="search"
               className="h-full min-w-0 flex-1 bg-transparent px-2 text-base text-[#0f2318] outline-none placeholder:text-gray-400"
               aria-label="Search products"
