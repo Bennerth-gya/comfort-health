@@ -272,7 +272,7 @@ export default function ShopSearchBar({
 
     try {
       const data = await fetchProducts(query, controller.signal);
-      
+
       setSearchState({
         status: "success",
         products: data.products,
@@ -335,11 +335,10 @@ export default function ShopSearchBar({
         </label>
 
         <div
-          className={`flex h-12 w-full items-center rounded-full border-[1.5px] bg-white transition-all duration-150 ${
-            isFocused
+          className={`flex h-12 w-full items-center rounded-full border-[1.5px] bg-white transition-all duration-150 ${isFocused
               ? "border-[#15803d] shadow-[0_0_0_4px_rgba(21,128,61,0.10)]"
               : "border-[#d1fae5] shadow-sm"
-          }`}
+            }`}
         >
           {/* Left icon */}
           <div className="ml-4 shrink-0">
@@ -350,9 +349,8 @@ export default function ShopSearchBar({
               />
             ) : (
               <Search
-                className={`h-[18px] w-[18px] transition-colors duration-150 ${
-                  isFocused ? "text-[#15803d]" : "text-[#15803d]"
-                }`}
+                className={`h-[18px] w-[18px] transition-colors duration-150 ${isFocused ? "text-[#15803d]" : "text-[#15803d]"
+                  }`}
                 aria-hidden
               />
             )}
@@ -367,7 +365,7 @@ export default function ShopSearchBar({
             onChange={(e) => setInputValue(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Search medicines, vitamins..."
+            placeholder="Search through medicines..."
             autoComplete="off"
             enterKeyHint="search"
             aria-label="Search products"
