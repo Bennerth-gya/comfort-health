@@ -6,12 +6,13 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
-import { ArrowLeft, Minus, Plus, Share2 } from "lucide-react";
+import { Info, ArrowLeft, Minus, Plus, Share2, Phone } from "lucide-react";
 import {
   type DosageGuide,
   dosageGuideEntries,
 } from "@/lib/dosage-guide";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
+import { PHARMACY_CONFIG } from "@/lib/config";
 
 type ProductDetails = {
   id: string;
@@ -263,6 +264,26 @@ export default function ProductDetailsClient({
             {product.description || "No description available."}
           </p>
 
+          <div className="flex items-center gap-3 bg-[#f0fdf4] border border-[#bbf7d0] rounded-xl px-4 py-3 my-4">
+            <div className="w-9 h-9 bg-[#15803d] rounded-full flex items-center justify-center flex-shrink-0">
+              <Phone size={16} color="white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[#0f2318] text-[12px] font-[600] leading-tight">
+                Not sure this is right for you?
+              </p>
+              <p className="text-[#15803d] text-[11px] font-[500]">
+                Call our pharmacist free
+              </p>
+            </div>
+            <a
+              href="tel:0244123456"
+              className="bg-[#15803d] text-white text-[11px] font-[700] px-3 py-2 rounded-lg active:scale-95 transition-all"
+            >
+              Call
+            </a>
+          </div>
+
           <div className="my-5 h-px bg-[#e5e7eb]" />
 
           <div className="divide-y divide-[#f3f4f6] rounded-2xl bg-white md:border md:border-[#e5e7eb]">
@@ -319,6 +340,20 @@ export default function ProductDetailsClient({
                 Buy now
               </button>
             </div>
+            <div className="mt-4 flex items-center gap-1.5 rounded-lg border border-[#dcfce7] bg-[#f0fdf4] px-3 py-2.5 text-[13px] text-[#6b7280]">
+              <div className="flex shrink-0 items-center justify-center h-4 w-4 rounded-full bg-[#15803d]">
+                <Info size={10} color="white" strokeWidth={3} />
+              </div>
+              <span className="flex-1">
+                Not sure if this is right for you?{" "}
+                <a
+                  href={`tel:${PHARMACY_CONFIG.phone}`}
+                  className="font-semibold text-[#15803d] underline"
+                >
+                  Call our pharmacist
+                </a>
+              </span>
+            </div>
           </div>
         </section>
       </div>
@@ -346,6 +381,22 @@ export default function ProductDetailsClient({
         >
           Buy now
         </button>
+      </div>
+      <div className="px-4 pb-6 pt-2 md:hidden">
+        <div className="flex items-center gap-1.5 rounded-lg border border-[#dcfce7] bg-[#f0fdf4] px-3 py-2.5 text-[13px] text-[#6b7280]">
+          <div className="flex shrink-0 items-center justify-center h-4 w-4 rounded-full bg-[#15803d]">
+            <Info size={10} color="white" strokeWidth={3} />
+          </div>
+          <span className="flex-1">
+            Not sure if this is right for you?{" "}
+            <a
+              href={`tel:${PHARMACY_CONFIG.phone}`}
+              className="font-semibold text-[#15803d] underline"
+            >
+              Call our pharmacist
+            </a>
+          </span>
+        </div>
       </div>
     </div>
   );

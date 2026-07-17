@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { HeartPulse, Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/app/context/cartContext";
-import { type FormEvent, type ReactNode, useState } from "react";
+import { type FormEvent, type ReactNode, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 function CartIcon() {
@@ -32,6 +32,34 @@ interface SiteHeaderClientProps {
 export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [isPharmacyOpen, setIsPharmacyOpen] = useState(false);
+
+  useEffect(() => {
+    // Simple check based on pharmacyHours utility, evaluated on client side
+    // to match current local time
+    const checkHours = () => {
+      const now = new Date();
+      const ghanaTime = new Date(
+        now.toLocaleString('en-US', { timeZone: 'Africa/Accra' })
+      );
+      const day = ghanaTime.getDay();
+      const hour = ghanaTime.getHours();
+      
+      let open = false;
+      if (day >= 1 && day <= 5) {
+        open = hour >= 8 && hour < 20;
+      } else if (day === 6) {
+        open = hour >= 9 && hour < 18;
+      } else if (day === 0) {
+        open = hour >= 10 && hour < 16;
+      }
+      setIsPharmacyOpen(open);
+    };
+    
+    checkHours();
+    const intervalId = setInterval(checkHours, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,6 +99,19 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
         </form>
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/support"
+            className="flex items-center gap-1.5 text-sm font-medium text-white transition hover:text-emerald-100"
+          >
+            Pharmacist Support
+            <span className="relative flex h-2 w-2">
+              {isPharmacyOpen && (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+              )}
+              <span className={`relative inline-flex h-2 w-2 rounded-full ${isPharmacyOpen ? 'bg-emerald-500' : 'bg-gray-400'}`}></span>
+            </span>
+          </Link>
+          <div className="h-4 w-px bg-[#254532]"></div>
           <Link
             href="/dashboard"
             className="text-sm font-medium text-white underline-offset-4 transition hover:text-emerald-100 hover:underline"

@@ -237,6 +237,57 @@ exports.Prisma.HeroSlideScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SupportConversationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  guestName: 'guestName',
+  guestPhone: 'guestPhone',
+  status: 'status',
+  subject: 'subject',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastMessageAt: 'lastMessageAt',
+  pharmacistId: 'pharmacistId',
+  isRead: 'isRead'
+};
+
+exports.Prisma.SupportMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  content: 'content',
+  senderType: 'senderType',
+  senderName: 'senderName',
+  createdAt: 'createdAt',
+  isRead: 'isRead',
+  messageType: 'messageType',
+  productId: 'productId',
+  productName: 'productName',
+  productPrice: 'productPrice',
+  productImage: 'productImage'
+};
+
+exports.Prisma.CustomerReviewScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  rating: 'rating',
+  message: 'message',
+  isApproved: 'isApproved',
+  isRead: 'isRead',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductRequestScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  productName: 'productName',
+  reason: 'reason',
+  status: 'status',
+  isRead: 'isRead',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -277,6 +328,32 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.ConversationStatus = exports.$Enums.ConversationStatus = {
+  WAITING: 'WAITING',
+  ACTIVE: 'ACTIVE',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+};
+
+exports.SenderType = exports.$Enums.SenderType = {
+  STUDENT: 'STUDENT',
+  PHARMACIST: 'PHARMACIST',
+  SYSTEM: 'SYSTEM'
+};
+
+exports.MessageType = exports.$Enums.MessageType = {
+  TEXT: 'TEXT',
+  PRODUCT_RECOMMENDATION: 'PRODUCT_RECOMMENDATION',
+  SYSTEM_NOTICE: 'SYSTEM_NOTICE'
+};
+
+exports.ProductRequestStatus = exports.$Enums.ProductRequestStatus = {
+  PENDING: 'PENDING',
+  NOTED: 'NOTED',
+  ADDED: 'ADDED',
+  UNAVAILABLE: 'UNAVAILABLE'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Product: 'Product',
@@ -285,7 +362,11 @@ exports.Prisma.ModelName = {
   Rider: 'Rider',
   OrderItem: 'OrderItem',
   PaymentTransaction: 'PaymentTransaction',
-  HeroSlide: 'HeroSlide'
+  HeroSlide: 'HeroSlide',
+  SupportConversation: 'SupportConversation',
+  SupportMessage: 'SupportMessage',
+  CustomerReview: 'CustomerReview',
+  ProductRequest: 'ProductRequest'
 };
 
 /**

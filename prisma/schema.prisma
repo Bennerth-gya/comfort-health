@@ -192,3 +192,91 @@ model HeroSlide {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// ─── Pharmacist Consultation Chat ─────────────────────────────────────────────
+
+enum ConversationStatus {
+  WAITING
+  ACTIVE
+  RESOLVED
+  CLOSED
+}
+
+enum SenderType {
+  STUDENT
+  PHARMACIST
+  SYSTEM
+}
+
+enum MessageType {
+  TEXT
+  PRODUCT_RECOMMENDATION
+  SYSTEM_NOTICE
+}
+
+model SupportConversation {
+  id           String             @id @default(cuid())
+  userId       String?
+  guestName    String?
+  guestPhone   String?
+  status       ConversationStatus @default(WAITING)
+  subject      String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  lastMessageAt DateTime          @default(now())
+  pharmacistId String?
+  isRead       Boolean            @default(false)
+  messages     SupportMessage[]
+
+  @@index([status, lastMessageAt])
+  @@index([lastMessageAt])
+  @@map("support_conversation")
+}
+
+model SupportMessage {
+  id             String              @id @default(cuid())
+  conversationId String
+  conversation   SupportConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  content        String
+  senderType     SenderType
+  senderName     String
+  createdAt      DateTime            @default(now())
+  isRead         Boolean             @default(false)
+  messageType    MessageType         @default(TEXT)
+  productId      String?
+  productName    String?
+  productPrice   Float?
+  productImage   String?
+
+  @@index([conversationId, createdAt])
+  @@map("support_message")
+}
+
+model CustomerReview {
+  id          String   @id @default(cuid())
+  name        String
+  rating      Int      // 1 to 5 stars
+  message     String   @db.Text
+  isApproved  Boolean  @default(false)
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProductRequest {
+  id          String              @id @default(cuid())
+  name        String              // customer name
+  productName String              // what they want
+  reason      String?             @db.Text // why they want it
+  status      ProductRequestStatus @default(PENDING)
+  isRead      Boolean             @default(false)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+enum ProductRequestStatus {
+  PENDING
+  NOTED
+  ADDED
+  UNAVAILABLE
+}

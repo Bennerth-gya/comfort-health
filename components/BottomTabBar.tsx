@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Info, MessageCircleHeart, ShoppingBag } from "lucide-react";
+import { Home, Headphones, MessageCircleHeart, ShoppingBag } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const tabs = [
   { label: "Home", href: "/", icon: Home },
   { label: "Shop", href: "/shop-page", icon: ShoppingBag },
   { label: "AI Guide", href: "/ai-guide", icon: MessageCircleHeart },
-  { label: "About Us", href: "/about", icon: Info },
+  { label: "Support", href: "/support", icon: Headphones },
 ];
 
 function isActive(pathname: string | null, href: string) {

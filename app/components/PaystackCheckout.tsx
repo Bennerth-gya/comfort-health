@@ -178,7 +178,7 @@ export default function PaystackCheckout({
           WhatsApp number <span className="text-red-500">*</span>
         </label>
         <p className="mt-1 text-xs text-gray-500">
-          We'll send order updates to this number
+          We&apos;ll send order updates to this number
         </p>
         <input
           id="checkout-phone"

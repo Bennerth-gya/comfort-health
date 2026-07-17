@@ -5,6 +5,10 @@ import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/app/components/ProductCard";
 import SearchBar from "@/components/SearchBar";
+import SupportFab from "@/components/SupportFab";
+import SupportBannerCard from "@/components/SupportBannerCard";
+import CommunitySection from "@/components/CommunitySection";
+import { Phone } from "lucide-react";
 
 const categories = [
   { name: "All", href: "/" },
@@ -232,6 +236,10 @@ async function HomeContent() {
         <AiHealthGuideCard />
       </div>
 
+      <div className="md:mx-auto md:max-w-7xl md:px-6 md:pt-4 max-md:pt-4 max-md:pb-1">
+        <SupportBannerCard />
+      </div>
+
       <section className="md:mx-auto md:max-w-7xl md:px-6">
         <SectionHeader title="Popular Products" />
         <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
@@ -294,6 +302,12 @@ export default function HomePage() {
       <Suspense fallback={<ProductGridSkeleton />}>
         <HomeContent />
       </Suspense>
+
+      <section className="md:mx-auto md:max-w-7xl md:px-6">
+        <CommunitySection />
+      </section>
+
+      <SupportFab />
     </div>
   );
 }

@@ -1,12 +1,13 @@
 "use client";
 
-import { ArrowLeft, HeartPulse, Mic, Send, ShoppingCart } from "lucide-react";
+import { ArrowLeft, HeartPulse, Mic, Send, ShoppingCart, Phone } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useCart } from "@/app/context/cartContext";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 import { stackClientApp } from "@/stack/client";
+import { PHARMACY_CONFIG } from "@/lib/config";
 
 type MessageRole = "user" | "assistant";
 
@@ -693,6 +694,21 @@ export default function AiGuidePage() {
         </div>
       </nav>
 
+      <div className="flex items-center justify-between px-3 py-2.5 bg-[#fff7ed] border-b border-[#fed7aa] flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <Phone size={13} color="#92400e" />
+          <p className="text-[#92400e] text-[11px] font-[500]">
+            Prefer to talk to a real person?
+          </p>
+        </div>
+        <a
+          href="tel:0244123456"
+          className="text-[#92400e] text-[11px] font-[700] underline underline-offset-2"
+        >
+          Call pharmacist
+        </a>
+      </div>
+
       {showDisclaimer ? (
         <div className="mx-3 mt-3 flex gap-2 rounded-[10px] border border-[#fed7aa] bg-[#fff7ed] px-3 py-2 text-[11px] leading-snug text-[#9a3412]">
           <span className="text-sm" aria-hidden="true">
@@ -839,6 +855,41 @@ export default function AiGuidePage() {
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#f0f0f0] bg-white px-4 pb-3 pt-2">
         <div className="mx-auto max-w-3xl">
+          <div style={{ position: 'relative', textAlign: 'center', margin: '12px 0 6px 0' }}>
+            <hr style={{ borderColor: '#e5e7eb', margin: 0 }} />
+            <span style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: 'white',
+              padding: '0 10px',
+              fontSize: '11px',
+              color: '#9ca3af',
+              whiteSpace: 'nowrap'
+            }}>
+              or speak to a real person
+            </span>
+          </div>
+          <a
+            href={`tel:${PHARMACY_CONFIG.phone}`}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              color: '#15803d',
+              fontSize: '13px',
+              fontWeight: 600,
+              textDecoration: 'none',
+              padding: '8px 0',
+              marginBottom: '4px'
+            }}
+          >
+            <Phone size={14} color="#15803d" />
+            Call our pharmacist directly
+          </a>
+
           <div className="mb-2">
             <p className="mb-1 text-[10px] text-gray-400">Quick questions</p>
             <div className="flex gap-2 overflow-x-auto pb-1">

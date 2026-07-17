@@ -53,6 +53,26 @@ export type PaymentTransaction = $Result.DefaultSelection<Prisma.$PaymentTransac
  * 
  */
 export type HeroSlide = $Result.DefaultSelection<Prisma.$HeroSlidePayload>
+/**
+ * Model SupportConversation
+ * 
+ */
+export type SupportConversation = $Result.DefaultSelection<Prisma.$SupportConversationPayload>
+/**
+ * Model SupportMessage
+ * 
+ */
+export type SupportMessage = $Result.DefaultSelection<Prisma.$SupportMessagePayload>
+/**
+ * Model CustomerReview
+ * 
+ */
+export type CustomerReview = $Result.DefaultSelection<Prisma.$CustomerReviewPayload>
+/**
+ * Model ProductRequest
+ * 
+ */
+export type ProductRequest = $Result.DefaultSelection<Prisma.$ProductRequestPayload>
 
 /**
  * Enums
@@ -78,6 +98,44 @@ export const OrderStatus: {
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
+
+export const ConversationStatus: {
+  WAITING: 'WAITING',
+  ACTIVE: 'ACTIVE',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+};
+
+export type ConversationStatus = (typeof ConversationStatus)[keyof typeof ConversationStatus]
+
+
+export const SenderType: {
+  STUDENT: 'STUDENT',
+  PHARMACIST: 'PHARMACIST',
+  SYSTEM: 'SYSTEM'
+};
+
+export type SenderType = (typeof SenderType)[keyof typeof SenderType]
+
+
+export const MessageType: {
+  TEXT: 'TEXT',
+  PRODUCT_RECOMMENDATION: 'PRODUCT_RECOMMENDATION',
+  SYSTEM_NOTICE: 'SYSTEM_NOTICE'
+};
+
+export type MessageType = (typeof MessageType)[keyof typeof MessageType]
+
+
+export const ProductRequestStatus: {
+  PENDING: 'PENDING',
+  NOTED: 'NOTED',
+  ADDED: 'ADDED',
+  UNAVAILABLE: 'UNAVAILABLE'
+};
+
+export type ProductRequestStatus = (typeof ProductRequestStatus)[keyof typeof ProductRequestStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -87,6 +145,22 @@ export const UserRole: typeof $Enums.UserRole
 export type OrderStatus = $Enums.OrderStatus
 
 export const OrderStatus: typeof $Enums.OrderStatus
+
+export type ConversationStatus = $Enums.ConversationStatus
+
+export const ConversationStatus: typeof $Enums.ConversationStatus
+
+export type SenderType = $Enums.SenderType
+
+export const SenderType: typeof $Enums.SenderType
+
+export type MessageType = $Enums.MessageType
+
+export const MessageType: typeof $Enums.MessageType
+
+export type ProductRequestStatus = $Enums.ProductRequestStatus
+
+export const ProductRequestStatus: typeof $Enums.ProductRequestStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -288,6 +362,46 @@ export class PrismaClient<
     * ```
     */
   get heroSlide(): Prisma.HeroSlideDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.supportConversation`: Exposes CRUD operations for the **SupportConversation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SupportConversations
+    * const supportConversations = await prisma.supportConversation.findMany()
+    * ```
+    */
+  get supportConversation(): Prisma.SupportConversationDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.supportMessage`: Exposes CRUD operations for the **SupportMessage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SupportMessages
+    * const supportMessages = await prisma.supportMessage.findMany()
+    * ```
+    */
+  get supportMessage(): Prisma.SupportMessageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.customerReview`: Exposes CRUD operations for the **CustomerReview** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CustomerReviews
+    * const customerReviews = await prisma.customerReview.findMany()
+    * ```
+    */
+  get customerReview(): Prisma.CustomerReviewDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.productRequest`: Exposes CRUD operations for the **ProductRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProductRequests
+    * const productRequests = await prisma.productRequest.findMany()
+    * ```
+    */
+  get productRequest(): Prisma.ProductRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -729,7 +843,11 @@ export namespace Prisma {
     Rider: 'Rider',
     OrderItem: 'OrderItem',
     PaymentTransaction: 'PaymentTransaction',
-    HeroSlide: 'HeroSlide'
+    HeroSlide: 'HeroSlide',
+    SupportConversation: 'SupportConversation',
+    SupportMessage: 'SupportMessage',
+    CustomerReview: 'CustomerReview',
+    ProductRequest: 'ProductRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -745,7 +863,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "product" | "order" | "orderStatusLog" | "rider" | "orderItem" | "paymentTransaction" | "heroSlide"
+      modelProps: "user" | "product" | "order" | "orderStatusLog" | "rider" | "orderItem" | "paymentTransaction" | "heroSlide" | "supportConversation" | "supportMessage" | "customerReview" | "productRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1341,6 +1459,302 @@ export namespace Prisma {
           }
         }
       }
+      SupportConversation: {
+        payload: Prisma.$SupportConversationPayload<ExtArgs>
+        fields: Prisma.SupportConversationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SupportConversationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SupportConversationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>
+          }
+          findFirst: {
+            args: Prisma.SupportConversationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SupportConversationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>
+          }
+          findMany: {
+            args: Prisma.SupportConversationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>[]
+          }
+          create: {
+            args: Prisma.SupportConversationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>
+          }
+          createMany: {
+            args: Prisma.SupportConversationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SupportConversationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>[]
+          }
+          delete: {
+            args: Prisma.SupportConversationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>
+          }
+          update: {
+            args: Prisma.SupportConversationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>
+          }
+          deleteMany: {
+            args: Prisma.SupportConversationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SupportConversationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SupportConversationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>[]
+          }
+          upsert: {
+            args: Prisma.SupportConversationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportConversationPayload>
+          }
+          aggregate: {
+            args: Prisma.SupportConversationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSupportConversation>
+          }
+          groupBy: {
+            args: Prisma.SupportConversationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SupportConversationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SupportConversationCountArgs<ExtArgs>
+            result: $Utils.Optional<SupportConversationCountAggregateOutputType> | number
+          }
+        }
+      }
+      SupportMessage: {
+        payload: Prisma.$SupportMessagePayload<ExtArgs>
+        fields: Prisma.SupportMessageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SupportMessageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SupportMessageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          findFirst: {
+            args: Prisma.SupportMessageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SupportMessageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          findMany: {
+            args: Prisma.SupportMessageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>[]
+          }
+          create: {
+            args: Prisma.SupportMessageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          createMany: {
+            args: Prisma.SupportMessageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SupportMessageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>[]
+          }
+          delete: {
+            args: Prisma.SupportMessageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          update: {
+            args: Prisma.SupportMessageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          deleteMany: {
+            args: Prisma.SupportMessageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SupportMessageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SupportMessageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>[]
+          }
+          upsert: {
+            args: Prisma.SupportMessageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SupportMessagePayload>
+          }
+          aggregate: {
+            args: Prisma.SupportMessageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSupportMessage>
+          }
+          groupBy: {
+            args: Prisma.SupportMessageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SupportMessageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SupportMessageCountArgs<ExtArgs>
+            result: $Utils.Optional<SupportMessageCountAggregateOutputType> | number
+          }
+        }
+      }
+      CustomerReview: {
+        payload: Prisma.$CustomerReviewPayload<ExtArgs>
+        fields: Prisma.CustomerReviewFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CustomerReviewFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CustomerReviewFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>
+          }
+          findFirst: {
+            args: Prisma.CustomerReviewFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CustomerReviewFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>
+          }
+          findMany: {
+            args: Prisma.CustomerReviewFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>[]
+          }
+          create: {
+            args: Prisma.CustomerReviewCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>
+          }
+          createMany: {
+            args: Prisma.CustomerReviewCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CustomerReviewCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>[]
+          }
+          delete: {
+            args: Prisma.CustomerReviewDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>
+          }
+          update: {
+            args: Prisma.CustomerReviewUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>
+          }
+          deleteMany: {
+            args: Prisma.CustomerReviewDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CustomerReviewUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CustomerReviewUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>[]
+          }
+          upsert: {
+            args: Prisma.CustomerReviewUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CustomerReviewPayload>
+          }
+          aggregate: {
+            args: Prisma.CustomerReviewAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCustomerReview>
+          }
+          groupBy: {
+            args: Prisma.CustomerReviewGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CustomerReviewGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CustomerReviewCountArgs<ExtArgs>
+            result: $Utils.Optional<CustomerReviewCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProductRequest: {
+        payload: Prisma.$ProductRequestPayload<ExtArgs>
+        fields: Prisma.ProductRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProductRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProductRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.ProductRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProductRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>
+          }
+          findMany: {
+            args: Prisma.ProductRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>[]
+          }
+          create: {
+            args: Prisma.ProductRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>
+          }
+          createMany: {
+            args: Prisma.ProductRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProductRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.ProductRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>
+          }
+          update: {
+            args: Prisma.ProductRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProductRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProductRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProductRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProductRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProductRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.ProductRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProductRequest>
+          }
+          groupBy: {
+            args: Prisma.ProductRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProductRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProductRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<ProductRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1457,6 +1871,10 @@ export namespace Prisma {
     orderItem?: OrderItemOmit
     paymentTransaction?: PaymentTransactionOmit
     heroSlide?: HeroSlideOmit
+    supportConversation?: SupportConversationOmit
+    supportMessage?: SupportMessageOmit
+    customerReview?: CustomerReviewOmit
+    productRequest?: ProductRequestOmit
   }
 
   /* Types for Logging */
@@ -1631,6 +2049,37 @@ export namespace Prisma {
    */
   export type RiderCountOutputTypeCountOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: OrderWhereInput
+  }
+
+
+  /**
+   * Count Type SupportConversationCountOutputType
+   */
+
+  export type SupportConversationCountOutputType = {
+    messages: number
+  }
+
+  export type SupportConversationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    messages?: boolean | SupportConversationCountOutputTypeCountMessagesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SupportConversationCountOutputType without action
+   */
+  export type SupportConversationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversationCountOutputType
+     */
+    select?: SupportConversationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SupportConversationCountOutputType without action
+   */
+  export type SupportConversationCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportMessageWhereInput
   }
 
 
@@ -11024,6 +11473,4459 @@ export namespace Prisma {
 
 
   /**
+   * Model SupportConversation
+   */
+
+  export type AggregateSupportConversation = {
+    _count: SupportConversationCountAggregateOutputType | null
+    _min: SupportConversationMinAggregateOutputType | null
+    _max: SupportConversationMaxAggregateOutputType | null
+  }
+
+  export type SupportConversationMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    guestName: string | null
+    guestPhone: string | null
+    status: $Enums.ConversationStatus | null
+    subject: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    lastMessageAt: Date | null
+    pharmacistId: string | null
+    isRead: boolean | null
+  }
+
+  export type SupportConversationMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    guestName: string | null
+    guestPhone: string | null
+    status: $Enums.ConversationStatus | null
+    subject: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    lastMessageAt: Date | null
+    pharmacistId: string | null
+    isRead: boolean | null
+  }
+
+  export type SupportConversationCountAggregateOutputType = {
+    id: number
+    userId: number
+    guestName: number
+    guestPhone: number
+    status: number
+    subject: number
+    createdAt: number
+    updatedAt: number
+    lastMessageAt: number
+    pharmacistId: number
+    isRead: number
+    _all: number
+  }
+
+
+  export type SupportConversationMinAggregateInputType = {
+    id?: true
+    userId?: true
+    guestName?: true
+    guestPhone?: true
+    status?: true
+    subject?: true
+    createdAt?: true
+    updatedAt?: true
+    lastMessageAt?: true
+    pharmacistId?: true
+    isRead?: true
+  }
+
+  export type SupportConversationMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    guestName?: true
+    guestPhone?: true
+    status?: true
+    subject?: true
+    createdAt?: true
+    updatedAt?: true
+    lastMessageAt?: true
+    pharmacistId?: true
+    isRead?: true
+  }
+
+  export type SupportConversationCountAggregateInputType = {
+    id?: true
+    userId?: true
+    guestName?: true
+    guestPhone?: true
+    status?: true
+    subject?: true
+    createdAt?: true
+    updatedAt?: true
+    lastMessageAt?: true
+    pharmacistId?: true
+    isRead?: true
+    _all?: true
+  }
+
+  export type SupportConversationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportConversation to aggregate.
+     */
+    where?: SupportConversationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportConversations to fetch.
+     */
+    orderBy?: SupportConversationOrderByWithRelationInput | SupportConversationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SupportConversationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportConversations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportConversations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SupportConversations
+    **/
+    _count?: true | SupportConversationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SupportConversationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SupportConversationMaxAggregateInputType
+  }
+
+  export type GetSupportConversationAggregateType<T extends SupportConversationAggregateArgs> = {
+        [P in keyof T & keyof AggregateSupportConversation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSupportConversation[P]>
+      : GetScalarType<T[P], AggregateSupportConversation[P]>
+  }
+
+
+
+
+  export type SupportConversationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportConversationWhereInput
+    orderBy?: SupportConversationOrderByWithAggregationInput | SupportConversationOrderByWithAggregationInput[]
+    by: SupportConversationScalarFieldEnum[] | SupportConversationScalarFieldEnum
+    having?: SupportConversationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SupportConversationCountAggregateInputType | true
+    _min?: SupportConversationMinAggregateInputType
+    _max?: SupportConversationMaxAggregateInputType
+  }
+
+  export type SupportConversationGroupByOutputType = {
+    id: string
+    userId: string | null
+    guestName: string | null
+    guestPhone: string | null
+    status: $Enums.ConversationStatus
+    subject: string | null
+    createdAt: Date
+    updatedAt: Date
+    lastMessageAt: Date
+    pharmacistId: string | null
+    isRead: boolean
+    _count: SupportConversationCountAggregateOutputType | null
+    _min: SupportConversationMinAggregateOutputType | null
+    _max: SupportConversationMaxAggregateOutputType | null
+  }
+
+  type GetSupportConversationGroupByPayload<T extends SupportConversationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SupportConversationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SupportConversationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SupportConversationGroupByOutputType[P]>
+            : GetScalarType<T[P], SupportConversationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SupportConversationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    guestName?: boolean
+    guestPhone?: boolean
+    status?: boolean
+    subject?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    lastMessageAt?: boolean
+    pharmacistId?: boolean
+    isRead?: boolean
+    messages?: boolean | SupportConversation$messagesArgs<ExtArgs>
+    _count?: boolean | SupportConversationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportConversation"]>
+
+  export type SupportConversationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    guestName?: boolean
+    guestPhone?: boolean
+    status?: boolean
+    subject?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    lastMessageAt?: boolean
+    pharmacistId?: boolean
+    isRead?: boolean
+  }, ExtArgs["result"]["supportConversation"]>
+
+  export type SupportConversationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    guestName?: boolean
+    guestPhone?: boolean
+    status?: boolean
+    subject?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    lastMessageAt?: boolean
+    pharmacistId?: boolean
+    isRead?: boolean
+  }, ExtArgs["result"]["supportConversation"]>
+
+  export type SupportConversationSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    guestName?: boolean
+    guestPhone?: boolean
+    status?: boolean
+    subject?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    lastMessageAt?: boolean
+    pharmacistId?: boolean
+    isRead?: boolean
+  }
+
+  export type SupportConversationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "guestName" | "guestPhone" | "status" | "subject" | "createdAt" | "updatedAt" | "lastMessageAt" | "pharmacistId" | "isRead", ExtArgs["result"]["supportConversation"]>
+  export type SupportConversationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    messages?: boolean | SupportConversation$messagesArgs<ExtArgs>
+    _count?: boolean | SupportConversationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SupportConversationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type SupportConversationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $SupportConversationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SupportConversation"
+    objects: {
+      messages: Prisma.$SupportMessagePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string | null
+      guestName: string | null
+      guestPhone: string | null
+      status: $Enums.ConversationStatus
+      subject: string | null
+      createdAt: Date
+      updatedAt: Date
+      lastMessageAt: Date
+      pharmacistId: string | null
+      isRead: boolean
+    }, ExtArgs["result"]["supportConversation"]>
+    composites: {}
+  }
+
+  type SupportConversationGetPayload<S extends boolean | null | undefined | SupportConversationDefaultArgs> = $Result.GetResult<Prisma.$SupportConversationPayload, S>
+
+  type SupportConversationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SupportConversationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SupportConversationCountAggregateInputType | true
+    }
+
+  export interface SupportConversationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SupportConversation'], meta: { name: 'SupportConversation' } }
+    /**
+     * Find zero or one SupportConversation that matches the filter.
+     * @param {SupportConversationFindUniqueArgs} args - Arguments to find a SupportConversation
+     * @example
+     * // Get one SupportConversation
+     * const supportConversation = await prisma.supportConversation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SupportConversationFindUniqueArgs>(args: SelectSubset<T, SupportConversationFindUniqueArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SupportConversation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SupportConversationFindUniqueOrThrowArgs} args - Arguments to find a SupportConversation
+     * @example
+     * // Get one SupportConversation
+     * const supportConversation = await prisma.supportConversation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SupportConversationFindUniqueOrThrowArgs>(args: SelectSubset<T, SupportConversationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportConversation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportConversationFindFirstArgs} args - Arguments to find a SupportConversation
+     * @example
+     * // Get one SupportConversation
+     * const supportConversation = await prisma.supportConversation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SupportConversationFindFirstArgs>(args?: SelectSubset<T, SupportConversationFindFirstArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportConversation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportConversationFindFirstOrThrowArgs} args - Arguments to find a SupportConversation
+     * @example
+     * // Get one SupportConversation
+     * const supportConversation = await prisma.supportConversation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SupportConversationFindFirstOrThrowArgs>(args?: SelectSubset<T, SupportConversationFindFirstOrThrowArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SupportConversations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportConversationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SupportConversations
+     * const supportConversations = await prisma.supportConversation.findMany()
+     * 
+     * // Get first 10 SupportConversations
+     * const supportConversations = await prisma.supportConversation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const supportConversationWithIdOnly = await prisma.supportConversation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SupportConversationFindManyArgs>(args?: SelectSubset<T, SupportConversationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SupportConversation.
+     * @param {SupportConversationCreateArgs} args - Arguments to create a SupportConversation.
+     * @example
+     * // Create one SupportConversation
+     * const SupportConversation = await prisma.supportConversation.create({
+     *   data: {
+     *     // ... data to create a SupportConversation
+     *   }
+     * })
+     * 
+     */
+    create<T extends SupportConversationCreateArgs>(args: SelectSubset<T, SupportConversationCreateArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SupportConversations.
+     * @param {SupportConversationCreateManyArgs} args - Arguments to create many SupportConversations.
+     * @example
+     * // Create many SupportConversations
+     * const supportConversation = await prisma.supportConversation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SupportConversationCreateManyArgs>(args?: SelectSubset<T, SupportConversationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SupportConversations and returns the data saved in the database.
+     * @param {SupportConversationCreateManyAndReturnArgs} args - Arguments to create many SupportConversations.
+     * @example
+     * // Create many SupportConversations
+     * const supportConversation = await prisma.supportConversation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SupportConversations and only return the `id`
+     * const supportConversationWithIdOnly = await prisma.supportConversation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SupportConversationCreateManyAndReturnArgs>(args?: SelectSubset<T, SupportConversationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SupportConversation.
+     * @param {SupportConversationDeleteArgs} args - Arguments to delete one SupportConversation.
+     * @example
+     * // Delete one SupportConversation
+     * const SupportConversation = await prisma.supportConversation.delete({
+     *   where: {
+     *     // ... filter to delete one SupportConversation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SupportConversationDeleteArgs>(args: SelectSubset<T, SupportConversationDeleteArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SupportConversation.
+     * @param {SupportConversationUpdateArgs} args - Arguments to update one SupportConversation.
+     * @example
+     * // Update one SupportConversation
+     * const supportConversation = await prisma.supportConversation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SupportConversationUpdateArgs>(args: SelectSubset<T, SupportConversationUpdateArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SupportConversations.
+     * @param {SupportConversationDeleteManyArgs} args - Arguments to filter SupportConversations to delete.
+     * @example
+     * // Delete a few SupportConversations
+     * const { count } = await prisma.supportConversation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SupportConversationDeleteManyArgs>(args?: SelectSubset<T, SupportConversationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportConversations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportConversationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SupportConversations
+     * const supportConversation = await prisma.supportConversation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SupportConversationUpdateManyArgs>(args: SelectSubset<T, SupportConversationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportConversations and returns the data updated in the database.
+     * @param {SupportConversationUpdateManyAndReturnArgs} args - Arguments to update many SupportConversations.
+     * @example
+     * // Update many SupportConversations
+     * const supportConversation = await prisma.supportConversation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SupportConversations and only return the `id`
+     * const supportConversationWithIdOnly = await prisma.supportConversation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SupportConversationUpdateManyAndReturnArgs>(args: SelectSubset<T, SupportConversationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SupportConversation.
+     * @param {SupportConversationUpsertArgs} args - Arguments to update or create a SupportConversation.
+     * @example
+     * // Update or create a SupportConversation
+     * const supportConversation = await prisma.supportConversation.upsert({
+     *   create: {
+     *     // ... data to create a SupportConversation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SupportConversation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SupportConversationUpsertArgs>(args: SelectSubset<T, SupportConversationUpsertArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SupportConversations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportConversationCountArgs} args - Arguments to filter SupportConversations to count.
+     * @example
+     * // Count the number of SupportConversations
+     * const count = await prisma.supportConversation.count({
+     *   where: {
+     *     // ... the filter for the SupportConversations we want to count
+     *   }
+     * })
+    **/
+    count<T extends SupportConversationCountArgs>(
+      args?: Subset<T, SupportConversationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SupportConversationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SupportConversation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportConversationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SupportConversationAggregateArgs>(args: Subset<T, SupportConversationAggregateArgs>): Prisma.PrismaPromise<GetSupportConversationAggregateType<T>>
+
+    /**
+     * Group by SupportConversation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportConversationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SupportConversationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SupportConversationGroupByArgs['orderBy'] }
+        : { orderBy?: SupportConversationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SupportConversationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSupportConversationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SupportConversation model
+   */
+  readonly fields: SupportConversationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SupportConversation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SupportConversationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    messages<T extends SupportConversation$messagesArgs<ExtArgs> = {}>(args?: Subset<T, SupportConversation$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SupportConversation model
+   */
+  interface SupportConversationFieldRefs {
+    readonly id: FieldRef<"SupportConversation", 'String'>
+    readonly userId: FieldRef<"SupportConversation", 'String'>
+    readonly guestName: FieldRef<"SupportConversation", 'String'>
+    readonly guestPhone: FieldRef<"SupportConversation", 'String'>
+    readonly status: FieldRef<"SupportConversation", 'ConversationStatus'>
+    readonly subject: FieldRef<"SupportConversation", 'String'>
+    readonly createdAt: FieldRef<"SupportConversation", 'DateTime'>
+    readonly updatedAt: FieldRef<"SupportConversation", 'DateTime'>
+    readonly lastMessageAt: FieldRef<"SupportConversation", 'DateTime'>
+    readonly pharmacistId: FieldRef<"SupportConversation", 'String'>
+    readonly isRead: FieldRef<"SupportConversation", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SupportConversation findUnique
+   */
+  export type SupportConversationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportConversation to fetch.
+     */
+    where: SupportConversationWhereUniqueInput
+  }
+
+  /**
+   * SupportConversation findUniqueOrThrow
+   */
+  export type SupportConversationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportConversation to fetch.
+     */
+    where: SupportConversationWhereUniqueInput
+  }
+
+  /**
+   * SupportConversation findFirst
+   */
+  export type SupportConversationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportConversation to fetch.
+     */
+    where?: SupportConversationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportConversations to fetch.
+     */
+    orderBy?: SupportConversationOrderByWithRelationInput | SupportConversationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportConversations.
+     */
+    cursor?: SupportConversationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportConversations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportConversations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportConversations.
+     */
+    distinct?: SupportConversationScalarFieldEnum | SupportConversationScalarFieldEnum[]
+  }
+
+  /**
+   * SupportConversation findFirstOrThrow
+   */
+  export type SupportConversationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportConversation to fetch.
+     */
+    where?: SupportConversationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportConversations to fetch.
+     */
+    orderBy?: SupportConversationOrderByWithRelationInput | SupportConversationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportConversations.
+     */
+    cursor?: SupportConversationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportConversations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportConversations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportConversations.
+     */
+    distinct?: SupportConversationScalarFieldEnum | SupportConversationScalarFieldEnum[]
+  }
+
+  /**
+   * SupportConversation findMany
+   */
+  export type SupportConversationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportConversations to fetch.
+     */
+    where?: SupportConversationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportConversations to fetch.
+     */
+    orderBy?: SupportConversationOrderByWithRelationInput | SupportConversationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SupportConversations.
+     */
+    cursor?: SupportConversationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportConversations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportConversations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportConversations.
+     */
+    distinct?: SupportConversationScalarFieldEnum | SupportConversationScalarFieldEnum[]
+  }
+
+  /**
+   * SupportConversation create
+   */
+  export type SupportConversationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SupportConversation.
+     */
+    data: XOR<SupportConversationCreateInput, SupportConversationUncheckedCreateInput>
+  }
+
+  /**
+   * SupportConversation createMany
+   */
+  export type SupportConversationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SupportConversations.
+     */
+    data: SupportConversationCreateManyInput | SupportConversationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportConversation createManyAndReturn
+   */
+  export type SupportConversationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * The data used to create many SupportConversations.
+     */
+    data: SupportConversationCreateManyInput | SupportConversationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportConversation update
+   */
+  export type SupportConversationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SupportConversation.
+     */
+    data: XOR<SupportConversationUpdateInput, SupportConversationUncheckedUpdateInput>
+    /**
+     * Choose, which SupportConversation to update.
+     */
+    where: SupportConversationWhereUniqueInput
+  }
+
+  /**
+   * SupportConversation updateMany
+   */
+  export type SupportConversationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SupportConversations.
+     */
+    data: XOR<SupportConversationUpdateManyMutationInput, SupportConversationUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportConversations to update
+     */
+    where?: SupportConversationWhereInput
+    /**
+     * Limit how many SupportConversations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportConversation updateManyAndReturn
+   */
+  export type SupportConversationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * The data used to update SupportConversations.
+     */
+    data: XOR<SupportConversationUpdateManyMutationInput, SupportConversationUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportConversations to update
+     */
+    where?: SupportConversationWhereInput
+    /**
+     * Limit how many SupportConversations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportConversation upsert
+   */
+  export type SupportConversationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SupportConversation to update in case it exists.
+     */
+    where: SupportConversationWhereUniqueInput
+    /**
+     * In case the SupportConversation found by the `where` argument doesn't exist, create a new SupportConversation with this data.
+     */
+    create: XOR<SupportConversationCreateInput, SupportConversationUncheckedCreateInput>
+    /**
+     * In case the SupportConversation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SupportConversationUpdateInput, SupportConversationUncheckedUpdateInput>
+  }
+
+  /**
+   * SupportConversation delete
+   */
+  export type SupportConversationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+    /**
+     * Filter which SupportConversation to delete.
+     */
+    where: SupportConversationWhereUniqueInput
+  }
+
+  /**
+   * SupportConversation deleteMany
+   */
+  export type SupportConversationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportConversations to delete
+     */
+    where?: SupportConversationWhereInput
+    /**
+     * Limit how many SupportConversations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportConversation.messages
+   */
+  export type SupportConversation$messagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    where?: SupportMessageWhereInput
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    cursor?: SupportMessageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SupportMessageScalarFieldEnum | SupportMessageScalarFieldEnum[]
+  }
+
+  /**
+   * SupportConversation without action
+   */
+  export type SupportConversationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportConversation
+     */
+    select?: SupportConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportConversation
+     */
+    omit?: SupportConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportConversationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SupportMessage
+   */
+
+  export type AggregateSupportMessage = {
+    _count: SupportMessageCountAggregateOutputType | null
+    _avg: SupportMessageAvgAggregateOutputType | null
+    _sum: SupportMessageSumAggregateOutputType | null
+    _min: SupportMessageMinAggregateOutputType | null
+    _max: SupportMessageMaxAggregateOutputType | null
+  }
+
+  export type SupportMessageAvgAggregateOutputType = {
+    productPrice: number | null
+  }
+
+  export type SupportMessageSumAggregateOutputType = {
+    productPrice: number | null
+  }
+
+  export type SupportMessageMinAggregateOutputType = {
+    id: string | null
+    conversationId: string | null
+    content: string | null
+    senderType: $Enums.SenderType | null
+    senderName: string | null
+    createdAt: Date | null
+    isRead: boolean | null
+    messageType: $Enums.MessageType | null
+    productId: string | null
+    productName: string | null
+    productPrice: number | null
+    productImage: string | null
+  }
+
+  export type SupportMessageMaxAggregateOutputType = {
+    id: string | null
+    conversationId: string | null
+    content: string | null
+    senderType: $Enums.SenderType | null
+    senderName: string | null
+    createdAt: Date | null
+    isRead: boolean | null
+    messageType: $Enums.MessageType | null
+    productId: string | null
+    productName: string | null
+    productPrice: number | null
+    productImage: string | null
+  }
+
+  export type SupportMessageCountAggregateOutputType = {
+    id: number
+    conversationId: number
+    content: number
+    senderType: number
+    senderName: number
+    createdAt: number
+    isRead: number
+    messageType: number
+    productId: number
+    productName: number
+    productPrice: number
+    productImage: number
+    _all: number
+  }
+
+
+  export type SupportMessageAvgAggregateInputType = {
+    productPrice?: true
+  }
+
+  export type SupportMessageSumAggregateInputType = {
+    productPrice?: true
+  }
+
+  export type SupportMessageMinAggregateInputType = {
+    id?: true
+    conversationId?: true
+    content?: true
+    senderType?: true
+    senderName?: true
+    createdAt?: true
+    isRead?: true
+    messageType?: true
+    productId?: true
+    productName?: true
+    productPrice?: true
+    productImage?: true
+  }
+
+  export type SupportMessageMaxAggregateInputType = {
+    id?: true
+    conversationId?: true
+    content?: true
+    senderType?: true
+    senderName?: true
+    createdAt?: true
+    isRead?: true
+    messageType?: true
+    productId?: true
+    productName?: true
+    productPrice?: true
+    productImage?: true
+  }
+
+  export type SupportMessageCountAggregateInputType = {
+    id?: true
+    conversationId?: true
+    content?: true
+    senderType?: true
+    senderName?: true
+    createdAt?: true
+    isRead?: true
+    messageType?: true
+    productId?: true
+    productName?: true
+    productPrice?: true
+    productImage?: true
+    _all?: true
+  }
+
+  export type SupportMessageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportMessage to aggregate.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SupportMessages
+    **/
+    _count?: true | SupportMessageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SupportMessageAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SupportMessageSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SupportMessageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SupportMessageMaxAggregateInputType
+  }
+
+  export type GetSupportMessageAggregateType<T extends SupportMessageAggregateArgs> = {
+        [P in keyof T & keyof AggregateSupportMessage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSupportMessage[P]>
+      : GetScalarType<T[P], AggregateSupportMessage[P]>
+  }
+
+
+
+
+  export type SupportMessageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SupportMessageWhereInput
+    orderBy?: SupportMessageOrderByWithAggregationInput | SupportMessageOrderByWithAggregationInput[]
+    by: SupportMessageScalarFieldEnum[] | SupportMessageScalarFieldEnum
+    having?: SupportMessageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SupportMessageCountAggregateInputType | true
+    _avg?: SupportMessageAvgAggregateInputType
+    _sum?: SupportMessageSumAggregateInputType
+    _min?: SupportMessageMinAggregateInputType
+    _max?: SupportMessageMaxAggregateInputType
+  }
+
+  export type SupportMessageGroupByOutputType = {
+    id: string
+    conversationId: string
+    content: string
+    senderType: $Enums.SenderType
+    senderName: string
+    createdAt: Date
+    isRead: boolean
+    messageType: $Enums.MessageType
+    productId: string | null
+    productName: string | null
+    productPrice: number | null
+    productImage: string | null
+    _count: SupportMessageCountAggregateOutputType | null
+    _avg: SupportMessageAvgAggregateOutputType | null
+    _sum: SupportMessageSumAggregateOutputType | null
+    _min: SupportMessageMinAggregateOutputType | null
+    _max: SupportMessageMaxAggregateOutputType | null
+  }
+
+  type GetSupportMessageGroupByPayload<T extends SupportMessageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SupportMessageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SupportMessageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SupportMessageGroupByOutputType[P]>
+            : GetScalarType<T[P], SupportMessageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SupportMessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    conversationId?: boolean
+    content?: boolean
+    senderType?: boolean
+    senderName?: boolean
+    createdAt?: boolean
+    isRead?: boolean
+    messageType?: boolean
+    productId?: boolean
+    productName?: boolean
+    productPrice?: boolean
+    productImage?: boolean
+    conversation?: boolean | SupportConversationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportMessage"]>
+
+  export type SupportMessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    conversationId?: boolean
+    content?: boolean
+    senderType?: boolean
+    senderName?: boolean
+    createdAt?: boolean
+    isRead?: boolean
+    messageType?: boolean
+    productId?: boolean
+    productName?: boolean
+    productPrice?: boolean
+    productImage?: boolean
+    conversation?: boolean | SupportConversationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportMessage"]>
+
+  export type SupportMessageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    conversationId?: boolean
+    content?: boolean
+    senderType?: boolean
+    senderName?: boolean
+    createdAt?: boolean
+    isRead?: boolean
+    messageType?: boolean
+    productId?: boolean
+    productName?: boolean
+    productPrice?: boolean
+    productImage?: boolean
+    conversation?: boolean | SupportConversationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["supportMessage"]>
+
+  export type SupportMessageSelectScalar = {
+    id?: boolean
+    conversationId?: boolean
+    content?: boolean
+    senderType?: boolean
+    senderName?: boolean
+    createdAt?: boolean
+    isRead?: boolean
+    messageType?: boolean
+    productId?: boolean
+    productName?: boolean
+    productPrice?: boolean
+    productImage?: boolean
+  }
+
+  export type SupportMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "conversationId" | "content" | "senderType" | "senderName" | "createdAt" | "isRead" | "messageType" | "productId" | "productName" | "productPrice" | "productImage", ExtArgs["result"]["supportMessage"]>
+  export type SupportMessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    conversation?: boolean | SupportConversationDefaultArgs<ExtArgs>
+  }
+  export type SupportMessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    conversation?: boolean | SupportConversationDefaultArgs<ExtArgs>
+  }
+  export type SupportMessageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    conversation?: boolean | SupportConversationDefaultArgs<ExtArgs>
+  }
+
+  export type $SupportMessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SupportMessage"
+    objects: {
+      conversation: Prisma.$SupportConversationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      conversationId: string
+      content: string
+      senderType: $Enums.SenderType
+      senderName: string
+      createdAt: Date
+      isRead: boolean
+      messageType: $Enums.MessageType
+      productId: string | null
+      productName: string | null
+      productPrice: number | null
+      productImage: string | null
+    }, ExtArgs["result"]["supportMessage"]>
+    composites: {}
+  }
+
+  type SupportMessageGetPayload<S extends boolean | null | undefined | SupportMessageDefaultArgs> = $Result.GetResult<Prisma.$SupportMessagePayload, S>
+
+  type SupportMessageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SupportMessageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SupportMessageCountAggregateInputType | true
+    }
+
+  export interface SupportMessageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SupportMessage'], meta: { name: 'SupportMessage' } }
+    /**
+     * Find zero or one SupportMessage that matches the filter.
+     * @param {SupportMessageFindUniqueArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SupportMessageFindUniqueArgs>(args: SelectSubset<T, SupportMessageFindUniqueArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SupportMessage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SupportMessageFindUniqueOrThrowArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SupportMessageFindUniqueOrThrowArgs>(args: SelectSubset<T, SupportMessageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportMessage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageFindFirstArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SupportMessageFindFirstArgs>(args?: SelectSubset<T, SupportMessageFindFirstArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SupportMessage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageFindFirstOrThrowArgs} args - Arguments to find a SupportMessage
+     * @example
+     * // Get one SupportMessage
+     * const supportMessage = await prisma.supportMessage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SupportMessageFindFirstOrThrowArgs>(args?: SelectSubset<T, SupportMessageFindFirstOrThrowArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SupportMessages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SupportMessages
+     * const supportMessages = await prisma.supportMessage.findMany()
+     * 
+     * // Get first 10 SupportMessages
+     * const supportMessages = await prisma.supportMessage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const supportMessageWithIdOnly = await prisma.supportMessage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SupportMessageFindManyArgs>(args?: SelectSubset<T, SupportMessageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SupportMessage.
+     * @param {SupportMessageCreateArgs} args - Arguments to create a SupportMessage.
+     * @example
+     * // Create one SupportMessage
+     * const SupportMessage = await prisma.supportMessage.create({
+     *   data: {
+     *     // ... data to create a SupportMessage
+     *   }
+     * })
+     * 
+     */
+    create<T extends SupportMessageCreateArgs>(args: SelectSubset<T, SupportMessageCreateArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SupportMessages.
+     * @param {SupportMessageCreateManyArgs} args - Arguments to create many SupportMessages.
+     * @example
+     * // Create many SupportMessages
+     * const supportMessage = await prisma.supportMessage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SupportMessageCreateManyArgs>(args?: SelectSubset<T, SupportMessageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SupportMessages and returns the data saved in the database.
+     * @param {SupportMessageCreateManyAndReturnArgs} args - Arguments to create many SupportMessages.
+     * @example
+     * // Create many SupportMessages
+     * const supportMessage = await prisma.supportMessage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SupportMessages and only return the `id`
+     * const supportMessageWithIdOnly = await prisma.supportMessage.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SupportMessageCreateManyAndReturnArgs>(args?: SelectSubset<T, SupportMessageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SupportMessage.
+     * @param {SupportMessageDeleteArgs} args - Arguments to delete one SupportMessage.
+     * @example
+     * // Delete one SupportMessage
+     * const SupportMessage = await prisma.supportMessage.delete({
+     *   where: {
+     *     // ... filter to delete one SupportMessage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SupportMessageDeleteArgs>(args: SelectSubset<T, SupportMessageDeleteArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SupportMessage.
+     * @param {SupportMessageUpdateArgs} args - Arguments to update one SupportMessage.
+     * @example
+     * // Update one SupportMessage
+     * const supportMessage = await prisma.supportMessage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SupportMessageUpdateArgs>(args: SelectSubset<T, SupportMessageUpdateArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SupportMessages.
+     * @param {SupportMessageDeleteManyArgs} args - Arguments to filter SupportMessages to delete.
+     * @example
+     * // Delete a few SupportMessages
+     * const { count } = await prisma.supportMessage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SupportMessageDeleteManyArgs>(args?: SelectSubset<T, SupportMessageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SupportMessages
+     * const supportMessage = await prisma.supportMessage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SupportMessageUpdateManyArgs>(args: SelectSubset<T, SupportMessageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SupportMessages and returns the data updated in the database.
+     * @param {SupportMessageUpdateManyAndReturnArgs} args - Arguments to update many SupportMessages.
+     * @example
+     * // Update many SupportMessages
+     * const supportMessage = await prisma.supportMessage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SupportMessages and only return the `id`
+     * const supportMessageWithIdOnly = await prisma.supportMessage.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SupportMessageUpdateManyAndReturnArgs>(args: SelectSubset<T, SupportMessageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SupportMessage.
+     * @param {SupportMessageUpsertArgs} args - Arguments to update or create a SupportMessage.
+     * @example
+     * // Update or create a SupportMessage
+     * const supportMessage = await prisma.supportMessage.upsert({
+     *   create: {
+     *     // ... data to create a SupportMessage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SupportMessage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SupportMessageUpsertArgs>(args: SelectSubset<T, SupportMessageUpsertArgs<ExtArgs>>): Prisma__SupportMessageClient<$Result.GetResult<Prisma.$SupportMessagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SupportMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageCountArgs} args - Arguments to filter SupportMessages to count.
+     * @example
+     * // Count the number of SupportMessages
+     * const count = await prisma.supportMessage.count({
+     *   where: {
+     *     // ... the filter for the SupportMessages we want to count
+     *   }
+     * })
+    **/
+    count<T extends SupportMessageCountArgs>(
+      args?: Subset<T, SupportMessageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SupportMessageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SupportMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SupportMessageAggregateArgs>(args: Subset<T, SupportMessageAggregateArgs>): Prisma.PrismaPromise<GetSupportMessageAggregateType<T>>
+
+    /**
+     * Group by SupportMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SupportMessageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SupportMessageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SupportMessageGroupByArgs['orderBy'] }
+        : { orderBy?: SupportMessageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SupportMessageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSupportMessageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SupportMessage model
+   */
+  readonly fields: SupportMessageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SupportMessage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SupportMessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    conversation<T extends SupportConversationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SupportConversationDefaultArgs<ExtArgs>>): Prisma__SupportConversationClient<$Result.GetResult<Prisma.$SupportConversationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SupportMessage model
+   */
+  interface SupportMessageFieldRefs {
+    readonly id: FieldRef<"SupportMessage", 'String'>
+    readonly conversationId: FieldRef<"SupportMessage", 'String'>
+    readonly content: FieldRef<"SupportMessage", 'String'>
+    readonly senderType: FieldRef<"SupportMessage", 'SenderType'>
+    readonly senderName: FieldRef<"SupportMessage", 'String'>
+    readonly createdAt: FieldRef<"SupportMessage", 'DateTime'>
+    readonly isRead: FieldRef<"SupportMessage", 'Boolean'>
+    readonly messageType: FieldRef<"SupportMessage", 'MessageType'>
+    readonly productId: FieldRef<"SupportMessage", 'String'>
+    readonly productName: FieldRef<"SupportMessage", 'String'>
+    readonly productPrice: FieldRef<"SupportMessage", 'Float'>
+    readonly productImage: FieldRef<"SupportMessage", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SupportMessage findUnique
+   */
+  export type SupportMessageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage findUniqueOrThrow
+   */
+  export type SupportMessageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage findFirst
+   */
+  export type SupportMessageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportMessages.
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessages.
+     */
+    distinct?: SupportMessageScalarFieldEnum | SupportMessageScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessage findFirstOrThrow
+   */
+  export type SupportMessageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessage to fetch.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SupportMessages.
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessages.
+     */
+    distinct?: SupportMessageScalarFieldEnum | SupportMessageScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessage findMany
+   */
+  export type SupportMessageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter, which SupportMessages to fetch.
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SupportMessages to fetch.
+     */
+    orderBy?: SupportMessageOrderByWithRelationInput | SupportMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SupportMessages.
+     */
+    cursor?: SupportMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SupportMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SupportMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SupportMessages.
+     */
+    distinct?: SupportMessageScalarFieldEnum | SupportMessageScalarFieldEnum[]
+  }
+
+  /**
+   * SupportMessage create
+   */
+  export type SupportMessageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SupportMessage.
+     */
+    data: XOR<SupportMessageCreateInput, SupportMessageUncheckedCreateInput>
+  }
+
+  /**
+   * SupportMessage createMany
+   */
+  export type SupportMessageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SupportMessages.
+     */
+    data: SupportMessageCreateManyInput | SupportMessageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SupportMessage createManyAndReturn
+   */
+  export type SupportMessageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * The data used to create many SupportMessages.
+     */
+    data: SupportMessageCreateManyInput | SupportMessageCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportMessage update
+   */
+  export type SupportMessageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SupportMessage.
+     */
+    data: XOR<SupportMessageUpdateInput, SupportMessageUncheckedUpdateInput>
+    /**
+     * Choose, which SupportMessage to update.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage updateMany
+   */
+  export type SupportMessageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SupportMessages.
+     */
+    data: XOR<SupportMessageUpdateManyMutationInput, SupportMessageUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportMessages to update
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * Limit how many SupportMessages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportMessage updateManyAndReturn
+   */
+  export type SupportMessageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * The data used to update SupportMessages.
+     */
+    data: XOR<SupportMessageUpdateManyMutationInput, SupportMessageUncheckedUpdateManyInput>
+    /**
+     * Filter which SupportMessages to update
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * Limit how many SupportMessages to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SupportMessage upsert
+   */
+  export type SupportMessageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SupportMessage to update in case it exists.
+     */
+    where: SupportMessageWhereUniqueInput
+    /**
+     * In case the SupportMessage found by the `where` argument doesn't exist, create a new SupportMessage with this data.
+     */
+    create: XOR<SupportMessageCreateInput, SupportMessageUncheckedCreateInput>
+    /**
+     * In case the SupportMessage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SupportMessageUpdateInput, SupportMessageUncheckedUpdateInput>
+  }
+
+  /**
+   * SupportMessage delete
+   */
+  export type SupportMessageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+    /**
+     * Filter which SupportMessage to delete.
+     */
+    where: SupportMessageWhereUniqueInput
+  }
+
+  /**
+   * SupportMessage deleteMany
+   */
+  export type SupportMessageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SupportMessages to delete
+     */
+    where?: SupportMessageWhereInput
+    /**
+     * Limit how many SupportMessages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SupportMessage without action
+   */
+  export type SupportMessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SupportMessage
+     */
+    select?: SupportMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SupportMessage
+     */
+    omit?: SupportMessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SupportMessageInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model CustomerReview
+   */
+
+  export type AggregateCustomerReview = {
+    _count: CustomerReviewCountAggregateOutputType | null
+    _avg: CustomerReviewAvgAggregateOutputType | null
+    _sum: CustomerReviewSumAggregateOutputType | null
+    _min: CustomerReviewMinAggregateOutputType | null
+    _max: CustomerReviewMaxAggregateOutputType | null
+  }
+
+  export type CustomerReviewAvgAggregateOutputType = {
+    rating: number | null
+  }
+
+  export type CustomerReviewSumAggregateOutputType = {
+    rating: number | null
+  }
+
+  export type CustomerReviewMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    rating: number | null
+    message: string | null
+    isApproved: boolean | null
+    isRead: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomerReviewMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    rating: number | null
+    message: string | null
+    isApproved: boolean | null
+    isRead: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CustomerReviewCountAggregateOutputType = {
+    id: number
+    name: number
+    rating: number
+    message: number
+    isApproved: number
+    isRead: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CustomerReviewAvgAggregateInputType = {
+    rating?: true
+  }
+
+  export type CustomerReviewSumAggregateInputType = {
+    rating?: true
+  }
+
+  export type CustomerReviewMinAggregateInputType = {
+    id?: true
+    name?: true
+    rating?: true
+    message?: true
+    isApproved?: true
+    isRead?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomerReviewMaxAggregateInputType = {
+    id?: true
+    name?: true
+    rating?: true
+    message?: true
+    isApproved?: true
+    isRead?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CustomerReviewCountAggregateInputType = {
+    id?: true
+    name?: true
+    rating?: true
+    message?: true
+    isApproved?: true
+    isRead?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CustomerReviewAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomerReview to aggregate.
+     */
+    where?: CustomerReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerReviews to fetch.
+     */
+    orderBy?: CustomerReviewOrderByWithRelationInput | CustomerReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CustomerReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerReviews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CustomerReviews
+    **/
+    _count?: true | CustomerReviewCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CustomerReviewAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CustomerReviewSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CustomerReviewMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CustomerReviewMaxAggregateInputType
+  }
+
+  export type GetCustomerReviewAggregateType<T extends CustomerReviewAggregateArgs> = {
+        [P in keyof T & keyof AggregateCustomerReview]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCustomerReview[P]>
+      : GetScalarType<T[P], AggregateCustomerReview[P]>
+  }
+
+
+
+
+  export type CustomerReviewGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CustomerReviewWhereInput
+    orderBy?: CustomerReviewOrderByWithAggregationInput | CustomerReviewOrderByWithAggregationInput[]
+    by: CustomerReviewScalarFieldEnum[] | CustomerReviewScalarFieldEnum
+    having?: CustomerReviewScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CustomerReviewCountAggregateInputType | true
+    _avg?: CustomerReviewAvgAggregateInputType
+    _sum?: CustomerReviewSumAggregateInputType
+    _min?: CustomerReviewMinAggregateInputType
+    _max?: CustomerReviewMaxAggregateInputType
+  }
+
+  export type CustomerReviewGroupByOutputType = {
+    id: string
+    name: string
+    rating: number
+    message: string
+    isApproved: boolean
+    isRead: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: CustomerReviewCountAggregateOutputType | null
+    _avg: CustomerReviewAvgAggregateOutputType | null
+    _sum: CustomerReviewSumAggregateOutputType | null
+    _min: CustomerReviewMinAggregateOutputType | null
+    _max: CustomerReviewMaxAggregateOutputType | null
+  }
+
+  type GetCustomerReviewGroupByPayload<T extends CustomerReviewGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CustomerReviewGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CustomerReviewGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CustomerReviewGroupByOutputType[P]>
+            : GetScalarType<T[P], CustomerReviewGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CustomerReviewSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    rating?: boolean
+    message?: boolean
+    isApproved?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["customerReview"]>
+
+  export type CustomerReviewSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    rating?: boolean
+    message?: boolean
+    isApproved?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["customerReview"]>
+
+  export type CustomerReviewSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    rating?: boolean
+    message?: boolean
+    isApproved?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["customerReview"]>
+
+  export type CustomerReviewSelectScalar = {
+    id?: boolean
+    name?: boolean
+    rating?: boolean
+    message?: boolean
+    isApproved?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CustomerReviewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "rating" | "message" | "isApproved" | "isRead" | "createdAt" | "updatedAt", ExtArgs["result"]["customerReview"]>
+
+  export type $CustomerReviewPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CustomerReview"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      rating: number
+      message: string
+      isApproved: boolean
+      isRead: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["customerReview"]>
+    composites: {}
+  }
+
+  type CustomerReviewGetPayload<S extends boolean | null | undefined | CustomerReviewDefaultArgs> = $Result.GetResult<Prisma.$CustomerReviewPayload, S>
+
+  type CustomerReviewCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CustomerReviewFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CustomerReviewCountAggregateInputType | true
+    }
+
+  export interface CustomerReviewDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CustomerReview'], meta: { name: 'CustomerReview' } }
+    /**
+     * Find zero or one CustomerReview that matches the filter.
+     * @param {CustomerReviewFindUniqueArgs} args - Arguments to find a CustomerReview
+     * @example
+     * // Get one CustomerReview
+     * const customerReview = await prisma.customerReview.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CustomerReviewFindUniqueArgs>(args: SelectSubset<T, CustomerReviewFindUniqueArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CustomerReview that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CustomerReviewFindUniqueOrThrowArgs} args - Arguments to find a CustomerReview
+     * @example
+     * // Get one CustomerReview
+     * const customerReview = await prisma.customerReview.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CustomerReviewFindUniqueOrThrowArgs>(args: SelectSubset<T, CustomerReviewFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomerReview that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerReviewFindFirstArgs} args - Arguments to find a CustomerReview
+     * @example
+     * // Get one CustomerReview
+     * const customerReview = await prisma.customerReview.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CustomerReviewFindFirstArgs>(args?: SelectSubset<T, CustomerReviewFindFirstArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CustomerReview that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerReviewFindFirstOrThrowArgs} args - Arguments to find a CustomerReview
+     * @example
+     * // Get one CustomerReview
+     * const customerReview = await prisma.customerReview.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CustomerReviewFindFirstOrThrowArgs>(args?: SelectSubset<T, CustomerReviewFindFirstOrThrowArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CustomerReviews that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerReviewFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CustomerReviews
+     * const customerReviews = await prisma.customerReview.findMany()
+     * 
+     * // Get first 10 CustomerReviews
+     * const customerReviews = await prisma.customerReview.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const customerReviewWithIdOnly = await prisma.customerReview.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CustomerReviewFindManyArgs>(args?: SelectSubset<T, CustomerReviewFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CustomerReview.
+     * @param {CustomerReviewCreateArgs} args - Arguments to create a CustomerReview.
+     * @example
+     * // Create one CustomerReview
+     * const CustomerReview = await prisma.customerReview.create({
+     *   data: {
+     *     // ... data to create a CustomerReview
+     *   }
+     * })
+     * 
+     */
+    create<T extends CustomerReviewCreateArgs>(args: SelectSubset<T, CustomerReviewCreateArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CustomerReviews.
+     * @param {CustomerReviewCreateManyArgs} args - Arguments to create many CustomerReviews.
+     * @example
+     * // Create many CustomerReviews
+     * const customerReview = await prisma.customerReview.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CustomerReviewCreateManyArgs>(args?: SelectSubset<T, CustomerReviewCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CustomerReviews and returns the data saved in the database.
+     * @param {CustomerReviewCreateManyAndReturnArgs} args - Arguments to create many CustomerReviews.
+     * @example
+     * // Create many CustomerReviews
+     * const customerReview = await prisma.customerReview.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CustomerReviews and only return the `id`
+     * const customerReviewWithIdOnly = await prisma.customerReview.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CustomerReviewCreateManyAndReturnArgs>(args?: SelectSubset<T, CustomerReviewCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CustomerReview.
+     * @param {CustomerReviewDeleteArgs} args - Arguments to delete one CustomerReview.
+     * @example
+     * // Delete one CustomerReview
+     * const CustomerReview = await prisma.customerReview.delete({
+     *   where: {
+     *     // ... filter to delete one CustomerReview
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CustomerReviewDeleteArgs>(args: SelectSubset<T, CustomerReviewDeleteArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CustomerReview.
+     * @param {CustomerReviewUpdateArgs} args - Arguments to update one CustomerReview.
+     * @example
+     * // Update one CustomerReview
+     * const customerReview = await prisma.customerReview.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CustomerReviewUpdateArgs>(args: SelectSubset<T, CustomerReviewUpdateArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CustomerReviews.
+     * @param {CustomerReviewDeleteManyArgs} args - Arguments to filter CustomerReviews to delete.
+     * @example
+     * // Delete a few CustomerReviews
+     * const { count } = await prisma.customerReview.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CustomerReviewDeleteManyArgs>(args?: SelectSubset<T, CustomerReviewDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomerReviews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerReviewUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CustomerReviews
+     * const customerReview = await prisma.customerReview.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CustomerReviewUpdateManyArgs>(args: SelectSubset<T, CustomerReviewUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CustomerReviews and returns the data updated in the database.
+     * @param {CustomerReviewUpdateManyAndReturnArgs} args - Arguments to update many CustomerReviews.
+     * @example
+     * // Update many CustomerReviews
+     * const customerReview = await prisma.customerReview.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CustomerReviews and only return the `id`
+     * const customerReviewWithIdOnly = await prisma.customerReview.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CustomerReviewUpdateManyAndReturnArgs>(args: SelectSubset<T, CustomerReviewUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CustomerReview.
+     * @param {CustomerReviewUpsertArgs} args - Arguments to update or create a CustomerReview.
+     * @example
+     * // Update or create a CustomerReview
+     * const customerReview = await prisma.customerReview.upsert({
+     *   create: {
+     *     // ... data to create a CustomerReview
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CustomerReview we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CustomerReviewUpsertArgs>(args: SelectSubset<T, CustomerReviewUpsertArgs<ExtArgs>>): Prisma__CustomerReviewClient<$Result.GetResult<Prisma.$CustomerReviewPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CustomerReviews.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerReviewCountArgs} args - Arguments to filter CustomerReviews to count.
+     * @example
+     * // Count the number of CustomerReviews
+     * const count = await prisma.customerReview.count({
+     *   where: {
+     *     // ... the filter for the CustomerReviews we want to count
+     *   }
+     * })
+    **/
+    count<T extends CustomerReviewCountArgs>(
+      args?: Subset<T, CustomerReviewCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CustomerReviewCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CustomerReview.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerReviewAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CustomerReviewAggregateArgs>(args: Subset<T, CustomerReviewAggregateArgs>): Prisma.PrismaPromise<GetCustomerReviewAggregateType<T>>
+
+    /**
+     * Group by CustomerReview.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CustomerReviewGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CustomerReviewGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CustomerReviewGroupByArgs['orderBy'] }
+        : { orderBy?: CustomerReviewGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CustomerReviewGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCustomerReviewGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CustomerReview model
+   */
+  readonly fields: CustomerReviewFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CustomerReview.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CustomerReviewClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CustomerReview model
+   */
+  interface CustomerReviewFieldRefs {
+    readonly id: FieldRef<"CustomerReview", 'String'>
+    readonly name: FieldRef<"CustomerReview", 'String'>
+    readonly rating: FieldRef<"CustomerReview", 'Int'>
+    readonly message: FieldRef<"CustomerReview", 'String'>
+    readonly isApproved: FieldRef<"CustomerReview", 'Boolean'>
+    readonly isRead: FieldRef<"CustomerReview", 'Boolean'>
+    readonly createdAt: FieldRef<"CustomerReview", 'DateTime'>
+    readonly updatedAt: FieldRef<"CustomerReview", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CustomerReview findUnique
+   */
+  export type CustomerReviewFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerReview to fetch.
+     */
+    where: CustomerReviewWhereUniqueInput
+  }
+
+  /**
+   * CustomerReview findUniqueOrThrow
+   */
+  export type CustomerReviewFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerReview to fetch.
+     */
+    where: CustomerReviewWhereUniqueInput
+  }
+
+  /**
+   * CustomerReview findFirst
+   */
+  export type CustomerReviewFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerReview to fetch.
+     */
+    where?: CustomerReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerReviews to fetch.
+     */
+    orderBy?: CustomerReviewOrderByWithRelationInput | CustomerReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomerReviews.
+     */
+    cursor?: CustomerReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerReviews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomerReviews.
+     */
+    distinct?: CustomerReviewScalarFieldEnum | CustomerReviewScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerReview findFirstOrThrow
+   */
+  export type CustomerReviewFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerReview to fetch.
+     */
+    where?: CustomerReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerReviews to fetch.
+     */
+    orderBy?: CustomerReviewOrderByWithRelationInput | CustomerReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CustomerReviews.
+     */
+    cursor?: CustomerReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerReviews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomerReviews.
+     */
+    distinct?: CustomerReviewScalarFieldEnum | CustomerReviewScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerReview findMany
+   */
+  export type CustomerReviewFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * Filter, which CustomerReviews to fetch.
+     */
+    where?: CustomerReviewWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CustomerReviews to fetch.
+     */
+    orderBy?: CustomerReviewOrderByWithRelationInput | CustomerReviewOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CustomerReviews.
+     */
+    cursor?: CustomerReviewWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CustomerReviews from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CustomerReviews.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CustomerReviews.
+     */
+    distinct?: CustomerReviewScalarFieldEnum | CustomerReviewScalarFieldEnum[]
+  }
+
+  /**
+   * CustomerReview create
+   */
+  export type CustomerReviewCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CustomerReview.
+     */
+    data: XOR<CustomerReviewCreateInput, CustomerReviewUncheckedCreateInput>
+  }
+
+  /**
+   * CustomerReview createMany
+   */
+  export type CustomerReviewCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CustomerReviews.
+     */
+    data: CustomerReviewCreateManyInput | CustomerReviewCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CustomerReview createManyAndReturn
+   */
+  export type CustomerReviewCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * The data used to create many CustomerReviews.
+     */
+    data: CustomerReviewCreateManyInput | CustomerReviewCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CustomerReview update
+   */
+  export type CustomerReviewUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CustomerReview.
+     */
+    data: XOR<CustomerReviewUpdateInput, CustomerReviewUncheckedUpdateInput>
+    /**
+     * Choose, which CustomerReview to update.
+     */
+    where: CustomerReviewWhereUniqueInput
+  }
+
+  /**
+   * CustomerReview updateMany
+   */
+  export type CustomerReviewUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CustomerReviews.
+     */
+    data: XOR<CustomerReviewUpdateManyMutationInput, CustomerReviewUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomerReviews to update
+     */
+    where?: CustomerReviewWhereInput
+    /**
+     * Limit how many CustomerReviews to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerReview updateManyAndReturn
+   */
+  export type CustomerReviewUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * The data used to update CustomerReviews.
+     */
+    data: XOR<CustomerReviewUpdateManyMutationInput, CustomerReviewUncheckedUpdateManyInput>
+    /**
+     * Filter which CustomerReviews to update
+     */
+    where?: CustomerReviewWhereInput
+    /**
+     * Limit how many CustomerReviews to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerReview upsert
+   */
+  export type CustomerReviewUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CustomerReview to update in case it exists.
+     */
+    where: CustomerReviewWhereUniqueInput
+    /**
+     * In case the CustomerReview found by the `where` argument doesn't exist, create a new CustomerReview with this data.
+     */
+    create: XOR<CustomerReviewCreateInput, CustomerReviewUncheckedCreateInput>
+    /**
+     * In case the CustomerReview was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CustomerReviewUpdateInput, CustomerReviewUncheckedUpdateInput>
+  }
+
+  /**
+   * CustomerReview delete
+   */
+  export type CustomerReviewDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+    /**
+     * Filter which CustomerReview to delete.
+     */
+    where: CustomerReviewWhereUniqueInput
+  }
+
+  /**
+   * CustomerReview deleteMany
+   */
+  export type CustomerReviewDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CustomerReviews to delete
+     */
+    where?: CustomerReviewWhereInput
+    /**
+     * Limit how many CustomerReviews to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CustomerReview without action
+   */
+  export type CustomerReviewDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CustomerReview
+     */
+    select?: CustomerReviewSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CustomerReview
+     */
+    omit?: CustomerReviewOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProductRequest
+   */
+
+  export type AggregateProductRequest = {
+    _count: ProductRequestCountAggregateOutputType | null
+    _min: ProductRequestMinAggregateOutputType | null
+    _max: ProductRequestMaxAggregateOutputType | null
+  }
+
+  export type ProductRequestMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    productName: string | null
+    reason: string | null
+    status: $Enums.ProductRequestStatus | null
+    isRead: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProductRequestMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    productName: string | null
+    reason: string | null
+    status: $Enums.ProductRequestStatus | null
+    isRead: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProductRequestCountAggregateOutputType = {
+    id: number
+    name: number
+    productName: number
+    reason: number
+    status: number
+    isRead: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProductRequestMinAggregateInputType = {
+    id?: true
+    name?: true
+    productName?: true
+    reason?: true
+    status?: true
+    isRead?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProductRequestMaxAggregateInputType = {
+    id?: true
+    name?: true
+    productName?: true
+    reason?: true
+    status?: true
+    isRead?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProductRequestCountAggregateInputType = {
+    id?: true
+    name?: true
+    productName?: true
+    reason?: true
+    status?: true
+    isRead?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProductRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductRequest to aggregate.
+     */
+    where?: ProductRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductRequests to fetch.
+     */
+    orderBy?: ProductRequestOrderByWithRelationInput | ProductRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProductRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProductRequests
+    **/
+    _count?: true | ProductRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProductRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProductRequestMaxAggregateInputType
+  }
+
+  export type GetProductRequestAggregateType<T extends ProductRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateProductRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProductRequest[P]>
+      : GetScalarType<T[P], AggregateProductRequest[P]>
+  }
+
+
+
+
+  export type ProductRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProductRequestWhereInput
+    orderBy?: ProductRequestOrderByWithAggregationInput | ProductRequestOrderByWithAggregationInput[]
+    by: ProductRequestScalarFieldEnum[] | ProductRequestScalarFieldEnum
+    having?: ProductRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProductRequestCountAggregateInputType | true
+    _min?: ProductRequestMinAggregateInputType
+    _max?: ProductRequestMaxAggregateInputType
+  }
+
+  export type ProductRequestGroupByOutputType = {
+    id: string
+    name: string
+    productName: string
+    reason: string | null
+    status: $Enums.ProductRequestStatus
+    isRead: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: ProductRequestCountAggregateOutputType | null
+    _min: ProductRequestMinAggregateOutputType | null
+    _max: ProductRequestMaxAggregateOutputType | null
+  }
+
+  type GetProductRequestGroupByPayload<T extends ProductRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProductRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProductRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProductRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], ProductRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProductRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    productName?: boolean
+    reason?: boolean
+    status?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["productRequest"]>
+
+  export type ProductRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    productName?: boolean
+    reason?: boolean
+    status?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["productRequest"]>
+
+  export type ProductRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    productName?: boolean
+    reason?: boolean
+    status?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["productRequest"]>
+
+  export type ProductRequestSelectScalar = {
+    id?: boolean
+    name?: boolean
+    productName?: boolean
+    reason?: boolean
+    status?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProductRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "productName" | "reason" | "status" | "isRead" | "createdAt" | "updatedAt", ExtArgs["result"]["productRequest"]>
+
+  export type $ProductRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProductRequest"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      productName: string
+      reason: string | null
+      status: $Enums.ProductRequestStatus
+      isRead: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["productRequest"]>
+    composites: {}
+  }
+
+  type ProductRequestGetPayload<S extends boolean | null | undefined | ProductRequestDefaultArgs> = $Result.GetResult<Prisma.$ProductRequestPayload, S>
+
+  type ProductRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProductRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProductRequestCountAggregateInputType | true
+    }
+
+  export interface ProductRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProductRequest'], meta: { name: 'ProductRequest' } }
+    /**
+     * Find zero or one ProductRequest that matches the filter.
+     * @param {ProductRequestFindUniqueArgs} args - Arguments to find a ProductRequest
+     * @example
+     * // Get one ProductRequest
+     * const productRequest = await prisma.productRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProductRequestFindUniqueArgs>(args: SelectSubset<T, ProductRequestFindUniqueArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProductRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProductRequestFindUniqueOrThrowArgs} args - Arguments to find a ProductRequest
+     * @example
+     * // Get one ProductRequest
+     * const productRequest = await prisma.productRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProductRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, ProductRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductRequestFindFirstArgs} args - Arguments to find a ProductRequest
+     * @example
+     * // Get one ProductRequest
+     * const productRequest = await prisma.productRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProductRequestFindFirstArgs>(args?: SelectSubset<T, ProductRequestFindFirstArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProductRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductRequestFindFirstOrThrowArgs} args - Arguments to find a ProductRequest
+     * @example
+     * // Get one ProductRequest
+     * const productRequest = await prisma.productRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProductRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, ProductRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProductRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProductRequests
+     * const productRequests = await prisma.productRequest.findMany()
+     * 
+     * // Get first 10 ProductRequests
+     * const productRequests = await prisma.productRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const productRequestWithIdOnly = await prisma.productRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProductRequestFindManyArgs>(args?: SelectSubset<T, ProductRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProductRequest.
+     * @param {ProductRequestCreateArgs} args - Arguments to create a ProductRequest.
+     * @example
+     * // Create one ProductRequest
+     * const ProductRequest = await prisma.productRequest.create({
+     *   data: {
+     *     // ... data to create a ProductRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProductRequestCreateArgs>(args: SelectSubset<T, ProductRequestCreateArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProductRequests.
+     * @param {ProductRequestCreateManyArgs} args - Arguments to create many ProductRequests.
+     * @example
+     * // Create many ProductRequests
+     * const productRequest = await prisma.productRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProductRequestCreateManyArgs>(args?: SelectSubset<T, ProductRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProductRequests and returns the data saved in the database.
+     * @param {ProductRequestCreateManyAndReturnArgs} args - Arguments to create many ProductRequests.
+     * @example
+     * // Create many ProductRequests
+     * const productRequest = await prisma.productRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProductRequests and only return the `id`
+     * const productRequestWithIdOnly = await prisma.productRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProductRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, ProductRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProductRequest.
+     * @param {ProductRequestDeleteArgs} args - Arguments to delete one ProductRequest.
+     * @example
+     * // Delete one ProductRequest
+     * const ProductRequest = await prisma.productRequest.delete({
+     *   where: {
+     *     // ... filter to delete one ProductRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProductRequestDeleteArgs>(args: SelectSubset<T, ProductRequestDeleteArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProductRequest.
+     * @param {ProductRequestUpdateArgs} args - Arguments to update one ProductRequest.
+     * @example
+     * // Update one ProductRequest
+     * const productRequest = await prisma.productRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProductRequestUpdateArgs>(args: SelectSubset<T, ProductRequestUpdateArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProductRequests.
+     * @param {ProductRequestDeleteManyArgs} args - Arguments to filter ProductRequests to delete.
+     * @example
+     * // Delete a few ProductRequests
+     * const { count } = await prisma.productRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProductRequestDeleteManyArgs>(args?: SelectSubset<T, ProductRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProductRequests
+     * const productRequest = await prisma.productRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProductRequestUpdateManyArgs>(args: SelectSubset<T, ProductRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProductRequests and returns the data updated in the database.
+     * @param {ProductRequestUpdateManyAndReturnArgs} args - Arguments to update many ProductRequests.
+     * @example
+     * // Update many ProductRequests
+     * const productRequest = await prisma.productRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProductRequests and only return the `id`
+     * const productRequestWithIdOnly = await prisma.productRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProductRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, ProductRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProductRequest.
+     * @param {ProductRequestUpsertArgs} args - Arguments to update or create a ProductRequest.
+     * @example
+     * // Update or create a ProductRequest
+     * const productRequest = await prisma.productRequest.upsert({
+     *   create: {
+     *     // ... data to create a ProductRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProductRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProductRequestUpsertArgs>(args: SelectSubset<T, ProductRequestUpsertArgs<ExtArgs>>): Prisma__ProductRequestClient<$Result.GetResult<Prisma.$ProductRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProductRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductRequestCountArgs} args - Arguments to filter ProductRequests to count.
+     * @example
+     * // Count the number of ProductRequests
+     * const count = await prisma.productRequest.count({
+     *   where: {
+     *     // ... the filter for the ProductRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProductRequestCountArgs>(
+      args?: Subset<T, ProductRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProductRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProductRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProductRequestAggregateArgs>(args: Subset<T, ProductRequestAggregateArgs>): Prisma.PrismaPromise<GetProductRequestAggregateType<T>>
+
+    /**
+     * Group by ProductRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProductRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProductRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProductRequestGroupByArgs['orderBy'] }
+        : { orderBy?: ProductRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProductRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProductRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProductRequest model
+   */
+  readonly fields: ProductRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProductRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProductRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProductRequest model
+   */
+  interface ProductRequestFieldRefs {
+    readonly id: FieldRef<"ProductRequest", 'String'>
+    readonly name: FieldRef<"ProductRequest", 'String'>
+    readonly productName: FieldRef<"ProductRequest", 'String'>
+    readonly reason: FieldRef<"ProductRequest", 'String'>
+    readonly status: FieldRef<"ProductRequest", 'ProductRequestStatus'>
+    readonly isRead: FieldRef<"ProductRequest", 'Boolean'>
+    readonly createdAt: FieldRef<"ProductRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProductRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProductRequest findUnique
+   */
+  export type ProductRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which ProductRequest to fetch.
+     */
+    where: ProductRequestWhereUniqueInput
+  }
+
+  /**
+   * ProductRequest findUniqueOrThrow
+   */
+  export type ProductRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which ProductRequest to fetch.
+     */
+    where: ProductRequestWhereUniqueInput
+  }
+
+  /**
+   * ProductRequest findFirst
+   */
+  export type ProductRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which ProductRequest to fetch.
+     */
+    where?: ProductRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductRequests to fetch.
+     */
+    orderBy?: ProductRequestOrderByWithRelationInput | ProductRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductRequests.
+     */
+    cursor?: ProductRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductRequests.
+     */
+    distinct?: ProductRequestScalarFieldEnum | ProductRequestScalarFieldEnum[]
+  }
+
+  /**
+   * ProductRequest findFirstOrThrow
+   */
+  export type ProductRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which ProductRequest to fetch.
+     */
+    where?: ProductRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductRequests to fetch.
+     */
+    orderBy?: ProductRequestOrderByWithRelationInput | ProductRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProductRequests.
+     */
+    cursor?: ProductRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductRequests.
+     */
+    distinct?: ProductRequestScalarFieldEnum | ProductRequestScalarFieldEnum[]
+  }
+
+  /**
+   * ProductRequest findMany
+   */
+  export type ProductRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which ProductRequests to fetch.
+     */
+    where?: ProductRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProductRequests to fetch.
+     */
+    orderBy?: ProductRequestOrderByWithRelationInput | ProductRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProductRequests.
+     */
+    cursor?: ProductRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProductRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProductRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProductRequests.
+     */
+    distinct?: ProductRequestScalarFieldEnum | ProductRequestScalarFieldEnum[]
+  }
+
+  /**
+   * ProductRequest create
+   */
+  export type ProductRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ProductRequest.
+     */
+    data: XOR<ProductRequestCreateInput, ProductRequestUncheckedCreateInput>
+  }
+
+  /**
+   * ProductRequest createMany
+   */
+  export type ProductRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProductRequests.
+     */
+    data: ProductRequestCreateManyInput | ProductRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProductRequest createManyAndReturn
+   */
+  export type ProductRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProductRequests.
+     */
+    data: ProductRequestCreateManyInput | ProductRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProductRequest update
+   */
+  export type ProductRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ProductRequest.
+     */
+    data: XOR<ProductRequestUpdateInput, ProductRequestUncheckedUpdateInput>
+    /**
+     * Choose, which ProductRequest to update.
+     */
+    where: ProductRequestWhereUniqueInput
+  }
+
+  /**
+   * ProductRequest updateMany
+   */
+  export type ProductRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProductRequests.
+     */
+    data: XOR<ProductRequestUpdateManyMutationInput, ProductRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductRequests to update
+     */
+    where?: ProductRequestWhereInput
+    /**
+     * Limit how many ProductRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductRequest updateManyAndReturn
+   */
+  export type ProductRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update ProductRequests.
+     */
+    data: XOR<ProductRequestUpdateManyMutationInput, ProductRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which ProductRequests to update
+     */
+    where?: ProductRequestWhereInput
+    /**
+     * Limit how many ProductRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductRequest upsert
+   */
+  export type ProductRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ProductRequest to update in case it exists.
+     */
+    where: ProductRequestWhereUniqueInput
+    /**
+     * In case the ProductRequest found by the `where` argument doesn't exist, create a new ProductRequest with this data.
+     */
+    create: XOR<ProductRequestCreateInput, ProductRequestUncheckedCreateInput>
+    /**
+     * In case the ProductRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProductRequestUpdateInput, ProductRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * ProductRequest delete
+   */
+  export type ProductRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+    /**
+     * Filter which ProductRequest to delete.
+     */
+    where: ProductRequestWhereUniqueInput
+  }
+
+  /**
+   * ProductRequest deleteMany
+   */
+  export type ProductRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProductRequests to delete
+     */
+    where?: ProductRequestWhereInput
+    /**
+     * Limit how many ProductRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProductRequest without action
+   */
+  export type ProductRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductRequest
+     */
+    select?: ProductRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductRequest
+     */
+    omit?: ProductRequestOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -11178,6 +16080,69 @@ export namespace Prisma {
   export type HeroSlideScalarFieldEnum = (typeof HeroSlideScalarFieldEnum)[keyof typeof HeroSlideScalarFieldEnum]
 
 
+  export const SupportConversationScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    guestName: 'guestName',
+    guestPhone: 'guestPhone',
+    status: 'status',
+    subject: 'subject',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    lastMessageAt: 'lastMessageAt',
+    pharmacistId: 'pharmacistId',
+    isRead: 'isRead'
+  };
+
+  export type SupportConversationScalarFieldEnum = (typeof SupportConversationScalarFieldEnum)[keyof typeof SupportConversationScalarFieldEnum]
+
+
+  export const SupportMessageScalarFieldEnum: {
+    id: 'id',
+    conversationId: 'conversationId',
+    content: 'content',
+    senderType: 'senderType',
+    senderName: 'senderName',
+    createdAt: 'createdAt',
+    isRead: 'isRead',
+    messageType: 'messageType',
+    productId: 'productId',
+    productName: 'productName',
+    productPrice: 'productPrice',
+    productImage: 'productImage'
+  };
+
+  export type SupportMessageScalarFieldEnum = (typeof SupportMessageScalarFieldEnum)[keyof typeof SupportMessageScalarFieldEnum]
+
+
+  export const CustomerReviewScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    rating: 'rating',
+    message: 'message',
+    isApproved: 'isApproved',
+    isRead: 'isRead',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CustomerReviewScalarFieldEnum = (typeof CustomerReviewScalarFieldEnum)[keyof typeof CustomerReviewScalarFieldEnum]
+
+
+  export const ProductRequestScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    productName: 'productName',
+    reason: 'reason',
+    status: 'status',
+    isRead: 'isRead',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProductRequestScalarFieldEnum = (typeof ProductRequestScalarFieldEnum)[keyof typeof ProductRequestScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -11330,6 +16295,48 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ConversationStatus'
+   */
+  export type EnumConversationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConversationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ConversationStatus[]'
+   */
+  export type ListEnumConversationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConversationStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SenderType'
+   */
+  export type EnumSenderTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SenderType'>
+    
+
+
+  /**
+   * Reference to a field of type 'SenderType[]'
+   */
+  export type ListEnumSenderTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SenderType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType'
+   */
+  export type EnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType'>
+    
+
+
+  /**
+   * Reference to a field of type 'MessageType[]'
+   */
+  export type ListEnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -11340,6 +16347,20 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProductRequestStatus'
+   */
+  export type EnumProductRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductRequestStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ProductRequestStatus[]'
+   */
+  export type ListEnumProductRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProductRequestStatus[]'>
     
   /**
    * Deep Input Types
@@ -12065,6 +17086,319 @@ export namespace Prisma {
     sortOrder?: IntWithAggregatesFilter<"HeroSlide"> | number
     createdAt?: DateTimeWithAggregatesFilter<"HeroSlide"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"HeroSlide"> | Date | string
+  }
+
+  export type SupportConversationWhereInput = {
+    AND?: SupportConversationWhereInput | SupportConversationWhereInput[]
+    OR?: SupportConversationWhereInput[]
+    NOT?: SupportConversationWhereInput | SupportConversationWhereInput[]
+    id?: StringFilter<"SupportConversation"> | string
+    userId?: StringNullableFilter<"SupportConversation"> | string | null
+    guestName?: StringNullableFilter<"SupportConversation"> | string | null
+    guestPhone?: StringNullableFilter<"SupportConversation"> | string | null
+    status?: EnumConversationStatusFilter<"SupportConversation"> | $Enums.ConversationStatus
+    subject?: StringNullableFilter<"SupportConversation"> | string | null
+    createdAt?: DateTimeFilter<"SupportConversation"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportConversation"> | Date | string
+    lastMessageAt?: DateTimeFilter<"SupportConversation"> | Date | string
+    pharmacistId?: StringNullableFilter<"SupportConversation"> | string | null
+    isRead?: BoolFilter<"SupportConversation"> | boolean
+    messages?: SupportMessageListRelationFilter
+  }
+
+  export type SupportConversationOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    guestName?: SortOrderInput | SortOrder
+    guestPhone?: SortOrderInput | SortOrder
+    status?: SortOrder
+    subject?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    lastMessageAt?: SortOrder
+    pharmacistId?: SortOrderInput | SortOrder
+    isRead?: SortOrder
+    messages?: SupportMessageOrderByRelationAggregateInput
+  }
+
+  export type SupportConversationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SupportConversationWhereInput | SupportConversationWhereInput[]
+    OR?: SupportConversationWhereInput[]
+    NOT?: SupportConversationWhereInput | SupportConversationWhereInput[]
+    userId?: StringNullableFilter<"SupportConversation"> | string | null
+    guestName?: StringNullableFilter<"SupportConversation"> | string | null
+    guestPhone?: StringNullableFilter<"SupportConversation"> | string | null
+    status?: EnumConversationStatusFilter<"SupportConversation"> | $Enums.ConversationStatus
+    subject?: StringNullableFilter<"SupportConversation"> | string | null
+    createdAt?: DateTimeFilter<"SupportConversation"> | Date | string
+    updatedAt?: DateTimeFilter<"SupportConversation"> | Date | string
+    lastMessageAt?: DateTimeFilter<"SupportConversation"> | Date | string
+    pharmacistId?: StringNullableFilter<"SupportConversation"> | string | null
+    isRead?: BoolFilter<"SupportConversation"> | boolean
+    messages?: SupportMessageListRelationFilter
+  }, "id">
+
+  export type SupportConversationOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    guestName?: SortOrderInput | SortOrder
+    guestPhone?: SortOrderInput | SortOrder
+    status?: SortOrder
+    subject?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    lastMessageAt?: SortOrder
+    pharmacistId?: SortOrderInput | SortOrder
+    isRead?: SortOrder
+    _count?: SupportConversationCountOrderByAggregateInput
+    _max?: SupportConversationMaxOrderByAggregateInput
+    _min?: SupportConversationMinOrderByAggregateInput
+  }
+
+  export type SupportConversationScalarWhereWithAggregatesInput = {
+    AND?: SupportConversationScalarWhereWithAggregatesInput | SupportConversationScalarWhereWithAggregatesInput[]
+    OR?: SupportConversationScalarWhereWithAggregatesInput[]
+    NOT?: SupportConversationScalarWhereWithAggregatesInput | SupportConversationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SupportConversation"> | string
+    userId?: StringNullableWithAggregatesFilter<"SupportConversation"> | string | null
+    guestName?: StringNullableWithAggregatesFilter<"SupportConversation"> | string | null
+    guestPhone?: StringNullableWithAggregatesFilter<"SupportConversation"> | string | null
+    status?: EnumConversationStatusWithAggregatesFilter<"SupportConversation"> | $Enums.ConversationStatus
+    subject?: StringNullableWithAggregatesFilter<"SupportConversation"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"SupportConversation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SupportConversation"> | Date | string
+    lastMessageAt?: DateTimeWithAggregatesFilter<"SupportConversation"> | Date | string
+    pharmacistId?: StringNullableWithAggregatesFilter<"SupportConversation"> | string | null
+    isRead?: BoolWithAggregatesFilter<"SupportConversation"> | boolean
+  }
+
+  export type SupportMessageWhereInput = {
+    AND?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    OR?: SupportMessageWhereInput[]
+    NOT?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    id?: StringFilter<"SupportMessage"> | string
+    conversationId?: StringFilter<"SupportMessage"> | string
+    content?: StringFilter<"SupportMessage"> | string
+    senderType?: EnumSenderTypeFilter<"SupportMessage"> | $Enums.SenderType
+    senderName?: StringFilter<"SupportMessage"> | string
+    createdAt?: DateTimeFilter<"SupportMessage"> | Date | string
+    isRead?: BoolFilter<"SupportMessage"> | boolean
+    messageType?: EnumMessageTypeFilter<"SupportMessage"> | $Enums.MessageType
+    productId?: StringNullableFilter<"SupportMessage"> | string | null
+    productName?: StringNullableFilter<"SupportMessage"> | string | null
+    productPrice?: FloatNullableFilter<"SupportMessage"> | number | null
+    productImage?: StringNullableFilter<"SupportMessage"> | string | null
+    conversation?: XOR<SupportConversationScalarRelationFilter, SupportConversationWhereInput>
+  }
+
+  export type SupportMessageOrderByWithRelationInput = {
+    id?: SortOrder
+    conversationId?: SortOrder
+    content?: SortOrder
+    senderType?: SortOrder
+    senderName?: SortOrder
+    createdAt?: SortOrder
+    isRead?: SortOrder
+    messageType?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    productName?: SortOrderInput | SortOrder
+    productPrice?: SortOrderInput | SortOrder
+    productImage?: SortOrderInput | SortOrder
+    conversation?: SupportConversationOrderByWithRelationInput
+  }
+
+  export type SupportMessageWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    OR?: SupportMessageWhereInput[]
+    NOT?: SupportMessageWhereInput | SupportMessageWhereInput[]
+    conversationId?: StringFilter<"SupportMessage"> | string
+    content?: StringFilter<"SupportMessage"> | string
+    senderType?: EnumSenderTypeFilter<"SupportMessage"> | $Enums.SenderType
+    senderName?: StringFilter<"SupportMessage"> | string
+    createdAt?: DateTimeFilter<"SupportMessage"> | Date | string
+    isRead?: BoolFilter<"SupportMessage"> | boolean
+    messageType?: EnumMessageTypeFilter<"SupportMessage"> | $Enums.MessageType
+    productId?: StringNullableFilter<"SupportMessage"> | string | null
+    productName?: StringNullableFilter<"SupportMessage"> | string | null
+    productPrice?: FloatNullableFilter<"SupportMessage"> | number | null
+    productImage?: StringNullableFilter<"SupportMessage"> | string | null
+    conversation?: XOR<SupportConversationScalarRelationFilter, SupportConversationWhereInput>
+  }, "id">
+
+  export type SupportMessageOrderByWithAggregationInput = {
+    id?: SortOrder
+    conversationId?: SortOrder
+    content?: SortOrder
+    senderType?: SortOrder
+    senderName?: SortOrder
+    createdAt?: SortOrder
+    isRead?: SortOrder
+    messageType?: SortOrder
+    productId?: SortOrderInput | SortOrder
+    productName?: SortOrderInput | SortOrder
+    productPrice?: SortOrderInput | SortOrder
+    productImage?: SortOrderInput | SortOrder
+    _count?: SupportMessageCountOrderByAggregateInput
+    _avg?: SupportMessageAvgOrderByAggregateInput
+    _max?: SupportMessageMaxOrderByAggregateInput
+    _min?: SupportMessageMinOrderByAggregateInput
+    _sum?: SupportMessageSumOrderByAggregateInput
+  }
+
+  export type SupportMessageScalarWhereWithAggregatesInput = {
+    AND?: SupportMessageScalarWhereWithAggregatesInput | SupportMessageScalarWhereWithAggregatesInput[]
+    OR?: SupportMessageScalarWhereWithAggregatesInput[]
+    NOT?: SupportMessageScalarWhereWithAggregatesInput | SupportMessageScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SupportMessage"> | string
+    conversationId?: StringWithAggregatesFilter<"SupportMessage"> | string
+    content?: StringWithAggregatesFilter<"SupportMessage"> | string
+    senderType?: EnumSenderTypeWithAggregatesFilter<"SupportMessage"> | $Enums.SenderType
+    senderName?: StringWithAggregatesFilter<"SupportMessage"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"SupportMessage"> | Date | string
+    isRead?: BoolWithAggregatesFilter<"SupportMessage"> | boolean
+    messageType?: EnumMessageTypeWithAggregatesFilter<"SupportMessage"> | $Enums.MessageType
+    productId?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    productName?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+    productPrice?: FloatNullableWithAggregatesFilter<"SupportMessage"> | number | null
+    productImage?: StringNullableWithAggregatesFilter<"SupportMessage"> | string | null
+  }
+
+  export type CustomerReviewWhereInput = {
+    AND?: CustomerReviewWhereInput | CustomerReviewWhereInput[]
+    OR?: CustomerReviewWhereInput[]
+    NOT?: CustomerReviewWhereInput | CustomerReviewWhereInput[]
+    id?: StringFilter<"CustomerReview"> | string
+    name?: StringFilter<"CustomerReview"> | string
+    rating?: IntFilter<"CustomerReview"> | number
+    message?: StringFilter<"CustomerReview"> | string
+    isApproved?: BoolFilter<"CustomerReview"> | boolean
+    isRead?: BoolFilter<"CustomerReview"> | boolean
+    createdAt?: DateTimeFilter<"CustomerReview"> | Date | string
+    updatedAt?: DateTimeFilter<"CustomerReview"> | Date | string
+  }
+
+  export type CustomerReviewOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    rating?: SortOrder
+    message?: SortOrder
+    isApproved?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerReviewWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CustomerReviewWhereInput | CustomerReviewWhereInput[]
+    OR?: CustomerReviewWhereInput[]
+    NOT?: CustomerReviewWhereInput | CustomerReviewWhereInput[]
+    name?: StringFilter<"CustomerReview"> | string
+    rating?: IntFilter<"CustomerReview"> | number
+    message?: StringFilter<"CustomerReview"> | string
+    isApproved?: BoolFilter<"CustomerReview"> | boolean
+    isRead?: BoolFilter<"CustomerReview"> | boolean
+    createdAt?: DateTimeFilter<"CustomerReview"> | Date | string
+    updatedAt?: DateTimeFilter<"CustomerReview"> | Date | string
+  }, "id">
+
+  export type CustomerReviewOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    rating?: SortOrder
+    message?: SortOrder
+    isApproved?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CustomerReviewCountOrderByAggregateInput
+    _avg?: CustomerReviewAvgOrderByAggregateInput
+    _max?: CustomerReviewMaxOrderByAggregateInput
+    _min?: CustomerReviewMinOrderByAggregateInput
+    _sum?: CustomerReviewSumOrderByAggregateInput
+  }
+
+  export type CustomerReviewScalarWhereWithAggregatesInput = {
+    AND?: CustomerReviewScalarWhereWithAggregatesInput | CustomerReviewScalarWhereWithAggregatesInput[]
+    OR?: CustomerReviewScalarWhereWithAggregatesInput[]
+    NOT?: CustomerReviewScalarWhereWithAggregatesInput | CustomerReviewScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CustomerReview"> | string
+    name?: StringWithAggregatesFilter<"CustomerReview"> | string
+    rating?: IntWithAggregatesFilter<"CustomerReview"> | number
+    message?: StringWithAggregatesFilter<"CustomerReview"> | string
+    isApproved?: BoolWithAggregatesFilter<"CustomerReview"> | boolean
+    isRead?: BoolWithAggregatesFilter<"CustomerReview"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"CustomerReview"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CustomerReview"> | Date | string
+  }
+
+  export type ProductRequestWhereInput = {
+    AND?: ProductRequestWhereInput | ProductRequestWhereInput[]
+    OR?: ProductRequestWhereInput[]
+    NOT?: ProductRequestWhereInput | ProductRequestWhereInput[]
+    id?: StringFilter<"ProductRequest"> | string
+    name?: StringFilter<"ProductRequest"> | string
+    productName?: StringFilter<"ProductRequest"> | string
+    reason?: StringNullableFilter<"ProductRequest"> | string | null
+    status?: EnumProductRequestStatusFilter<"ProductRequest"> | $Enums.ProductRequestStatus
+    isRead?: BoolFilter<"ProductRequest"> | boolean
+    createdAt?: DateTimeFilter<"ProductRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"ProductRequest"> | Date | string
+  }
+
+  export type ProductRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    productName?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    status?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProductRequestWhereInput | ProductRequestWhereInput[]
+    OR?: ProductRequestWhereInput[]
+    NOT?: ProductRequestWhereInput | ProductRequestWhereInput[]
+    name?: StringFilter<"ProductRequest"> | string
+    productName?: StringFilter<"ProductRequest"> | string
+    reason?: StringNullableFilter<"ProductRequest"> | string | null
+    status?: EnumProductRequestStatusFilter<"ProductRequest"> | $Enums.ProductRequestStatus
+    isRead?: BoolFilter<"ProductRequest"> | boolean
+    createdAt?: DateTimeFilter<"ProductRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"ProductRequest"> | Date | string
+  }, "id">
+
+  export type ProductRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    productName?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    status?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProductRequestCountOrderByAggregateInput
+    _max?: ProductRequestMaxOrderByAggregateInput
+    _min?: ProductRequestMinOrderByAggregateInput
+  }
+
+  export type ProductRequestScalarWhereWithAggregatesInput = {
+    AND?: ProductRequestScalarWhereWithAggregatesInput | ProductRequestScalarWhereWithAggregatesInput[]
+    OR?: ProductRequestScalarWhereWithAggregatesInput[]
+    NOT?: ProductRequestScalarWhereWithAggregatesInput | ProductRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProductRequest"> | string
+    name?: StringWithAggregatesFilter<"ProductRequest"> | string
+    productName?: StringWithAggregatesFilter<"ProductRequest"> | string
+    reason?: StringNullableWithAggregatesFilter<"ProductRequest"> | string | null
+    status?: EnumProductRequestStatusWithAggregatesFilter<"ProductRequest"> | $Enums.ProductRequestStatus
+    isRead?: BoolWithAggregatesFilter<"ProductRequest"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"ProductRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProductRequest"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -12901,6 +18235,366 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SupportConversationCreateInput = {
+    id?: string
+    userId?: string | null
+    guestName?: string | null
+    guestPhone?: string | null
+    status?: $Enums.ConversationStatus
+    subject?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastMessageAt?: Date | string
+    pharmacistId?: string | null
+    isRead?: boolean
+    messages?: SupportMessageCreateNestedManyWithoutConversationInput
+  }
+
+  export type SupportConversationUncheckedCreateInput = {
+    id?: string
+    userId?: string | null
+    guestName?: string | null
+    guestPhone?: string | null
+    status?: $Enums.ConversationStatus
+    subject?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastMessageAt?: Date | string
+    pharmacistId?: string | null
+    isRead?: boolean
+    messages?: SupportMessageUncheckedCreateNestedManyWithoutConversationInput
+  }
+
+  export type SupportConversationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    guestName?: NullableStringFieldUpdateOperationsInput | string | null
+    guestPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pharmacistId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messages?: SupportMessageUpdateManyWithoutConversationNestedInput
+  }
+
+  export type SupportConversationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    guestName?: NullableStringFieldUpdateOperationsInput | string | null
+    guestPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pharmacistId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messages?: SupportMessageUncheckedUpdateManyWithoutConversationNestedInput
+  }
+
+  export type SupportConversationCreateManyInput = {
+    id?: string
+    userId?: string | null
+    guestName?: string | null
+    guestPhone?: string | null
+    status?: $Enums.ConversationStatus
+    subject?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastMessageAt?: Date | string
+    pharmacistId?: string | null
+    isRead?: boolean
+  }
+
+  export type SupportConversationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    guestName?: NullableStringFieldUpdateOperationsInput | string | null
+    guestPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pharmacistId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SupportConversationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    guestName?: NullableStringFieldUpdateOperationsInput | string | null
+    guestPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pharmacistId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SupportMessageCreateInput = {
+    id?: string
+    content: string
+    senderType: $Enums.SenderType
+    senderName: string
+    createdAt?: Date | string
+    isRead?: boolean
+    messageType?: $Enums.MessageType
+    productId?: string | null
+    productName?: string | null
+    productPrice?: number | null
+    productImage?: string | null
+    conversation: SupportConversationCreateNestedOneWithoutMessagesInput
+  }
+
+  export type SupportMessageUncheckedCreateInput = {
+    id?: string
+    conversationId: string
+    content: string
+    senderType: $Enums.SenderType
+    senderName: string
+    createdAt?: Date | string
+    isRead?: boolean
+    messageType?: $Enums.MessageType
+    productId?: string | null
+    productName?: string | null
+    productPrice?: number | null
+    productImage?: string | null
+  }
+
+  export type SupportMessageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    senderType?: EnumSenderTypeFieldUpdateOperationsInput | $Enums.SenderType
+    senderName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messageType?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    productImage?: NullableStringFieldUpdateOperationsInput | string | null
+    conversation?: SupportConversationUpdateOneRequiredWithoutMessagesNestedInput
+  }
+
+  export type SupportMessageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    conversationId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    senderType?: EnumSenderTypeFieldUpdateOperationsInput | $Enums.SenderType
+    senderName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messageType?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    productImage?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupportMessageCreateManyInput = {
+    id?: string
+    conversationId: string
+    content: string
+    senderType: $Enums.SenderType
+    senderName: string
+    createdAt?: Date | string
+    isRead?: boolean
+    messageType?: $Enums.MessageType
+    productId?: string | null
+    productName?: string | null
+    productPrice?: number | null
+    productImage?: string | null
+  }
+
+  export type SupportMessageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    senderType?: EnumSenderTypeFieldUpdateOperationsInput | $Enums.SenderType
+    senderName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messageType?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    productImage?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupportMessageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    conversationId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    senderType?: EnumSenderTypeFieldUpdateOperationsInput | $Enums.SenderType
+    senderName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messageType?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    productImage?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type CustomerReviewCreateInput = {
+    id?: string
+    name: string
+    rating: number
+    message: string
+    isApproved?: boolean
+    isRead?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomerReviewUncheckedCreateInput = {
+    id?: string
+    name: string
+    rating: number
+    message: string
+    isApproved?: boolean
+    isRead?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomerReviewUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerReviewUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerReviewCreateManyInput = {
+    id?: string
+    name: string
+    rating: number
+    message: string
+    isApproved?: boolean
+    isRead?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CustomerReviewUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CustomerReviewUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    rating?: IntFieldUpdateOperationsInput | number
+    message?: StringFieldUpdateOperationsInput | string
+    isApproved?: BoolFieldUpdateOperationsInput | boolean
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductRequestCreateInput = {
+    id?: string
+    name: string
+    productName: string
+    reason?: string | null
+    status?: $Enums.ProductRequestStatus
+    isRead?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductRequestUncheckedCreateInput = {
+    id?: string
+    name: string
+    productName: string
+    reason?: string | null
+    status?: $Enums.ProductRequestStatus
+    isRead?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    productName?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProductRequestStatusFieldUpdateOperationsInput | $Enums.ProductRequestStatus
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    productName?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProductRequestStatusFieldUpdateOperationsInput | $Enums.ProductRequestStatus
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductRequestCreateManyInput = {
+    id?: string
+    name: string
+    productName: string
+    reason?: string | null
+    status?: $Enums.ProductRequestStatus
+    isRead?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProductRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    productName?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProductRequestStatusFieldUpdateOperationsInput | $Enums.ProductRequestStatus
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProductRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    productName?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProductRequestStatusFieldUpdateOperationsInput | $Enums.ProductRequestStatus
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -13648,6 +19342,285 @@ export namespace Prisma {
     sortOrder?: SortOrder
   }
 
+  export type EnumConversationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ConversationStatus | EnumConversationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumConversationStatusFilter<$PrismaModel> | $Enums.ConversationStatus
+  }
+
+  export type SupportMessageListRelationFilter = {
+    every?: SupportMessageWhereInput
+    some?: SupportMessageWhereInput
+    none?: SupportMessageWhereInput
+  }
+
+  export type SupportMessageOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SupportConversationCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    guestName?: SortOrder
+    guestPhone?: SortOrder
+    status?: SortOrder
+    subject?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    lastMessageAt?: SortOrder
+    pharmacistId?: SortOrder
+    isRead?: SortOrder
+  }
+
+  export type SupportConversationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    guestName?: SortOrder
+    guestPhone?: SortOrder
+    status?: SortOrder
+    subject?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    lastMessageAt?: SortOrder
+    pharmacistId?: SortOrder
+    isRead?: SortOrder
+  }
+
+  export type SupportConversationMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    guestName?: SortOrder
+    guestPhone?: SortOrder
+    status?: SortOrder
+    subject?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    lastMessageAt?: SortOrder
+    pharmacistId?: SortOrder
+    isRead?: SortOrder
+  }
+
+  export type EnumConversationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ConversationStatus | EnumConversationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumConversationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConversationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumConversationStatusFilter<$PrismaModel>
+    _max?: NestedEnumConversationStatusFilter<$PrismaModel>
+  }
+
+  export type EnumSenderTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.SenderType | EnumSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSenderTypeFilter<$PrismaModel> | $Enums.SenderType
+  }
+
+  export type EnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
+  }
+
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type SupportConversationScalarRelationFilter = {
+    is?: SupportConversationWhereInput
+    isNot?: SupportConversationWhereInput
+  }
+
+  export type SupportMessageCountOrderByAggregateInput = {
+    id?: SortOrder
+    conversationId?: SortOrder
+    content?: SortOrder
+    senderType?: SortOrder
+    senderName?: SortOrder
+    createdAt?: SortOrder
+    isRead?: SortOrder
+    messageType?: SortOrder
+    productId?: SortOrder
+    productName?: SortOrder
+    productPrice?: SortOrder
+    productImage?: SortOrder
+  }
+
+  export type SupportMessageAvgOrderByAggregateInput = {
+    productPrice?: SortOrder
+  }
+
+  export type SupportMessageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    conversationId?: SortOrder
+    content?: SortOrder
+    senderType?: SortOrder
+    senderName?: SortOrder
+    createdAt?: SortOrder
+    isRead?: SortOrder
+    messageType?: SortOrder
+    productId?: SortOrder
+    productName?: SortOrder
+    productPrice?: SortOrder
+    productImage?: SortOrder
+  }
+
+  export type SupportMessageMinOrderByAggregateInput = {
+    id?: SortOrder
+    conversationId?: SortOrder
+    content?: SortOrder
+    senderType?: SortOrder
+    senderName?: SortOrder
+    createdAt?: SortOrder
+    isRead?: SortOrder
+    messageType?: SortOrder
+    productId?: SortOrder
+    productName?: SortOrder
+    productPrice?: SortOrder
+    productImage?: SortOrder
+  }
+
+  export type SupportMessageSumOrderByAggregateInput = {
+    productPrice?: SortOrder
+  }
+
+  export type EnumSenderTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SenderType | EnumSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSenderTypeWithAggregatesFilter<$PrismaModel> | $Enums.SenderType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSenderTypeFilter<$PrismaModel>
+    _max?: NestedEnumSenderTypeFilter<$PrismaModel>
+  }
+
+  export type EnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type CustomerReviewCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    rating?: SortOrder
+    message?: SortOrder
+    isApproved?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerReviewAvgOrderByAggregateInput = {
+    rating?: SortOrder
+  }
+
+  export type CustomerReviewMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    rating?: SortOrder
+    message?: SortOrder
+    isApproved?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerReviewMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    rating?: SortOrder
+    message?: SortOrder
+    isApproved?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CustomerReviewSumOrderByAggregateInput = {
+    rating?: SortOrder
+  }
+
+  export type EnumProductRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductRequestStatus | EnumProductRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductRequestStatusFilter<$PrismaModel> | $Enums.ProductRequestStatus
+  }
+
+  export type ProductRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    productName?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    productName?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProductRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    productName?: SortOrder
+    reason?: SortOrder
+    status?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumProductRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductRequestStatus | EnumProductRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProductRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumProductRequestStatusFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -13972,6 +19945,86 @@ export namespace Prisma {
     update?: XOR<XOR<OrderUpdateToOneWithWhereWithoutPaymentInput, OrderUpdateWithoutPaymentInput>, OrderUncheckedUpdateWithoutPaymentInput>
   }
 
+  export type SupportMessageCreateNestedManyWithoutConversationInput = {
+    create?: XOR<SupportMessageCreateWithoutConversationInput, SupportMessageUncheckedCreateWithoutConversationInput> | SupportMessageCreateWithoutConversationInput[] | SupportMessageUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: SupportMessageCreateOrConnectWithoutConversationInput | SupportMessageCreateOrConnectWithoutConversationInput[]
+    createMany?: SupportMessageCreateManyConversationInputEnvelope
+    connect?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+  }
+
+  export type SupportMessageUncheckedCreateNestedManyWithoutConversationInput = {
+    create?: XOR<SupportMessageCreateWithoutConversationInput, SupportMessageUncheckedCreateWithoutConversationInput> | SupportMessageCreateWithoutConversationInput[] | SupportMessageUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: SupportMessageCreateOrConnectWithoutConversationInput | SupportMessageCreateOrConnectWithoutConversationInput[]
+    createMany?: SupportMessageCreateManyConversationInputEnvelope
+    connect?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+  }
+
+  export type EnumConversationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ConversationStatus
+  }
+
+  export type SupportMessageUpdateManyWithoutConversationNestedInput = {
+    create?: XOR<SupportMessageCreateWithoutConversationInput, SupportMessageUncheckedCreateWithoutConversationInput> | SupportMessageCreateWithoutConversationInput[] | SupportMessageUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: SupportMessageCreateOrConnectWithoutConversationInput | SupportMessageCreateOrConnectWithoutConversationInput[]
+    upsert?: SupportMessageUpsertWithWhereUniqueWithoutConversationInput | SupportMessageUpsertWithWhereUniqueWithoutConversationInput[]
+    createMany?: SupportMessageCreateManyConversationInputEnvelope
+    set?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    disconnect?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    delete?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    connect?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    update?: SupportMessageUpdateWithWhereUniqueWithoutConversationInput | SupportMessageUpdateWithWhereUniqueWithoutConversationInput[]
+    updateMany?: SupportMessageUpdateManyWithWhereWithoutConversationInput | SupportMessageUpdateManyWithWhereWithoutConversationInput[]
+    deleteMany?: SupportMessageScalarWhereInput | SupportMessageScalarWhereInput[]
+  }
+
+  export type SupportMessageUncheckedUpdateManyWithoutConversationNestedInput = {
+    create?: XOR<SupportMessageCreateWithoutConversationInput, SupportMessageUncheckedCreateWithoutConversationInput> | SupportMessageCreateWithoutConversationInput[] | SupportMessageUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: SupportMessageCreateOrConnectWithoutConversationInput | SupportMessageCreateOrConnectWithoutConversationInput[]
+    upsert?: SupportMessageUpsertWithWhereUniqueWithoutConversationInput | SupportMessageUpsertWithWhereUniqueWithoutConversationInput[]
+    createMany?: SupportMessageCreateManyConversationInputEnvelope
+    set?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    disconnect?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    delete?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    connect?: SupportMessageWhereUniqueInput | SupportMessageWhereUniqueInput[]
+    update?: SupportMessageUpdateWithWhereUniqueWithoutConversationInput | SupportMessageUpdateWithWhereUniqueWithoutConversationInput[]
+    updateMany?: SupportMessageUpdateManyWithWhereWithoutConversationInput | SupportMessageUpdateManyWithWhereWithoutConversationInput[]
+    deleteMany?: SupportMessageScalarWhereInput | SupportMessageScalarWhereInput[]
+  }
+
+  export type SupportConversationCreateNestedOneWithoutMessagesInput = {
+    create?: XOR<SupportConversationCreateWithoutMessagesInput, SupportConversationUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: SupportConversationCreateOrConnectWithoutMessagesInput
+    connect?: SupportConversationWhereUniqueInput
+  }
+
+  export type EnumSenderTypeFieldUpdateOperationsInput = {
+    set?: $Enums.SenderType
+  }
+
+  export type EnumMessageTypeFieldUpdateOperationsInput = {
+    set?: $Enums.MessageType
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type SupportConversationUpdateOneRequiredWithoutMessagesNestedInput = {
+    create?: XOR<SupportConversationCreateWithoutMessagesInput, SupportConversationUncheckedCreateWithoutMessagesInput>
+    connectOrCreate?: SupportConversationCreateOrConnectWithoutMessagesInput
+    upsert?: SupportConversationUpsertWithoutMessagesInput
+    connect?: SupportConversationWhereUniqueInput
+    update?: XOR<XOR<SupportConversationUpdateToOneWithWhereWithoutMessagesInput, SupportConversationUpdateWithoutMessagesInput>, SupportConversationUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type EnumProductRequestStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ProductRequestStatus
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -14255,6 +20308,90 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrderStatusFilter<$PrismaModel>
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumConversationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ConversationStatus | EnumConversationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumConversationStatusFilter<$PrismaModel> | $Enums.ConversationStatus
+  }
+
+  export type NestedEnumConversationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ConversationStatus | EnumConversationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ConversationStatus[] | ListEnumConversationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumConversationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConversationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumConversationStatusFilter<$PrismaModel>
+    _max?: NestedEnumConversationStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSenderTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.SenderType | EnumSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSenderTypeFilter<$PrismaModel> | $Enums.SenderType
+  }
+
+  export type NestedEnumMessageTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeFilter<$PrismaModel> | $Enums.MessageType
+  }
+
+  export type NestedEnumSenderTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SenderType | EnumSenderTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SenderType[] | ListEnumSenderTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumSenderTypeWithAggregatesFilter<$PrismaModel> | $Enums.SenderType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSenderTypeFilter<$PrismaModel>
+    _max?: NestedEnumSenderTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MessageType | EnumMessageTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MessageType[] | ListEnumMessageTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumMessageTypeWithAggregatesFilter<$PrismaModel> | $Enums.MessageType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMessageTypeFilter<$PrismaModel>
+    _max?: NestedEnumMessageTypeFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumProductRequestStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductRequestStatus | EnumProductRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductRequestStatusFilter<$PrismaModel> | $Enums.ProductRequestStatus
+  }
+
+  export type NestedEnumProductRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProductRequestStatus | EnumProductRequestStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProductRequestStatus[] | ListEnumProductRequestStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProductRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.ProductRequestStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumProductRequestStatusFilter<$PrismaModel>
+    _max?: NestedEnumProductRequestStatusFilter<$PrismaModel>
   }
 
   export type OrderItemCreateWithoutProductInput = {
@@ -15169,6 +21306,150 @@ export namespace Prisma {
     statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
   }
 
+  export type SupportMessageCreateWithoutConversationInput = {
+    id?: string
+    content: string
+    senderType: $Enums.SenderType
+    senderName: string
+    createdAt?: Date | string
+    isRead?: boolean
+    messageType?: $Enums.MessageType
+    productId?: string | null
+    productName?: string | null
+    productPrice?: number | null
+    productImage?: string | null
+  }
+
+  export type SupportMessageUncheckedCreateWithoutConversationInput = {
+    id?: string
+    content: string
+    senderType: $Enums.SenderType
+    senderName: string
+    createdAt?: Date | string
+    isRead?: boolean
+    messageType?: $Enums.MessageType
+    productId?: string | null
+    productName?: string | null
+    productPrice?: number | null
+    productImage?: string | null
+  }
+
+  export type SupportMessageCreateOrConnectWithoutConversationInput = {
+    where: SupportMessageWhereUniqueInput
+    create: XOR<SupportMessageCreateWithoutConversationInput, SupportMessageUncheckedCreateWithoutConversationInput>
+  }
+
+  export type SupportMessageCreateManyConversationInputEnvelope = {
+    data: SupportMessageCreateManyConversationInput | SupportMessageCreateManyConversationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SupportMessageUpsertWithWhereUniqueWithoutConversationInput = {
+    where: SupportMessageWhereUniqueInput
+    update: XOR<SupportMessageUpdateWithoutConversationInput, SupportMessageUncheckedUpdateWithoutConversationInput>
+    create: XOR<SupportMessageCreateWithoutConversationInput, SupportMessageUncheckedCreateWithoutConversationInput>
+  }
+
+  export type SupportMessageUpdateWithWhereUniqueWithoutConversationInput = {
+    where: SupportMessageWhereUniqueInput
+    data: XOR<SupportMessageUpdateWithoutConversationInput, SupportMessageUncheckedUpdateWithoutConversationInput>
+  }
+
+  export type SupportMessageUpdateManyWithWhereWithoutConversationInput = {
+    where: SupportMessageScalarWhereInput
+    data: XOR<SupportMessageUpdateManyMutationInput, SupportMessageUncheckedUpdateManyWithoutConversationInput>
+  }
+
+  export type SupportMessageScalarWhereInput = {
+    AND?: SupportMessageScalarWhereInput | SupportMessageScalarWhereInput[]
+    OR?: SupportMessageScalarWhereInput[]
+    NOT?: SupportMessageScalarWhereInput | SupportMessageScalarWhereInput[]
+    id?: StringFilter<"SupportMessage"> | string
+    conversationId?: StringFilter<"SupportMessage"> | string
+    content?: StringFilter<"SupportMessage"> | string
+    senderType?: EnumSenderTypeFilter<"SupportMessage"> | $Enums.SenderType
+    senderName?: StringFilter<"SupportMessage"> | string
+    createdAt?: DateTimeFilter<"SupportMessage"> | Date | string
+    isRead?: BoolFilter<"SupportMessage"> | boolean
+    messageType?: EnumMessageTypeFilter<"SupportMessage"> | $Enums.MessageType
+    productId?: StringNullableFilter<"SupportMessage"> | string | null
+    productName?: StringNullableFilter<"SupportMessage"> | string | null
+    productPrice?: FloatNullableFilter<"SupportMessage"> | number | null
+    productImage?: StringNullableFilter<"SupportMessage"> | string | null
+  }
+
+  export type SupportConversationCreateWithoutMessagesInput = {
+    id?: string
+    userId?: string | null
+    guestName?: string | null
+    guestPhone?: string | null
+    status?: $Enums.ConversationStatus
+    subject?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastMessageAt?: Date | string
+    pharmacistId?: string | null
+    isRead?: boolean
+  }
+
+  export type SupportConversationUncheckedCreateWithoutMessagesInput = {
+    id?: string
+    userId?: string | null
+    guestName?: string | null
+    guestPhone?: string | null
+    status?: $Enums.ConversationStatus
+    subject?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lastMessageAt?: Date | string
+    pharmacistId?: string | null
+    isRead?: boolean
+  }
+
+  export type SupportConversationCreateOrConnectWithoutMessagesInput = {
+    where: SupportConversationWhereUniqueInput
+    create: XOR<SupportConversationCreateWithoutMessagesInput, SupportConversationUncheckedCreateWithoutMessagesInput>
+  }
+
+  export type SupportConversationUpsertWithoutMessagesInput = {
+    update: XOR<SupportConversationUpdateWithoutMessagesInput, SupportConversationUncheckedUpdateWithoutMessagesInput>
+    create: XOR<SupportConversationCreateWithoutMessagesInput, SupportConversationUncheckedCreateWithoutMessagesInput>
+    where?: SupportConversationWhereInput
+  }
+
+  export type SupportConversationUpdateToOneWithWhereWithoutMessagesInput = {
+    where?: SupportConversationWhereInput
+    data: XOR<SupportConversationUpdateWithoutMessagesInput, SupportConversationUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type SupportConversationUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    guestName?: NullableStringFieldUpdateOperationsInput | string | null
+    guestPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pharmacistId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SupportConversationUncheckedUpdateWithoutMessagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    guestName?: NullableStringFieldUpdateOperationsInput | string | null
+    guestPhone?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumConversationStatusFieldUpdateOperationsInput | $Enums.ConversationStatus
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastMessageAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pharmacistId?: NullableStringFieldUpdateOperationsInput | string | null
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+  }
+
   export type OrderItemCreateManyProductInput = {
     id?: string
     orderId: string
@@ -15393,6 +21674,62 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SupportMessageCreateManyConversationInput = {
+    id?: string
+    content: string
+    senderType: $Enums.SenderType
+    senderName: string
+    createdAt?: Date | string
+    isRead?: boolean
+    messageType?: $Enums.MessageType
+    productId?: string | null
+    productName?: string | null
+    productPrice?: number | null
+    productImage?: string | null
+  }
+
+  export type SupportMessageUpdateWithoutConversationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    senderType?: EnumSenderTypeFieldUpdateOperationsInput | $Enums.SenderType
+    senderName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messageType?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    productImage?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupportMessageUncheckedUpdateWithoutConversationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    senderType?: EnumSenderTypeFieldUpdateOperationsInput | $Enums.SenderType
+    senderName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messageType?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    productImage?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type SupportMessageUncheckedUpdateManyWithoutConversationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    senderType?: EnumSenderTypeFieldUpdateOperationsInput | $Enums.SenderType
+    senderName?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    messageType?: EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
+    productId?: NullableStringFieldUpdateOperationsInput | string | null
+    productName?: NullableStringFieldUpdateOperationsInput | string | null
+    productPrice?: NullableFloatFieldUpdateOperationsInput | number | null
+    productImage?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

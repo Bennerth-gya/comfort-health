@@ -9,16 +9,21 @@ import {
   ShoppingBag,
   Store,
   Truck,
+  MessageSquareHeart,
+  Package as PackageIcon
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import AdminOrdersNavLink from "@/components/admin/AdminOrdersNavLink";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Orders", href: "/orders", icon: ShoppingBag },
-  { name: "Inventory", href: "/inventory", icon: Package },
+  { name: "Inventory", href: "/inventory", icon: PackageIcon },
   { name: "Add product", href: "/add-products", icon: PlusCircle },
+  { name: "Reviews", href: "/admin/reviews", icon: MessageSquareHeart },
+  { name: "Requests", href: "/admin/product-requests", icon: PackageIcon },
 ] as const;
 
 function isNavActive(pathname: string, href: string) {
@@ -27,6 +32,28 @@ function isNavActive(pathname: string, href: string) {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [unreadCounts, setUnreadCounts] = useState({ reviews: 0, requests: 0 });
+
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchCounts() {
+      try {
+        const res = await fetch("/api/admin/unread-counts", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!cancelled) setUnreadCounts(data);
+      } catch {
+        // Ignore
+      }
+    }
+    
+    void fetchCounts();
+    const interval = setInterval(fetchCounts, 15000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
   return (
     <aside className="fixed left-0 top-0 z-10 flex min-h-screen w-64 flex-col border-r border-gray-200 bg-white text-slate-700">
       <div className="flex h-24 items-center border-b border-gray-100 px-8">
@@ -59,7 +86,19 @@ export default function Sidebar() {
               }`}
             >
               <Icon className="h-5 w-5" />
-              {item.name}
+              <span className="relative">
+                {item.name}
+                {item.name === "Reviews" && unreadCounts.reviews > 0 && (
+                  <span className="absolute -right-5 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {unreadCounts.reviews > 9 ? "9+" : unreadCounts.reviews}
+                  </span>
+                )}
+                {item.name === "Requests" && unreadCounts.requests > 0 && (
+                  <span className="absolute -right-5 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {unreadCounts.requests > 9 ? "9+" : unreadCounts.requests}
+                  </span>
+                )}
+              </span>
             </Link>
           );
         })}
