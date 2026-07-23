@@ -1,4 +1,4 @@
-import type { OrderStatus, Prisma } from "@/generated/db";
+import type { OrderStatus, Prisma, ValidationStatus } from "@/generated/db";
 
 export const ACTIVE_FULFILLMENT_STATUSES: OrderStatus[] = [
   "PENDING",
@@ -27,6 +27,10 @@ export type AdminOrderRecord = {
   pickedUpAt: string | null;
   deliveredAt: string | null;
   createdAt: string;
+  paymentMethod: string;
+  validationStatus: ValidationStatus;
+  validatedAt: string | null;
+  adminCalledAt: string | null;
   items: Array<{
     id: string;
     name: string;
@@ -58,6 +62,10 @@ export function serializeAdminOrder(
     pickedUpAt: order.pickedUpAt?.toISOString() ?? null,
     deliveredAt: order.deliveredAt?.toISOString() ?? null,
     createdAt: order.createdAt.toISOString(),
+    paymentMethod: order.paymentMethod,
+    validationStatus: order.validationStatus,
+    validatedAt: order.validatedAt?.toISOString() ?? null,
+    adminCalledAt: order.adminCalledAt?.toISOString() ?? null,
     items: order.items.map((item) => ({
       id: item.id,
       name: item.name,

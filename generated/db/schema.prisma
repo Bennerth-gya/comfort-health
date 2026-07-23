@@ -27,6 +27,13 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum ValidationStatus {
+  UNVALIDATED // order placed — admin has not called yet
+  CALLED // admin called the customer
+  VALIDATED // customer confirmed the order by phone
+  REJECTED // customer rejected or unreachable
+}
+
 model User {
   id        String   @id // Stack user ID
   email     String?
@@ -100,6 +107,13 @@ model Order {
   estimatedTime     Int?
   adminNotes        String?
   notificationSent  Boolean     @default(false)
+
+  // Pay on Delivery fields
+  paymentMethod    String           @default("PAY_ON_DELIVERY")
+  deliveryNotes    String?
+  validationStatus ValidationStatus @default(UNVALIDATED)
+  validatedAt      DateTime?
+  adminCalledAt    DateTime?
 
   items         OrderItem[]
   payment       PaymentTransaction?

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { ArrowLeft, Lock, Minus, Plus, ShieldCheck, ShoppingCart, Trash2 } from "lucide-react";
+import { ArrowLeft, Lock, Minus, Plus, ShieldCheck, ShoppingCart, Trash2, ShoppingBag } from "lucide-react";
 import PaystackCheckout from "@/app/components/PaystackCheckout";
 import { type CartItem, useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
@@ -308,6 +308,7 @@ export default function CartPage() {
               </div>
 
               <div id="checkout-panel" className="mt-4 scroll-mt-24">
+                {/* PAYSTACK_DISABLED — will re-enable after approval
                 <PaystackCheckout
                   items={cart}
                   amount={subtotal}
@@ -315,6 +316,19 @@ export default function CartPage() {
                   buttonClassName="w-full flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#15803d] px-5 py-3.5 text-[14px] font-bold text-white transition active:scale-[0.98] hover:bg-[#166534] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d]"
                   buttonIcon={<Lock className="h-4 w-4" />}
                 />
+                */}
+                <Link
+                  href="/checkout"
+                  className="
+                    w-full flex min-h-11 items-center justify-center gap-2
+                    bg-[#15803d] text-white rounded-xl px-5 py-3.5
+                    text-[14px] font-bold active:scale-[0.98] hover:bg-[#166534]
+                    transition-all shadow-lg shadow-green-900/20
+                  "
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  Proceed to checkout — GHS {subtotal.toFixed(2)}
+                </Link>
               </div>
 
               <button
@@ -339,7 +353,7 @@ export default function CartPage() {
                 <div>
                   <p className="text-sm font-semibold text-white">Secure checkout</p>
                   <p className="mt-1 text-xs leading-[1.6] text-white/70">
-                    Paystack encrypts your payment details. Comfort Health never stores card data.
+                    Pay on delivery is enabled. You only pay when your order arrives.
                   </p>
                 </div>
               </div>
@@ -349,13 +363,12 @@ export default function CartPage() {
       </div>
 
       {cart.length > 0 ? (
-        <button
-          type="button"
-          onClick={scrollToCheckout}
+        <Link
+          href="/checkout"
           className="safe-bottom fixed bottom-0 left-0 right-0 z-40 flex min-h-14 items-center justify-center bg-[#15803d] px-4 py-4 text-base font-bold text-white active:opacity-90 md:hidden"
         >
           Checkout - GHS {subtotal.toFixed(2)}
-        </button>
+        </Link>
       ) : null}
     </div>
   );

@@ -6,7 +6,7 @@ import { Phone, X, MessageCircle, HeadphonesIcon } from 'lucide-react'
 // ── CONFIGURATION ──────────────────────────────────────────
 // Change these two values to your real pharmacy numbers
 const PHARMACY_PHONE = '0244123456'
-const PHARMACY_WHATSAPP = '233244123456'
+const PHARMACY_WHATSAPP = '233537355068'
 // ──────────────────────────────────────────────────────────
 
 export default function PharmacistSupport() {

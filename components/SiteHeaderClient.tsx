@@ -5,6 +5,7 @@ import { HeartPulse, Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/app/context/cartContext";
 import { type FormEvent, type ReactNode, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { isLocalClient } from "@/lib/admin-client";
 
 function CartIcon() {
   const { cartCount } = useCart();
@@ -112,12 +113,14 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
             </span>
           </Link>
           <div className="h-4 w-px bg-[#254532]"></div>
-          <Link
-            href="/dashboard"
-            className="text-sm font-medium text-white underline-offset-4 transition hover:text-emerald-100 hover:underline"
-          >
-            Dashboard
-          </Link>
+          {isLocalClient() && (
+            <Link
+              href="/dashboard"
+              className="text-sm font-medium text-white underline-offset-4 transition hover:text-emerald-100 hover:underline"
+            >
+              Dashboard
+            </Link>
+          )}
           {adminNode}
           <CartIcon />
         </div>

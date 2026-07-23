@@ -1,7 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getAdminUserOrNull } from '@/lib/auth'
 
 export async function GET() {
+  const admin = await getAdminUserOrNull()
+  if (!admin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   try {
     const requests = await prisma.productRequest.findMany({
       orderBy: { createdAt: 'desc' },

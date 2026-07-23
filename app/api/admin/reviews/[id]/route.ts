@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getAdminUserOrNull } from '@/lib/auth'
 
 // Approve, reject, or mark as read
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const admin = await getAdminUserOrNull()
+  if (!admin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   try {
     const { id } = await params;
     const body = await req.json()
@@ -33,6 +39,11 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const admin = await getAdminUserOrNull()
+  if (!admin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   try {
     const { id } = await params;
     await prisma.customerReview.delete({

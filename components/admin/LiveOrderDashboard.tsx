@@ -13,9 +13,10 @@ import {
   Truck,
   User,
   X,
+  CheckCircle2,
 } from "lucide-react";
 import type { AdminOrderRecord } from "@/lib/orders-admin";
-import type { OrderStatus } from "@/generated/db";
+import type { OrderStatus, ValidationStatus } from "@/generated/db";
 
 const STATUS_CONFIG: Record<
   OrderStatus,
@@ -186,6 +187,25 @@ export default function LiveOrderDashboard() {
     void updateStatus(order.id, next);
   };
 
+  const updateValidationStatus = async (
+    orderId: string,
+    validationStatus: ValidationStatus
+  ) => {
+    const response = await fetch(`/api/admin/orders/${orderId}/validate`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ validationStatus }),
+    });
+
+    if (response.ok) {
+      setOrders((current) =>
+        current.map((order) =>
+          order.id === orderId ? { ...order, validationStatus } : order
+        ),
+      );
+    }
+  };
+
   const filteredOrders = orders.filter((order) => {
     if (filter === "ACTIVE") {
       return (
@@ -311,6 +331,79 @@ export default function LiveOrderDashboard() {
                       <span className="text-sm text-gray-600">{order.customerAddress}</span>
                     </div>
                   ) : null}
+                </div>
+
+                {/* Validation section */}
+                <div className={`
+                  mx-4 mb-3 mt-3 rounded-xl px-3 py-2.5
+                  ${order.validationStatus === 'UNVALIDATED'
+                    ? 'bg-yellow-50 border border-yellow-200'
+                    : order.validationStatus === 'VALIDATED'
+                    ? 'bg-green-50 border border-green-200'
+                    : 'bg-red-50 border border-red-200'
+                  }
+                `}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                        Validation status
+                      </p>
+                      <p className={`text-[12px] font-bold mt-0.5
+                        ${order.validationStatus === 'UNVALIDATED' ? 'text-yellow-700' :
+                          order.validationStatus === 'VALIDATED' ? 'text-green-700' :
+                          'text-red-700'}
+                      `}>
+                        {order.validationStatus === 'UNVALIDATED' && '⚠️ Not yet validated'}
+                        {order.validationStatus === 'CALLED' && '📞 Called — awaiting confirmation'}
+                        {order.validationStatus === 'VALIDATED' && '✅ Validated'}
+                        {order.validationStatus === 'REJECTED' && '❌ Rejected'}
+                      </p>
+                    </div>
+
+                    {/* Call button */}
+                    {order.customerPhone && (
+                      <a
+                        href={`tel:${order.customerPhone}`}
+                        className="
+                          flex items-center gap-1.5 
+                          bg-[#15803d] text-white
+                          px-3 py-2 rounded-xl
+                          text-[11px] font-bold
+                          active:scale-95 transition-all
+                        "
+                        onClick={() => {
+                          // Mark as called when admin taps the call button
+                          if (order.validationStatus === 'UNVALIDATED') {
+                            void updateValidationStatus(order.id, 'CALLED');
+                          }
+                        }}
+                      >
+                        <Phone size={13} />
+                        Call {order.customerPhone}
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Validate / Reject buttons */}
+                  {(order.validationStatus === 'UNVALIDATED' ||
+                    order.validationStatus === 'CALLED') && (
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        type="button"
+                        onClick={() => void updateValidationStatus(order.id, 'VALIDATED')}
+                        className="flex-1 text-[11px] font-bold py-1.5 bg-green-600 text-white rounded-lg flex items-center justify-center gap-1"
+                      >
+                        <CheckCircle2 size={14} /> Confirm
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void updateValidationStatus(order.id, 'REJECTED')}
+                        className="flex-1 text-[11px] font-semibold py-1.5 border border-red-200 text-red-500 rounded-lg flex items-center justify-center gap-1"
+                      >
+                        <AlertCircle size={14} /> Reject
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-b border-gray-100 px-4 pb-3">

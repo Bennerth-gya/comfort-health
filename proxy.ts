@@ -1,53 +1,88 @@
-import { isAdminPath } from "@/lib/admin-routes";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from 'next/server'
 
-/** Stack Auth session cookies (nextjs-cookie token store). */
-function hasStackSession(request: NextRequest) {
-  return request.cookies.getAll().some((cookie) => {
-    const name = cookie.name.toLowerCase();
-    const value = cookie.value?.trim();
+// Paths that are admin-only
+const ADMIN_PATHS = [
+  '/dashboard',
+  '/admin',
+  '/inventory',
+  '/orders',
+  '/add-products',
+  '/api/admin',
+]
 
-    if (!value) return false;
-
-    return (
-      name.endsWith("-refresh-token") ||
-      name.endsWith("-access-token") ||
-      (name.includes("stack") &&
-        (name.includes("refresh") || name.includes("access") || name.includes("token")))
-    );
-  });
+function isAdminPath(pathname: string): boolean {
+  return ADMIN_PATHS.some(
+    (adminPath) =>
+      pathname === adminPath || pathname.startsWith(`${adminPath}/`),
+  )
 }
 
-function isAdminRoute(pathname: string) {
+/**
+ * Returns true when the request is coming from a local development machine.
+ *
+ * Two checks in order:
+ *  1. NEXT_PUBLIC_IS_LOCAL env var — set in .env.local only, never on Vercel.
+ *  2. The Host header — localhost / 127.0.0.1 / private LAN addresses.
+ */
+function isLocalRequest(request: NextRequest): boolean {
+  if (process.env.NEXT_PUBLIC_IS_LOCAL === 'true') return true
+
+  const host = request.headers.get('host') ?? ''
   return (
-    isAdminPath(pathname) ||
-    pathname === "/inventory/hero-slides" ||
-    pathname.startsWith("/inventory/hero-slides/")
-  );
+    host.startsWith('localhost') ||
+    host.startsWith('127.0.0.1') ||
+    host.startsWith('0.0.0.0') ||
+    host.startsWith('192.168.')
+  )
 }
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl
 
-  if (isAdminRoute(pathname) && !hasStackSession(request)) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // Only gate admin paths — all other routes pass through immediately.
+  if (!isAdminPath(pathname)) {
+    return NextResponse.next()
   }
 
-  return NextResponse.next();
+  // On localhost (dev), let everything through — no auth friction.
+  if (isLocalRequest(request)) {
+    return NextResponse.next()
+  }
+
+  // ── Production: block completely unauthenticated visitors ──────────────────
+  //
+  // Stack Auth stores its session in a cookie whose name begins with
+  // "stack-auth".  We cannot fully verify the JWT here without the SDK
+  // (that happens in the page/layout via requireAdminUser), but we can at
+  // least redirect visitors who have no session cookie at all.
+  //
+  const hasSession = [...request.cookies.getAll()].some(
+    (c) => c.name.startsWith('stack-auth'),
+  )
+
+  if (!hasSession) {
+    // API routes → 403 JSON; page routes → redirect to sign-in
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const signInUrl = new URL('/sign-in', request.url)
+    signInUrl.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(signInUrl)
+  }
+
+  // Session cookie present: let the request through.
+  // The page/layout server components (requireAdminUser) do the final role check.
+  return NextResponse.next()
 }
 
 export const config = {
   matcher: [
-    "/dashboard",
-    "/dashboard/:path*",
-    "/inventory",
-    "/inventory/:path*",
-    "/orders",
-    "/orders/:path*",
-    "/add-products",
-    "/add-products/:path*",
-    "/inventory/hero-slides",
-    "/inventory/hero-slides/:path*",
+    '/dashboard/:path*',
+    '/admin/:path*',
+    '/inventory/:path*',
+    '/orders/:path*',
+    '/add-products/:path*',
+    '/api/admin/:path*',
   ],
-};
+}

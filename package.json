@@ -23,6 +23,8 @@
     "@prisma/client": "^7.8.0",
     "@stackframe/stack": "^2.8.108",
     "@stackframe/stack-ui": "^2.8.108",
+    "@supabase/ssr": "^0.12.3",
+    "@supabase/supabase-js": "^2.110.8",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "groq-sdk": "^1.3.0",

@@ -175,7 +175,12 @@ exports.Prisma.OrderScalarFieldEnum = {
   deliveredAt: 'deliveredAt',
   estimatedTime: 'estimatedTime',
   adminNotes: 'adminNotes',
-  notificationSent: 'notificationSent'
+  notificationSent: 'notificationSent',
+  paymentMethod: 'paymentMethod',
+  deliveryNotes: 'deliveryNotes',
+  validationStatus: 'validationStatus',
+  validatedAt: 'validatedAt',
+  adminCalledAt: 'adminCalledAt'
 };
 
 exports.Prisma.OrderStatusLogScalarFieldEnum = {
@@ -326,6 +331,13 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
   DELIVERED: 'DELIVERED',
   CANCELLED: 'CANCELLED'
+};
+
+exports.ValidationStatus = exports.$Enums.ValidationStatus = {
+  UNVALIDATED: 'UNVALIDATED',
+  CALLED: 'CALLED',
+  VALIDATED: 'VALIDATED',
+  REJECTED: 'REJECTED'
 };
 
 exports.ConversationStatus = exports.$Enums.ConversationStatus = {

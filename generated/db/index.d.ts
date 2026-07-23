@@ -99,6 +99,16 @@ export const OrderStatus: {
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
 
+export const ValidationStatus: {
+  UNVALIDATED: 'UNVALIDATED',
+  CALLED: 'CALLED',
+  VALIDATED: 'VALIDATED',
+  REJECTED: 'REJECTED'
+};
+
+export type ValidationStatus = (typeof ValidationStatus)[keyof typeof ValidationStatus]
+
+
 export const ConversationStatus: {
   WAITING: 'WAITING',
   ACTIVE: 'ACTIVE',
@@ -145,6 +155,10 @@ export const UserRole: typeof $Enums.UserRole
 export type OrderStatus = $Enums.OrderStatus
 
 export const OrderStatus: typeof $Enums.OrderStatus
+
+export type ValidationStatus = $Enums.ValidationStatus
+
+export const ValidationStatus: typeof $Enums.ValidationStatus
 
 export type ConversationStatus = $Enums.ConversationStatus
 
@@ -4446,6 +4460,11 @@ export namespace Prisma {
     estimatedTime: number | null
     adminNotes: string | null
     notificationSent: boolean | null
+    paymentMethod: string | null
+    deliveryNotes: string | null
+    validationStatus: $Enums.ValidationStatus | null
+    validatedAt: Date | null
+    adminCalledAt: Date | null
   }
 
   export type OrderMaxAggregateOutputType = {
@@ -4473,6 +4492,11 @@ export namespace Prisma {
     estimatedTime: number | null
     adminNotes: string | null
     notificationSent: boolean | null
+    paymentMethod: string | null
+    deliveryNotes: string | null
+    validationStatus: $Enums.ValidationStatus | null
+    validatedAt: Date | null
+    adminCalledAt: Date | null
   }
 
   export type OrderCountAggregateOutputType = {
@@ -4500,6 +4524,11 @@ export namespace Prisma {
     estimatedTime: number
     adminNotes: number
     notificationSent: number
+    paymentMethod: number
+    deliveryNotes: number
+    validationStatus: number
+    validatedAt: number
+    adminCalledAt: number
     _all: number
   }
 
@@ -4539,6 +4568,11 @@ export namespace Prisma {
     estimatedTime?: true
     adminNotes?: true
     notificationSent?: true
+    paymentMethod?: true
+    deliveryNotes?: true
+    validationStatus?: true
+    validatedAt?: true
+    adminCalledAt?: true
   }
 
   export type OrderMaxAggregateInputType = {
@@ -4566,6 +4600,11 @@ export namespace Prisma {
     estimatedTime?: true
     adminNotes?: true
     notificationSent?: true
+    paymentMethod?: true
+    deliveryNotes?: true
+    validationStatus?: true
+    validatedAt?: true
+    adminCalledAt?: true
   }
 
   export type OrderCountAggregateInputType = {
@@ -4593,6 +4632,11 @@ export namespace Prisma {
     estimatedTime?: true
     adminNotes?: true
     notificationSent?: true
+    paymentMethod?: true
+    deliveryNotes?: true
+    validationStatus?: true
+    validatedAt?: true
+    adminCalledAt?: true
     _all?: true
   }
 
@@ -4707,6 +4751,11 @@ export namespace Prisma {
     estimatedTime: number | null
     adminNotes: string | null
     notificationSent: boolean
+    paymentMethod: string
+    deliveryNotes: string | null
+    validationStatus: $Enums.ValidationStatus
+    validatedAt: Date | null
+    adminCalledAt: Date | null
     _count: OrderCountAggregateOutputType | null
     _avg: OrderAvgAggregateOutputType | null
     _sum: OrderSumAggregateOutputType | null
@@ -4753,6 +4802,11 @@ export namespace Prisma {
     estimatedTime?: boolean
     adminNotes?: boolean
     notificationSent?: boolean
+    paymentMethod?: boolean
+    deliveryNotes?: boolean
+    validationStatus?: boolean
+    validatedAt?: boolean
+    adminCalledAt?: boolean
     items?: boolean | Order$itemsArgs<ExtArgs>
     payment?: boolean | Order$paymentArgs<ExtArgs>
     statusHistory?: boolean | Order$statusHistoryArgs<ExtArgs>
@@ -4785,6 +4839,11 @@ export namespace Prisma {
     estimatedTime?: boolean
     adminNotes?: boolean
     notificationSent?: boolean
+    paymentMethod?: boolean
+    deliveryNotes?: boolean
+    validationStatus?: boolean
+    validatedAt?: boolean
+    adminCalledAt?: boolean
     rider?: boolean | Order$riderArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -4813,6 +4872,11 @@ export namespace Prisma {
     estimatedTime?: boolean
     adminNotes?: boolean
     notificationSent?: boolean
+    paymentMethod?: boolean
+    deliveryNotes?: boolean
+    validationStatus?: boolean
+    validatedAt?: boolean
+    adminCalledAt?: boolean
     rider?: boolean | Order$riderArgs<ExtArgs>
   }, ExtArgs["result"]["order"]>
 
@@ -4841,9 +4905,14 @@ export namespace Prisma {
     estimatedTime?: boolean
     adminNotes?: boolean
     notificationSent?: boolean
+    paymentMethod?: boolean
+    deliveryNotes?: boolean
+    validationStatus?: boolean
+    validatedAt?: boolean
+    adminCalledAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reference" | "idempotencyKey" | "sellerId" | "email" | "amount" | "currency" | "status" | "paidAt" | "createdAt" | "updatedAt" | "fulfillmentStatus" | "customerName" | "customerPhone" | "customerAddress" | "riderId" | "riderName" | "riderPhone" | "assignedAt" | "pickedUpAt" | "deliveredAt" | "estimatedTime" | "adminNotes" | "notificationSent", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reference" | "idempotencyKey" | "sellerId" | "email" | "amount" | "currency" | "status" | "paidAt" | "createdAt" | "updatedAt" | "fulfillmentStatus" | "customerName" | "customerPhone" | "customerAddress" | "riderId" | "riderName" | "riderPhone" | "assignedAt" | "pickedUpAt" | "deliveredAt" | "estimatedTime" | "adminNotes" | "notificationSent" | "paymentMethod" | "deliveryNotes" | "validationStatus" | "validatedAt" | "adminCalledAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     items?: boolean | Order$itemsArgs<ExtArgs>
     payment?: boolean | Order$paymentArgs<ExtArgs>
@@ -4891,6 +4960,11 @@ export namespace Prisma {
       estimatedTime: number | null
       adminNotes: string | null
       notificationSent: boolean
+      paymentMethod: string
+      deliveryNotes: string | null
+      validationStatus: $Enums.ValidationStatus
+      validatedAt: Date | null
+      adminCalledAt: Date | null
     }, ExtArgs["result"]["order"]>
     composites: {}
   }
@@ -5342,6 +5416,11 @@ export namespace Prisma {
     readonly estimatedTime: FieldRef<"Order", 'Int'>
     readonly adminNotes: FieldRef<"Order", 'String'>
     readonly notificationSent: FieldRef<"Order", 'Boolean'>
+    readonly paymentMethod: FieldRef<"Order", 'String'>
+    readonly deliveryNotes: FieldRef<"Order", 'String'>
+    readonly validationStatus: FieldRef<"Order", 'ValidationStatus'>
+    readonly validatedAt: FieldRef<"Order", 'DateTime'>
+    readonly adminCalledAt: FieldRef<"Order", 'DateTime'>
   }
     
 
@@ -16000,7 +16079,12 @@ export namespace Prisma {
     deliveredAt: 'deliveredAt',
     estimatedTime: 'estimatedTime',
     adminNotes: 'adminNotes',
-    notificationSent: 'notificationSent'
+    notificationSent: 'notificationSent',
+    paymentMethod: 'paymentMethod',
+    deliveryNotes: 'deliveryNotes',
+    validationStatus: 'validationStatus',
+    validatedAt: 'validatedAt',
+    adminCalledAt: 'adminCalledAt'
   };
 
   export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
@@ -16295,6 +16379,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ValidationStatus'
+   */
+  export type EnumValidationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ValidationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ValidationStatus[]'
+   */
+  export type ListEnumValidationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ValidationStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'ConversationStatus'
    */
   export type EnumConversationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConversationStatus'>
@@ -16579,6 +16677,11 @@ export namespace Prisma {
     estimatedTime?: IntNullableFilter<"Order"> | number | null
     adminNotes?: StringNullableFilter<"Order"> | string | null
     notificationSent?: BoolFilter<"Order"> | boolean
+    paymentMethod?: StringFilter<"Order"> | string
+    deliveryNotes?: StringNullableFilter<"Order"> | string | null
+    validationStatus?: EnumValidationStatusFilter<"Order"> | $Enums.ValidationStatus
+    validatedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    adminCalledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     items?: OrderItemListRelationFilter
     payment?: XOR<PaymentTransactionNullableScalarRelationFilter, PaymentTransactionWhereInput> | null
     statusHistory?: OrderStatusLogListRelationFilter
@@ -16610,6 +16713,11 @@ export namespace Prisma {
     estimatedTime?: SortOrderInput | SortOrder
     adminNotes?: SortOrderInput | SortOrder
     notificationSent?: SortOrder
+    paymentMethod?: SortOrder
+    deliveryNotes?: SortOrderInput | SortOrder
+    validationStatus?: SortOrder
+    validatedAt?: SortOrderInput | SortOrder
+    adminCalledAt?: SortOrderInput | SortOrder
     items?: OrderItemOrderByRelationAggregateInput
     payment?: PaymentTransactionOrderByWithRelationInput
     statusHistory?: OrderStatusLogOrderByRelationAggregateInput
@@ -16644,6 +16752,11 @@ export namespace Prisma {
     estimatedTime?: IntNullableFilter<"Order"> | number | null
     adminNotes?: StringNullableFilter<"Order"> | string | null
     notificationSent?: BoolFilter<"Order"> | boolean
+    paymentMethod?: StringFilter<"Order"> | string
+    deliveryNotes?: StringNullableFilter<"Order"> | string | null
+    validationStatus?: EnumValidationStatusFilter<"Order"> | $Enums.ValidationStatus
+    validatedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    adminCalledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     items?: OrderItemListRelationFilter
     payment?: XOR<PaymentTransactionNullableScalarRelationFilter, PaymentTransactionWhereInput> | null
     statusHistory?: OrderStatusLogListRelationFilter
@@ -16675,6 +16788,11 @@ export namespace Prisma {
     estimatedTime?: SortOrderInput | SortOrder
     adminNotes?: SortOrderInput | SortOrder
     notificationSent?: SortOrder
+    paymentMethod?: SortOrder
+    deliveryNotes?: SortOrderInput | SortOrder
+    validationStatus?: SortOrder
+    validatedAt?: SortOrderInput | SortOrder
+    adminCalledAt?: SortOrderInput | SortOrder
     _count?: OrderCountOrderByAggregateInput
     _avg?: OrderAvgOrderByAggregateInput
     _max?: OrderMaxOrderByAggregateInput
@@ -16710,6 +16828,11 @@ export namespace Prisma {
     estimatedTime?: IntNullableWithAggregatesFilter<"Order"> | number | null
     adminNotes?: StringNullableWithAggregatesFilter<"Order"> | string | null
     notificationSent?: BoolWithAggregatesFilter<"Order"> | boolean
+    paymentMethod?: StringWithAggregatesFilter<"Order"> | string
+    deliveryNotes?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    validationStatus?: EnumValidationStatusWithAggregatesFilter<"Order"> | $Enums.ValidationStatus
+    validatedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    adminCalledAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   }
 
   export type OrderStatusLogWhereInput = {
@@ -17646,6 +17769,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
     statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
@@ -17677,6 +17805,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
     statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
@@ -17706,6 +17839,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
@@ -17737,6 +17875,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -17767,6 +17910,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
   }
 
   export type OrderUpdateManyMutationInput = {
@@ -17793,6 +17941,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OrderUncheckedUpdateManyInput = {
@@ -17820,6 +17973,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type OrderStatusLogCreateInput = {
@@ -18998,6 +19156,13 @@ export namespace Prisma {
     not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
   }
 
+  export type EnumValidationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ValidationStatus | EnumValidationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumValidationStatusFilter<$PrismaModel> | $Enums.ValidationStatus
+  }
+
   export type PaymentTransactionNullableScalarRelationFilter = {
     is?: PaymentTransactionWhereInput | null
     isNot?: PaymentTransactionWhereInput | null
@@ -19043,6 +19208,11 @@ export namespace Prisma {
     estimatedTime?: SortOrder
     adminNotes?: SortOrder
     notificationSent?: SortOrder
+    paymentMethod?: SortOrder
+    deliveryNotes?: SortOrder
+    validationStatus?: SortOrder
+    validatedAt?: SortOrder
+    adminCalledAt?: SortOrder
   }
 
   export type OrderAvgOrderByAggregateInput = {
@@ -19075,6 +19245,11 @@ export namespace Prisma {
     estimatedTime?: SortOrder
     adminNotes?: SortOrder
     notificationSent?: SortOrder
+    paymentMethod?: SortOrder
+    deliveryNotes?: SortOrder
+    validationStatus?: SortOrder
+    validatedAt?: SortOrder
+    adminCalledAt?: SortOrder
   }
 
   export type OrderMinOrderByAggregateInput = {
@@ -19102,6 +19277,11 @@ export namespace Prisma {
     estimatedTime?: SortOrder
     adminNotes?: SortOrder
     notificationSent?: SortOrder
+    paymentMethod?: SortOrder
+    deliveryNotes?: SortOrder
+    validationStatus?: SortOrder
+    validatedAt?: SortOrder
+    adminCalledAt?: SortOrder
   }
 
   export type OrderSumOrderByAggregateInput = {
@@ -19117,6 +19297,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrderStatusFilter<$PrismaModel>
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
+  }
+
+  export type EnumValidationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ValidationStatus | EnumValidationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumValidationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ValidationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumValidationStatusFilter<$PrismaModel>
+    _max?: NestedEnumValidationStatusFilter<$PrismaModel>
   }
 
   export type OrderScalarRelationFilter = {
@@ -19761,6 +19951,10 @@ export namespace Prisma {
     set?: $Enums.OrderStatus
   }
 
+  export type EnumValidationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ValidationStatus
+  }
+
   export type OrderItemUpdateManyWithoutOrderNestedInput = {
     create?: XOR<OrderItemCreateWithoutOrderInput, OrderItemUncheckedCreateWithoutOrderInput> | OrderItemCreateWithoutOrderInput[] | OrderItemUncheckedCreateWithoutOrderInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutOrderInput | OrderItemCreateOrConnectWithoutOrderInput[]
@@ -20300,6 +20494,13 @@ export namespace Prisma {
     not?: NestedEnumOrderStatusFilter<$PrismaModel> | $Enums.OrderStatus
   }
 
+  export type NestedEnumValidationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ValidationStatus | EnumValidationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumValidationStatusFilter<$PrismaModel> | $Enums.ValidationStatus
+  }
+
   export type NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
     in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
@@ -20308,6 +20509,16 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrderStatusFilter<$PrismaModel>
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumValidationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ValidationStatus | EnumValidationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ValidationStatus[] | ListEnumValidationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumValidationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ValidationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumValidationStatusFilter<$PrismaModel>
+    _max?: NestedEnumValidationStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumConversationStatusFilter<$PrismaModel = never> = {
@@ -20712,6 +20923,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
     rider?: RiderCreateNestedOneWithoutOrdersInput
@@ -20742,6 +20958,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
   }
@@ -20786,6 +21007,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
     rider?: RiderUpdateOneWithoutOrdersNestedInput
@@ -20816,6 +21042,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
   }
@@ -20844,6 +21075,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
     statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
@@ -20873,6 +21109,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
     statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
@@ -20932,6 +21173,11 @@ export namespace Prisma {
     estimatedTime?: IntNullableFilter<"Order"> | number | null
     adminNotes?: StringNullableFilter<"Order"> | string | null
     notificationSent?: BoolFilter<"Order"> | boolean
+    paymentMethod?: StringFilter<"Order"> | string
+    deliveryNotes?: StringNullableFilter<"Order"> | string | null
+    validationStatus?: EnumValidationStatusFilter<"Order"> | $Enums.ValidationStatus
+    validatedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    adminCalledAt?: DateTimeNullableFilter<"Order"> | Date | string | null
   }
 
   export type OrderCreateWithoutItemsInput = {
@@ -20958,6 +21204,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     payment?: PaymentTransactionCreateNestedOneWithoutOrderInput
     statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
     rider?: RiderCreateNestedOneWithoutOrdersInput
@@ -20988,6 +21239,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     payment?: PaymentTransactionUncheckedCreateNestedOneWithoutOrderInput
     statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
   }
@@ -21083,6 +21339,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
     rider?: RiderUpdateOneWithoutOrdersNestedInput
@@ -21113,6 +21374,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
   }
@@ -21198,6 +21464,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusLogCreateNestedManyWithoutOrderInput
     rider?: RiderCreateNestedOneWithoutOrdersInput
@@ -21228,6 +21499,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
     statusHistory?: OrderStatusLogUncheckedCreateNestedManyWithoutOrderInput
   }
@@ -21272,6 +21548,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
     rider?: RiderUpdateOneWithoutOrdersNestedInput
@@ -21302,6 +21583,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
   }
@@ -21590,6 +21876,11 @@ export namespace Prisma {
     estimatedTime?: number | null
     adminNotes?: string | null
     notificationSent?: boolean
+    paymentMethod?: string
+    deliveryNotes?: string | null
+    validationStatus?: $Enums.ValidationStatus
+    validatedAt?: Date | string | null
+    adminCalledAt?: Date | string | null
   }
 
   export type OrderUpdateWithoutRiderInput = {
@@ -21616,6 +21907,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUpdateOneWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUpdateManyWithoutOrderNestedInput
@@ -21645,6 +21941,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
     payment?: PaymentTransactionUncheckedUpdateOneWithoutOrderNestedInput
     statusHistory?: OrderStatusLogUncheckedUpdateManyWithoutOrderNestedInput
@@ -21674,6 +21975,11 @@ export namespace Prisma {
     estimatedTime?: NullableIntFieldUpdateOperationsInput | number | null
     adminNotes?: NullableStringFieldUpdateOperationsInput | string | null
     notificationSent?: BoolFieldUpdateOperationsInput | boolean
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    deliveryNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    validationStatus?: EnumValidationStatusFieldUpdateOperationsInput | $Enums.ValidationStatus
+    validatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    adminCalledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SupportMessageCreateManyConversationInput = {

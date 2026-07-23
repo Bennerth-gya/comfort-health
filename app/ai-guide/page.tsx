@@ -702,7 +702,7 @@ export default function AiGuidePage() {
           </p>
         </div>
         <a
-          href="tel:0244123456"
+          href="tel:0537355068"
           className="text-[#92400e] text-[11px] font-[700] underline underline-offset-2"
         >
           Call pharmacist
