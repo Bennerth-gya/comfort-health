@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack --hostname 0.0.0.0",
-    "build": "prisma generate && prisma db push --skip-generate && next build",
+    "build": "prisma generate && prisma db push && next build",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
