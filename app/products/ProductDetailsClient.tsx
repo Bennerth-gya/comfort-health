@@ -91,9 +91,9 @@ export default function ProductDetailsClient({
 
   const expiry = product.expiryDate
     ? new Intl.DateTimeFormat("en-US", {
-        month: "short",
-        year: "numeric",
-      }).format(new Date(product.expiryDate))
+      month: "short",
+      year: "numeric",
+    }).format(new Date(product.expiryDate))
     : "Not listed";
   const detailRows = [
     { label: "Dosage", value: product.dosage ?? "Ask a pharmacist" },
@@ -277,7 +277,7 @@ export default function ProductDetailsClient({
               </p>
             </div>
             <a
-              href="tel:0244123456"
+              href="tel:0537355068"
               className="bg-[#15803d] text-white text-[11px] font-[700] px-3 py-2 rounded-lg active:scale-95 transition-all"
             >
               Call

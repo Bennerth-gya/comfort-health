@@ -178,10 +178,9 @@ export default function CheckoutPage() {
                     w-full pl-9 pr-4 py-3 rounded-xl border text-[#0f2318]
                     placeholder:text-gray-400 bg-[#f8faf8]
                     outline-none transition-all
-                    ${
-                      errors.customerName
-                        ? "border-red-300 bg-red-50 focus:border-red-400"
-                        : "border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10"
+                    ${errors.customerName
+                      ? "border-red-300 bg-red-50 focus:border-red-400"
+                      : "border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10"
                     }
                   `}
                 />
@@ -206,17 +205,16 @@ export default function CheckoutPage() {
                   type="tel"
                   value={form.customerPhone}
                   onChange={(e) => updateField("customerPhone", e.target.value)}
-                  placeholder="e.g. 0244123456"
+                  placeholder="e.g. 0537355068"
                   maxLength={15}
                   style={{ fontSize: "16px" }}
                   className={`
                     w-full pl-9 pr-4 py-3 rounded-xl border text-[#0f2318]
                     placeholder:text-gray-400 bg-[#f8faf8]
                     outline-none transition-all
-                    ${
-                      errors.customerPhone
-                        ? "border-red-300 bg-red-50 focus:border-red-400"
-                        : "border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10"
+                    ${errors.customerPhone
+                      ? "border-red-300 bg-red-50 focus:border-red-400"
+                      : "border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10"
                     }
                   `}
                 />
@@ -252,10 +250,9 @@ export default function CheckoutPage() {
                     w-full pl-9 pr-4 py-3 rounded-xl border text-[#0f2318]
                     placeholder:text-gray-400 bg-[#f8faf8] resize-none
                     outline-none transition-all
-                    ${
-                      errors.customerAddress
-                        ? "border-red-300 bg-red-50 focus:border-red-400"
-                        : "border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10"
+                    ${errors.customerAddress
+                      ? "border-red-300 bg-red-50 focus:border-red-400"
+                      : "border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10"
                     }
                   `}
                 />

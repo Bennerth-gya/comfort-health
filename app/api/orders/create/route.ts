@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     const cleanPhone = customerPhone.replace(/\s/g, "");
     if (!phoneRegex.test(cleanPhone)) {
       return NextResponse.json(
-        { error: "Please enter a valid Ghana phone number (e.g. 0244123456)" },
+        { error: "Please enter a valid Ghana phone number (e.g. 0537355068)" },
         { status: 400 },
       );
     }
