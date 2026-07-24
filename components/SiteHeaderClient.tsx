@@ -4,7 +4,7 @@ import Link from "next/link";
 import { HeartPulse, Search, ShoppingCart } from "lucide-react";
 import { useCart } from "@/app/context/cartContext";
 import { type FormEvent, type ReactNode, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { isLocalClient } from "@/lib/admin-client";
 
 function CartIcon() {
@@ -32,6 +32,7 @@ interface SiteHeaderClientProps {
 
 export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [isPharmacyOpen, setIsPharmacyOpen] = useState(false);
 
@@ -113,7 +114,7 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
             </span>
           </Link>
           <div className="h-4 w-px bg-[#254532]"></div>
-          {isLocalClient() && (
+          {(isLocalClient() || (pathname && (pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || pathname.startsWith('/pharmacist')))) && (
             <Link
               href="/dashboard"
               className="text-sm font-medium text-white underline-offset-4 transition hover:text-emerald-100 hover:underline"
