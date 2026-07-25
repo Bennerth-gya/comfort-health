@@ -37,9 +37,17 @@ export async function GET() {
                 fulfillmentStatus: {
                   in: ACTIVE_FULFILLMENT_STATUSES,
                 },
-                status: {
-                  in: ["paid", "paid_fulfillment_review"],
-                },
+                OR: [
+                  {
+                    status: {
+                      in: ["paid", "paid_fulfillment_review"],
+                    },
+                  },
+                  {
+                    paymentMethod: "PAY_ON_DELIVERY",
+                    status: "pending",
+                  },
+                ],
               },
               include: {
                 items: true,
@@ -52,9 +60,17 @@ export async function GET() {
                 fulfillmentStatus: {
                   in: PENDING_FULFILLMENT_STATUSES,
                 },
-                status: {
-                  in: ["paid", "paid_fulfillment_review"],
-                },
+                OR: [
+                  {
+                    status: {
+                      in: ["paid", "paid_fulfillment_review"],
+                    },
+                  },
+                  {
+                    paymentMethod: "PAY_ON_DELIVERY",
+                    status: "pending",
+                  },
+                ],
               },
             }),
           ]);
