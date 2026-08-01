@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { HeartPulse, Search, ShoppingCart } from "lucide-react";
+import { HeartPulse, Search } from "lucide-react";
 import { useCart } from "@/app/context/cartContext";
+import CartIcon from "@/components/CartIcon";
 
 export default function MobileTopBar() {
   const { cartCount } = useCart();
@@ -31,18 +32,7 @@ export default function MobileTopBar() {
           >
             <Search className="h-6 w-6" aria-hidden="true" />
           </Link>
-          <Link
-            href="/cart"
-            className="relative flex h-11 w-11 items-center justify-center rounded-full text-white transition-all duration-100 active:scale-[0.97] active:bg-white/10 active:opacity-90"
-            aria-label="Shopping cart"
-          >
-            <ShoppingCart className="h-6 w-6" aria-hidden="true" />
-            {cartCount > 0 ? (
-              <span className="absolute right-1 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#15803d] px-1 text-[10px] font-bold leading-none text-white ring-2 ring-[#1a2e22]">
-                {cartCount > 99 ? "99+" : cartCount}
-              </span>
-            ) : null}
-          </Link>
+          <CartIcon itemCount={cartCount} />
         </div>
       </div>
     </header>

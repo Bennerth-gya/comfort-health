@@ -1,30 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { HeartPulse, Search, ShoppingCart } from "lucide-react";
+import { HeartPulse, Search } from "lucide-react";
+import CartIcon from "@/components/CartIcon";
 import { useCart } from "@/app/context/cartContext";
 import { type FormEvent, type ReactNode, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { isLocalClient } from "@/lib/admin-client";
-
-function CartIcon() {
-  const { cartCount } = useCart();
-
-  return (
-    <Link
-      href="/cart"
-      className="relative flex h-11 w-11 items-center justify-center rounded-full text-white transition hover:bg-white/10"
-      aria-label="Shopping cart"
-    >
-      <ShoppingCart className="h-5 w-5" />
-      {cartCount > 0 ? (
-        <span className="absolute right-0 top-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#15803d] px-1 text-[10px] font-bold leading-none text-white ring-2 ring-[#1a2e22]">
-          {cartCount > 99 ? "99+" : cartCount}
-        </span>
-      ) : null}
-    </Link>
-  );
-}
 
 interface SiteHeaderClientProps {
   adminNode?: ReactNode;
@@ -33,6 +15,7 @@ interface SiteHeaderClientProps {
 export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { cartCount } = useCart();
   const [query, setQuery] = useState("");
   const [isPharmacyOpen, setIsPharmacyOpen] = useState(false);
 
@@ -123,7 +106,7 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
             </Link>
           )}
           {adminNode}
-          <CartIcon />
+          <CartIcon itemCount={cartCount} />
         </div>
       </div>
     </header>

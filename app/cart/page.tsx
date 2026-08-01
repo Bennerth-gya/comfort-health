@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, Minus, Plus, ShieldCheck, ShoppingCart, Trash2, ShoppingBag } from "lucide-react";
 import PaystackCheckout from "@/app/components/PaystackCheckout";
 import { type CartItem, useCart } from "@/app/context/cartContext";
@@ -208,6 +209,7 @@ function SummaryRows({ subtotal }: { subtotal: number }) {
 }
 
 export default function CartPage() {
+  const router = useRouter();
   const {
     cart,
     cartCount,
@@ -236,27 +238,23 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-[#f8faf8] pb-[calc(76px+env(safe-area-inset-bottom,16px))] text-[#0f2318] md:pb-8">
+    <div className="min-h-dvh bg-[#f8faf8] pb-[calc(96px+env(safe-area-inset-bottom,16px))] text-[#0f2318] md:pb-8">
       <div className="mx-auto max-w-7xl md:px-6 md:py-8">
-        <header className="flex items-center justify-between px-4 py-4 md:px-0 md:pb-6 md:pt-0">
+        <header className="bg-[#0f2318] px-4 py-3 flex items-center gap-3 text-white md:px-0">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/10 text-white transition active:scale-[0.97]"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
           <div>
-            <Link
-              href="/"
-              className="mb-3 inline-flex min-h-11 items-center gap-2 rounded-full text-sm font-semibold text-[#15803d] md:hover:underline"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Continue shopping
-            </Link>
-            <h1 className="text-[22px] font-bold leading-tight md:text-3xl">
-              Your cart
-            </h1>
-            <p className="mt-1 text-sm leading-[1.5] text-gray-500">
-              {cartCount} item{cartCount === 1 ? "" : "s"} ready for checkout
+            <h1 className="text-lg font-700">My Cart ({cartCount} item{cartCount === 1 ? "" : "s"})</h1>
+            <p className="mt-1 text-sm text-white/70">
+              {cart.length} product{cart.length === 1 ? "" : "s"} in your bag
             </p>
           </div>
-          <span className="flex h-11 min-w-11 items-center justify-center rounded-full bg-[#f0fdf4] px-3 text-sm font-bold text-[#15803d]">
-            {cartCount}
-          </span>
         </header>
 
         {cart.length === 0 ? (
@@ -277,7 +275,7 @@ export default function CartPage() {
           </section>
         ) : (
           <div className="md:grid md:grid-cols-[65fr_35fr] md:gap-6">
-            <section className="md:min-w-0">
+            <section className="md:min-w-0 pb-32">
               <div className="bg-white md:space-y-3 md:bg-transparent">
                 {cart.map((item) => (
                   <CartItemRow
@@ -365,9 +363,11 @@ export default function CartPage() {
       {cart.length > 0 ? (
         <Link
           href="/checkout"
-          className="safe-bottom fixed bottom-0 left-0 right-0 z-40 flex min-h-14 items-center justify-center bg-[#15803d] px-4 py-4 text-base font-bold text-white active:opacity-90 md:hidden"
+          className="safe-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-gray-100 bg-white px-4 py-3 md:hidden"
         >
-          Checkout - GHS {subtotal.toFixed(2)}
+          <span className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#15803d] px-4 py-3 text-[16px] font-800 text-white shadow-lg shadow-green-900/20 transition active:scale-[0.98]">
+            Proceed to checkout — GHS {subtotal.toFixed(2)}
+          </span>
         </Link>
       ) : null}
     </div>

@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import ProductCard from "@/app/components/ProductCard";
+import SearchEmptyState from "@/components/SearchEmptyState";
 
 export type ShopProduct = {
   id: string;
@@ -136,13 +137,17 @@ function ProductGrid({
   isLoading,
   error,
   query,
+  onClearSearch,
 }: {
   products: ShopProduct[];
   total: number;
   isLoading: boolean;
   error: string | null;
   query: string;
+  onClearSearch: () => void;
 }) {
+  const hasQuery = query.trim().length > 0;
+
   if (error) {
     return (
       <div className="rounded-3xl border border-red-200 bg-red-50 p-8 text-center">
@@ -163,7 +168,11 @@ function ProductGrid({
   }
 
   if (products.length === 0) {
-    return <EmptyState query={query} />;
+    return hasQuery ? (
+      <SearchEmptyState searchQuery={query} onClearSearch={onClearSearch} />
+    ) : (
+      <EmptyState query={query} />
+    );
   }
 
   return (
@@ -215,6 +224,7 @@ export default function ShopSearchBar({
   const debouncedQuery = useDebounce(inputValue.trim(), LIVE_SEARCH_DELAY_MS);
 
   const query = inputValue.trim();
+  const hasQuery = query.length > 0;
   const displayedProducts = (() => {
     if (!query) {
       return initialProducts;
@@ -408,6 +418,7 @@ export default function ShopSearchBar({
         isLoading={isLoading}
         error={searchState.status === "error" ? searchState.message : null}
         query={debouncedQuery}
+        onClearSearch={handleClear}
       />
     </div>
   );

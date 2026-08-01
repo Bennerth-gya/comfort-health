@@ -1,55 +1,22 @@
-import "server-only";
-
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
-import { normalizePostgresSslMode } from "@/lib/database-url";
-import { PrismaClient } from "../generated/db";
-import type { PrismaClient as PrismaClientType } from "../generated/db";
-
-const rawConnectionString =
-  process.env.DATABASE_POOL_URL ?? process.env.DATABASE_URL;
-
-if (!rawConnectionString) {
-  throw new Error("DATABASE_POOL_URL or DATABASE_URL is not set");
-}
-
-const connectionString = normalizePostgresSslMode(rawConnectionString);
+import 'server-only'
+import { PrismaClient } from '../generated/db'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClientType | undefined;
-  prismaPool: Pool | undefined;
-};
+  prisma: PrismaClient | undefined
+}
 
-const pool =
-  globalForPrisma.prismaPool ??
-  new Pool({
-    connectionString,
-    max: Number(process.env.DB_POOL_MAX ?? 3),
-    idleTimeoutMillis: Number(process.env.DB_IDLE_TIMEOUT_MS ?? 10_000),
-    connectionTimeoutMillis: Number(
-      process.env.DB_CONNECTION_TIMEOUT_MS ??
-        (process.env.NODE_ENV === "production" ? 30_000 : 60_000),
-    ),
-  });
+function createPrismaClient() {
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  })
+  const adapter = new PrismaPg(pool)
+  return new PrismaClient({ adapter })
+}
 
-pool.on("error", (error) => {
-  console.error("Postgres idle client error", error);
-});
+export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    adapter: new PrismaPg(pool, {
-      onPoolError: (error) => {
-        console.error("Postgres pool error", error);
-      },
-      onConnectionError: (error) => {
-        console.error("Postgres connection error", error);
-      },
-    }),
-  });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
-  globalForPrisma.prismaPool = pool;
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma
 }

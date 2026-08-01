@@ -81,23 +81,41 @@ export default function AdminProductRequestsPage() {
         <div className="p-4 md:p-6 max-w-4xl mx-auto">
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-bold text-[#0f2318] flex items-center gap-2">
-                <Package size={24} color="#15803d" />
-                Product Requests
-              </h1>
-              <p className="text-gray-500 text-sm mt-1">
-                {pendingCount} new requests · {requests.length} total
-              </p>
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-[#0f2318] flex items-center gap-2">
+                  <Package size={24} color="#15803d" />
+                  Product Requests
+                </h1>
+                <p className="text-gray-500 text-sm mt-1">
+                  {pendingCount} new requests · {requests.length} total
+                </p>
+              </div>
+              <button
+                onClick={fetchRequests}
+                className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50"
+              >
+                <RefreshCw size={14} />
+                Refresh
+              </button>
             </div>
-            <button
-              onClick={fetchRequests}
-              className="flex items-center gap-2 px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50"
-            >
-              <RefreshCw size={14} />
-              Refresh
-            </button>
+
+            {pendingCount > 0 && (
+              <div className="rounded-2xl border border-[#fef3c7] bg-[#fffbeb] px-4 py-3 text-sm text-[#92400e]">
+                <div className="flex items-start gap-3">
+                  <Clock size={20} className="mt-0.5 text-[#d97706]" />
+                  <div>
+                    <p className="font-semibold text-[#92400e]">
+                      {pendingCount} pending product request{pendingCount === 1 ? '' : 's'} need review.
+                    </p>
+                    <p className="mt-1 text-[13px] text-[#92400e]/80">
+                      Mark requests noted once processed, or update the status after adding products to the shop.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Most requested products */}

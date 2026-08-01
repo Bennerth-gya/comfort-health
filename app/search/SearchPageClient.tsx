@@ -4,6 +4,7 @@ import { ArrowLeft, Clock3, PackageSearch, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import ProductCard from "@/app/components/ProductCard";
+import SearchEmptyState from "@/components/SearchEmptyState";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export type SearchProduct = {
@@ -186,6 +187,8 @@ export default function SearchPageClient({
   }
 
   const { products, total, error, isLoading } = searchResults;
+  const typedQuery = query.trim();
+  const hasSearchHint = typedQuery.length > 2 && !isLoading && products.length === 0;
 
   return (
     <div className="min-h-dvh bg-[#f8faf8] pb-6 text-[#0f2318] md:pb-10">
@@ -231,14 +234,107 @@ export default function SearchPageClient({
             ) : null}
           </div>
         </form>
+
+        {hasSearchHint && (
+          <div className="px-3 pb-3 text-[12px] text-[#92400e] bg-[#fffbeb] border-y border-[#fde68a]">
+            <div className="flex flex-wrap items-center gap-2">
+              <span>💊 Can't find "{typedQuery}"?</span>
+              <button
+                type="button"
+                onClick={() => router.push(`/search?q=${encodeURIComponent(typedQuery)}`)}
+                className="font-700 text-[#15803d] underline-offset-4 hover:underline"
+              >
+                Request it →
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
-      <main className="px-3 pt-4 md:mx-auto md:max-w-7xl md:px-6 md:py-8">
-        {!query.trim() ? (
-          <section className="md:max-w-2xl">
-            <h1 className="px-1 text-sm font-semibold text-[#0f2318]">
-              Recent searches
-            </h1>
+      <main className="px-3 pt-4 md:px-6">
+        {typedQuery ? (
+          <div className="md:grid md:grid-cols-[20%_minmax(0,1fr)] md:gap-6">
+            <aside className="hidden rounded-2xl border border-[#e5e7eb] bg-white p-5 md:block md:self-start">
+              <h2 className="text-sm font-bold text-[#0f2318]">Filters</h2>
+              <div className="mt-5 space-y-5">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-gray-400">Category</p>
+                  <div className="mt-3 space-y-2 text-sm text-gray-600">
+                    {["All", "Pain Relief", "Vitamins", "Sexual Wellness", "Flu & Cold", "First Aid"].map((item) => (
+                      <label key={item} className="flex min-h-8 items-center gap-2">
+                        <input type="radio" name="category" defaultChecked={item === "All"} />
+                        {item}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase text-gray-400">Price range</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="Min"
+                      className="h-10 rounded-lg border border-[#e5e7eb] px-3 text-sm outline-none focus:border-[#15803d]"
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      placeholder="Max"
+                      className="h-10 rounded-lg border border-[#e5e7eb] px-3 text-sm outline-none focus:border-[#15803d]"
+                    />
+                  </div>
+                </div>
+                <label className="flex min-h-11 items-center justify-between gap-3 text-sm text-gray-700">
+                  Prescription required
+                  <input type="checkbox" className="h-4 w-4 accent-[#15803d]" />
+                </label>
+              </div>
+            </aside>
+
+            <div className="min-w-0">
+              <p className="px-1 text-[13px] leading-[1.5] text-gray-500">
+                {isLoading
+                  ? "Searching..."
+                  : `${total} result${total === 1 ? "" : "s"} for '${typedQuery}'`}
+              </p>
+
+              {error ? (
+                <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                  {error}
+                </div>
+              ) : products.length > 0 ? (
+                <div className="mt-3 grid grid-cols-2 gap-2.5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+                  {products.map((product, index) => (
+                    <ProductCard
+                      key={product.id}
+                      priority={index < 4}
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.imageUrl,
+                        category: product.category,
+                        quantity: product.quantity,
+                        prescriptionRequired: product.prescriptionRequired,
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : !isLoading ? (
+                <SearchEmptyState
+                  searchQuery={typedQuery}
+                  onClearSearch={() => {
+                    setQuery('');
+                    router.replace('/search');
+                  }}
+                />
+              ) : null}
+            </div>
+          </div>
+        ) : (
+          <section className="md:max-w-2xl mx-auto">
+            <h1 className="px-1 text-sm font-semibold text-[#0f2318]">Recent searches</h1>
             <div className="mt-2 overflow-hidden rounded-2xl bg-white">
               {recentSearches.length > 0 ? (
                 recentSearches.map((item) => (
@@ -272,90 +368,6 @@ export default function SearchPageClient({
                   Your recent searches will appear here.
                 </p>
               )}
-            </div>
-          </section>
-        ) : (
-          <section>
-            <div className="md:grid md:grid-cols-[20%_minmax(0,1fr)] md:gap-6">
-              <aside className="hidden rounded-2xl border border-[#e5e7eb] bg-white p-5 md:block md:self-start">
-                <h2 className="text-sm font-bold text-[#0f2318]">Filters</h2>
-                <div className="mt-5 space-y-5">
-                  <div>
-                    <p className="text-xs font-semibold uppercase text-gray-400">Category</p>
-                    <div className="mt-3 space-y-2 text-sm text-gray-600">
-                      {["All", "Pain Relief", "Vitamins", "Sexual Wellness", "Flu & Cold", "First Aid"].map((item) => (
-                        <label key={item} className="flex min-h-8 items-center gap-2">
-                          <input type="radio" name="category" defaultChecked={item === "All"} />
-                          {item}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase text-gray-400">Price range</p>
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="Min"
-                        className="h-10 rounded-lg border border-[#e5e7eb] px-3 text-sm outline-none focus:border-[#15803d]"
-                      />
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="Max"
-                        className="h-10 rounded-lg border border-[#e5e7eb] px-3 text-sm outline-none focus:border-[#15803d]"
-                      />
-                    </div>
-                  </div>
-                  <label className="flex min-h-11 items-center justify-between gap-3 text-sm text-gray-700">
-                    Prescription required
-                    <input type="checkbox" className="h-4 w-4 accent-[#15803d]" />
-                  </label>
-                </div>
-              </aside>
-
-              <div className="min-w-0">
-                <p className="px-1 text-[13px] leading-[1.5] text-gray-500">
-                  {isLoading
-                    ? "Searching..."
-                    : `${total} result${total === 1 ? "" : "s"} for '${query.trim()}'`}
-                </p>
-
-                {error ? (
-                  <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                    {error}
-                  </div>
-                ) : products.length > 0 ? (
-                  <div className="mt-3 grid grid-cols-2 gap-2.5 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
-                    {products.map((product, index) => (
-                      <ProductCard
-                        key={product.id}
-                        priority={index < 4}
-                        product={{
-                          id: product.id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.imageUrl,
-                          category: product.category,
-                          quantity: product.quantity,
-                          prescriptionRequired: product.prescriptionRequired,
-                        }}
-                      />
-                    ))}
-                  </div>
-                ) : !isLoading ? (
-                  <div className="flex min-h-[45dvh] flex-col items-center justify-center text-center">
-                    <PackageSearch className="h-10 w-10 text-gray-300" aria-hidden="true" />
-                    <h2 className="mt-3 text-[17px] font-bold text-[#0f2318]">
-                      No products found
-                    </h2>
-                    <p className="mt-1 text-sm leading-[1.5] text-gray-500">
-                      Try a different name
-                    </p>
-                  </div>
-                ) : null}
-              </div>
             </div>
           </section>
         )}

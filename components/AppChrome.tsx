@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import BottomTabBar from "@/components/BottomTabBar";
-import FloatingCartBar from "@/components/FloatingCartBar";
 import MobileTopBar from "@/components/MobileTopBar";
 import SiteHeaderClient from "@/components/SiteHeaderClient";
 
@@ -55,12 +54,7 @@ export default function AppChrome({ children }: { children: ReactNode }) {
       >
         {children}
       </main>
-      {showMobileChrome ? (
-        <>
-          <FloatingCartBar />
-          <BottomTabBar />
-        </>
-      ) : null}
+      {showMobileChrome ? <BottomTabBar /> : null}
     </>
   );
 }

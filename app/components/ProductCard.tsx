@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { ExternalLink, Share2, ShoppingCart, Zap } from "lucide-react";
+import { ExternalLink, Share2, ShoppingBag, ShoppingCart, Check, Zap } from "lucide-react";
+import FlyToCart from "@/components/FlyToCart";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 import { useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
@@ -29,6 +30,9 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
   const router = useRouter();
   const { addToCart } = useCart();
   const { pushToast } = useToast();
+  const addButtonRef = useRef<HTMLButtonElement>(null);
+  const [flyTrigger, setFlyTrigger] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressTriggeredRef = useRef(false);
@@ -76,7 +80,12 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
 
   const handleAddToCart = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    addCurrentProductToCart();
+    if (addCurrentProductToCart()) {
+      setFlyTrigger(true);
+      setTimeout(() => setFlyTrigger(false), 100);
+      setJustAdded(true);
+      setTimeout(() => setJustAdded(false), 1500);
+    }
   };
 
   const handleBuyNow = () => {
@@ -181,14 +190,30 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
         </div>
       </Link>
 
+      <FlyToCart trigger={flyTrigger} sourceRef={addButtonRef} />
       <div className="px-2.5 pb-3 pt-2">
         <button
+          ref={addButtonRef}
           type="button"
           onClick={handleAddToCart}
           disabled={!canAddToCart}
-          className="flex h-[38px] w-full items-center justify-center rounded-[10px] bg-[#15803d] px-2 text-[13px] font-semibold text-white transition-all duration-100 active:scale-[0.97] active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600"
+          className={`flex h-[38px] w-full items-center justify-center gap-2 rounded-[10px] px-2 text-[13px] font-semibold text-white transition-all duration-100 active:scale-[0.97] active:opacity-90 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600 ${
+            justAdded
+              ? 'bg-[#059669] scale-[0.98]'
+              : 'bg-[#15803d] hover:bg-[#166634]'
+          }`}
         >
-          {buttonLabel}
+          {justAdded ? (
+            <>
+              <Check size={15} strokeWidth={3} />
+              Added!
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={15} />
+              Add to cart
+            </>
+          )}
         </button>
       </div>
 
