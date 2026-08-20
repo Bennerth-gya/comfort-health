@@ -294,3 +294,28 @@ enum ProductRequestStatus {
   ADDED
   UNAVAILABLE
 }
+
+// ─── Health Education Articles ─────────────────────────────────────────────────
+
+model HealthArticle {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  category    String
+  excerpt     String   @db.Text
+  content     String   @db.Text
+  coverImage  String?
+  readTime    String   @default("5 min read")
+  author      String   @default("Comfort Health Team")
+  isPublished Boolean  @default(false)
+  isFeatured  Boolean  @default(false)
+  views       Int      @default(0)
+  tags        String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([slug])
+  @@index([isPublished, createdAt])
+  @@map("health_article")
+}

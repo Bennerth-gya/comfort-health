@@ -69,17 +69,18 @@ export default async function InventoryPage() {
     inventoryValueRows,
   ] = await Promise.all([
     prisma.product.findMany({
-      where: { userId },
+      where: { userId, activeListing: true },
       orderBy: { createAt: "desc" },
       take: 20,
     }),
-    prisma.product.count({ where: { userId } }),
+    prisma.product.count({ where: { userId, activeListing: true } }),
     prisma.product.count({ where: { activeListing: true } }),
-    prisma.product.count({ where: { userId, quantity: { lte: 0 } } }),
+    prisma.product.count({ where: { userId, activeListing: true, quantity: { lte: 0 } } }),
     prisma.$queryRaw<Array<{ count: number }>>`
       SELECT COUNT(*)::int AS count
       FROM "product"
       WHERE "userId" = ${userId}
+        AND "activeListing" = true
         AND "quantity" > 0
         AND "lowStock" IS NOT NULL
         AND "quantity" <= "lowStock"
@@ -88,6 +89,7 @@ export default async function InventoryPage() {
       SELECT COALESCE(SUM("price" * "quantity"), 0)::text AS value
       FROM "product"
       WHERE "userId" = ${userId}
+        AND "activeListing" = true
     `,
   ]);
 

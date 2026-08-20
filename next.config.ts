@@ -70,6 +70,18 @@ const nextConfig: NextConfig = {
         hostname: "*.r2.cloudflarestorage.com",
         pathname: "/**",
       },
+      {
+        // Supabase Storage — article cover images
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        // Cloudinary — article cover images
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
     ],
   },
 

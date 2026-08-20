@@ -293,6 +293,24 @@ exports.Prisma.ProductRequestScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.HealthArticleScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  category: 'category',
+  excerpt: 'excerpt',
+  content: 'content',
+  coverImage: 'coverImage',
+  readTime: 'readTime',
+  author: 'author',
+  isPublished: 'isPublished',
+  isFeatured: 'isFeatured',
+  views: 'views',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -378,7 +396,8 @@ exports.Prisma.ModelName = {
   SupportConversation: 'SupportConversation',
   SupportMessage: 'SupportMessage',
   CustomerReview: 'CustomerReview',
-  ProductRequest: 'ProductRequest'
+  ProductRequest: 'ProductRequest',
+  HealthArticle: 'HealthArticle'
 };
 
 /**

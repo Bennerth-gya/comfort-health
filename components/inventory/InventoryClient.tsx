@@ -15,6 +15,7 @@ import {
 import type { DosageGuide } from "@/lib/dosage-guide";
 import EditProductModal from "./EditProductModal";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
+import { PRESET_CATEGORIES } from "./CategorySelect";
 
 export type Product = {
   id: string;
@@ -116,17 +117,7 @@ function StockBar({ quantity, lowStock }: { quantity: number; lowStock?: number 
   );
 }
 
-const CATEGORIES = [
-  "Pain Relief",
-  "Sexual Wellness",
-  "Women's Care",
-  "Flu & Cold",
-  "Vitamins & Supplements",
-  "Skincare",
-  "Antibiotics",
-  "General Health",
-  "Other",
-];
+
 
 export function filterInventoryLocally(
   products: Product[],
@@ -255,6 +246,14 @@ export default function InventoryClient({
   const [productCache, setProductCache] = useState<Record<string, Product>>(() =>
     seedProductCache(initialRows),
   );
+
+  const allCategories = useMemo(() => {
+    const custom = Object.values(productCache)
+      .map((p) => p.category)
+      .filter(Boolean)
+      .filter((c) => !PRESET_CATEGORIES.includes(c as any)) as string[];
+    return Array.from(new Set([...PRESET_CATEGORIES, ...custom])).sort();
+  }, [productCache]);
 
   // Keep track of the parameters used for the last successful server-side fetch
   const [lastFetchedParams, setLastFetchedParams] = useState({
@@ -489,7 +488,7 @@ export default function InventoryClient({
               className="h-9 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
             >
               <option value="">All categories</option>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
 

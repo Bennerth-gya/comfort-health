@@ -75,7 +75,7 @@ export async function GET(req: Request) {
       skip,
     } = parsedQuery.data;
 
-    const where: Prisma.ProductWhereInput = { userId: user.id };
+    const where: Prisma.ProductWhereInput = { userId: user.id, activeListing: true };
 
     if (q) {
       const like = { contains: q, mode: "insensitive" } as const;

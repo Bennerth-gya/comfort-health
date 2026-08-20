@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Headphones, MessageCircleHeart, ShoppingBag } from "lucide-react";
+import { Home, Headphones, MessageCircleHeart, ShoppingBag, Heart } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/app/context/cartContext";
 
@@ -9,6 +9,7 @@ const tabs = [
   { label: "Home", href: "/", icon: Home },
   { label: "Shop", href: "/shop-page", icon: ShoppingBag },
   { label: "AI Guide", href: "/ai-guide", icon: MessageCircleHeart },
+  { label: "Health", href: "/health", icon: Heart },
   { label: "Support", href: "/support", icon: Headphones },
 ];
 

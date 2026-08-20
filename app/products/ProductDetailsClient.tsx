@@ -12,7 +12,7 @@ import {
   dosageGuideEntries,
 } from "@/lib/dosage-guide";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
-import { PHARMACY_CONFIG } from "@/lib/config";
+import PharmacyCallChooser from "@/components/PharmacyCallChooser";
 
 type ProductDetails = {
   id: string;
@@ -276,12 +276,11 @@ export default function ProductDetailsClient({
                 Call our pharmacist free
               </p>
             </div>
-            <a
-              href="tel:0537355068"
+            <PharmacyCallChooser
               className="bg-[#15803d] text-white text-[11px] font-[700] px-3 py-2 rounded-lg active:scale-95 transition-all"
             >
               Call
-            </a>
+            </PharmacyCallChooser>
           </div>
 
           <div className="my-5 h-px bg-[#e5e7eb]" />
@@ -346,12 +345,11 @@ export default function ProductDetailsClient({
               </div>
               <span className="flex-1">
                 Not sure if this is right for you?{" "}
-                <a
-                  href={`tel:${PHARMACY_CONFIG.phone}`}
-                  className="font-semibold text-[#15803d] underline"
+                <PharmacyCallChooser
+                  className="bg-transparent p-0 font-semibold text-[#15803d] underline"
                 >
                   Call our pharmacist
-                </a>
+                </PharmacyCallChooser>
               </span>
             </div>
           </div>
@@ -389,12 +387,11 @@ export default function ProductDetailsClient({
           </div>
           <span className="flex-1">
             Not sure if this is right for you?{" "}
-            <a
-              href={`tel:${PHARMACY_CONFIG.phone}`}
-              className="font-semibold text-[#15803d] underline"
+            <PharmacyCallChooser
+              className="bg-transparent p-0 font-semibold text-[#15803d] underline"
             >
               Call our pharmacist
-            </a>
+            </PharmacyCallChooser>
           </span>
         </div>
       </div>

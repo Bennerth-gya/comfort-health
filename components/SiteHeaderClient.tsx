@@ -85,6 +85,13 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
 
         <div className="flex items-center gap-3">
           <Link
+            href="/health"
+            className="text-sm font-medium text-[#d1fae5] hover:text-white transition-colors"
+          >
+            Health Guide
+          </Link>
+          <div className="h-4 w-px bg-[#254532]" />
+          <Link
             href="/support"
             className="flex items-center gap-1.5 text-sm font-medium text-white transition hover:text-emerald-100"
           >

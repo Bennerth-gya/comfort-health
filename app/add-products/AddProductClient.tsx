@@ -17,6 +17,7 @@ import {
     X,
     Package,
 } from "lucide-react";
+import CategorySelect from "@/components/inventory/CategorySelect";
 
 export default function AddProductClient() {
     const router = useRouter();
@@ -218,21 +219,13 @@ export default function AddProductClient() {
                                             <label className="block text-xs font-medium text-gray-600 mb-1.5">
                                                 Category
                                             </label>
-                                            <select
+                                            <CategorySelect
                                                 value={form.category}
-                                                onChange={set("category")}
-                                                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white"
-                                            >
-                                                <option value="">Select category</option>
-                                                <option>Pain Relief</option>
-                                                <option>Sexual Wellness</option>
-                                                <option>Women&apos;s Care</option>
-                                                <option>Flu & Cold</option>
-                                                <option>Vitamins & Supplements</option>
-                                                <option>Skincare</option>
-                                                <option>Antibiotics</option>
-                                                <option>Other</option>
-                                            </select>
+                                                onChange={(val) =>
+                                                    setForm((prev) => ({ ...prev, category: val }))
+                                                }
+                                                inputClassName="text-gray-900 placeholder-gray-400 focus:ring-emerald-500"
+                                            />
                                         </div>
                                         <div>
                                             <label className="block text-xs font-medium text-gray-600 mb-1.5">

@@ -1,7 +1,7 @@
 'use client'
 
 import { Phone, HeartPulse } from 'lucide-react'
-import { PHARMACY_CONFIG } from '@/lib/config'
+import PharmacyCallChooser from '@/components/PharmacyCallChooser'
 
 export default function SupportBannerCard() {
   return (
@@ -58,8 +58,7 @@ export default function SupportBannerCard() {
         >
           Talk directly to our licensed pharmacist.
         </p>
-        <a
-          href={`tel:${PHARMACY_CONFIG.phone}`}
+        <PharmacyCallChooser
           style={{
             height: '40px',
             background: '#15803d',
@@ -75,7 +74,7 @@ export default function SupportBannerCard() {
           }}
         >
           <Phone size={14} color="white" /> Call Now
-        </a>
+        </PharmacyCallChooser>
       </div>
 
       <div

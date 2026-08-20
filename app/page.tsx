@@ -8,7 +8,7 @@ import SearchBar from "@/components/SearchBar";
 import SupportFab from "@/components/SupportFab";
 import SupportBannerCard from "@/components/SupportBannerCard";
 import CommunitySection from "@/components/CommunitySection";
-import { Phone } from "lucide-react";
+import HealthEducationTeaser from "@/components/HealthEducationTeaser";
 
 const categories = [
   { name: "All", href: "/" },
@@ -18,6 +18,8 @@ const categories = [
   { name: "Flu & Cold", href: "/shop-page?q=Flu%20%26%20Cold" },
   { name: "First Aid", href: "/shop-page?q=First%20Aid" },
 ];
+
+const POPULAR_PRODUCTS_LIMIT = 20;
 
 function SectionHeader({
   title,
@@ -104,9 +106,14 @@ function ProductGridSkeleton() {
     <>
       <section className="md:mx-auto md:max-w-7xl md:px-6">
         <SectionHeader title="Popular Products" />
-        <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
+        <div className="scrollbar-hide flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 md:gap-4 md:px-0">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="w-[46vw] min-w-[148px] max-w-[190px] shrink-0 snap-start md:w-[210px] md:max-w-none lg:w-[232px]"
+            >
+              <ProductCardSkeleton />
+            </div>
           ))}
         </div>
       </section>
@@ -145,7 +152,7 @@ async function getHomeData() {
     prisma.product.findMany({
       where: { activeListing: true, isFeatured: true },
       orderBy: [{ featuredRank: "asc" }, { createAt: "desc" }],
-      take: 4,
+      take: POPULAR_PRODUCTS_LIMIT,
       select: {
         id: true,
         name: true,
@@ -196,7 +203,9 @@ async function HomeContent() {
   }
 
   const displayProducts = products;
-  const featuredDisplay = featuredProducts.length > 0 ? featuredProducts : displayProducts.slice(0, 4);
+  const featuredDisplay = featuredProducts.length > 0
+    ? featuredProducts
+    : displayProducts.slice(0, POPULAR_PRODUCTS_LIMIT);
   const showPlaceholder = displayProducts.length === 0;
 
   return (
@@ -236,30 +245,41 @@ async function HomeContent() {
         <AiHealthGuideCard />
       </div>
 
-      <div className="md:mx-auto md:max-w-7xl md:px-6 md:pt-4 max-md:pt-4 max-md:pb-1">
+      <div className="md:mx-auto md:max-w-7xl md:px-6 md:pt-4 max-md:pt-4">
+        <HealthEducationTeaser />
+      </div>
+
+      <div className="md:mx-auto md:max-w-7xl md:px-6 max-md:pb-1">
         <SupportBannerCard />
       </div>
 
       <section className="md:mx-auto md:max-w-7xl md:px-6">
         <SectionHeader title="Popular Products" />
-        <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
+        <div
+          className="scrollbar-hide flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 md:gap-4 md:px-0"
+          aria-label="Popular products"
+        >
           {featuredDisplay.map((product, index) => (
-            <ProductCard
+            <div
               key={product.id}
-              priority={index < 4}
-              product={{
-                id: product.id,
-                name: product.name,
-                price: Number(product.price),
-                image: product.imageUrl,
-                category: product.category,
-                quantity: product.quantity,
-                prescriptionRequired: product.prescriptionRequired,
-              }}
-            />
+              className="w-[46vw] min-w-[148px] max-w-[190px] shrink-0 snap-start md:w-[210px] md:max-w-none lg:w-[232px]"
+            >
+              <ProductCard
+                priority={index < 4}
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: Number(product.price),
+                  image: product.imageUrl,
+                  category: product.category,
+                  quantity: product.quantity,
+                  prescriptionRequired: product.prescriptionRequired,
+                }}
+              />
+            </div>
           ))}
           {showPlaceholder ? (
-            <div className="col-span-full rounded-2xl border border-dashed border-gray-200 bg-white p-6 text-center text-sm leading-[1.5] text-gray-500">
+            <div className="w-full shrink-0 rounded-2xl border border-dashed border-gray-200 bg-white p-6 text-center text-sm leading-[1.5] text-gray-500">
               No products available right now.
             </div>
           ) : null}

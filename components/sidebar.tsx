@@ -10,7 +10,8 @@ import {
   Store,
   Truck,
   MessageSquareHeart,
-  Package as PackageIcon
+  Package as PackageIcon,
+  BookOpen
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,6 +25,7 @@ const navigation = [
   { name: "Add product", href: "/add-products", icon: PlusCircle },
   { name: "Reviews", href: "/admin/reviews", icon: MessageSquareHeart },
   { name: "Requests", href: "/admin/product-requests", icon: PackageIcon },
+  { name: "Health Articles", href: "/admin/health", icon: BookOpen },
 ] as const;
 
 function isNavActive(pathname: string, href: string) {

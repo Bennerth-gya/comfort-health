@@ -7,7 +7,7 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useCart } from "@/app/context/cartContext";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 import { stackClientApp } from "@/stack/client";
-import { PHARMACY_CONFIG } from "@/lib/config";
+import PharmacyCallChooser from "@/components/PharmacyCallChooser";
 
 type MessageRole = "user" | "assistant";
 
@@ -701,12 +701,11 @@ export default function AiGuidePage() {
             Prefer to talk to a real person?
           </p>
         </div>
-        <a
-          href="tel:0537355068"
-          className="text-[#92400e] text-[11px] font-[700] underline underline-offset-2"
+        <PharmacyCallChooser
+          className="bg-transparent p-0 text-[#92400e] text-[11px] font-[700] underline underline-offset-2"
         >
           Call pharmacist
-        </a>
+        </PharmacyCallChooser>
       </div>
 
       {showDisclaimer ? (
@@ -871,8 +870,7 @@ export default function AiGuidePage() {
               or speak to a real person
             </span>
           </div>
-          <a
-            href={`tel:${PHARMACY_CONFIG.phone}`}
+          <PharmacyCallChooser
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -883,12 +881,13 @@ export default function AiGuidePage() {
               fontWeight: 600,
               textDecoration: 'none',
               padding: '8px 0',
-              marginBottom: '4px'
+              marginBottom: '4px',
+              background: 'transparent'
             }}
           >
             <Phone size={14} color="#15803d" />
             Call our pharmacist directly
-          </a>
+          </PharmacyCallChooser>
 
           <div className="mb-2">
             <p className="mb-1 text-[10px] text-gray-400">Quick questions</p>

@@ -2,17 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { Phone, X, MessageCircle, HeadphonesIcon } from 'lucide-react'
-
-// ── CONFIGURATION ──────────────────────────────────────────
-// Change these two values to your real pharmacy numbers
-const PHARMACY_PHONE = '0537355068'
-const PHARMACY_WHATSAPP = '233537355068'
-// ──────────────────────────────────────────────────────────
+import PharmacyCallChooser from '@/components/PharmacyCallChooser'
+import { PHARMACY_CONFIG } from '@/lib/config'
 
 export default function PharmacistSupport() {
   const [isOpen, setIsOpen] = useState(false)
   const [showPulse, setShowPulse] = useState(true)
   const [isVisible, setIsVisible] = useState(false)
+  const whatsappHelpLink = `${PHARMACY_CONFIG.whatsappLink}?text=${encodeURIComponent(
+    "Hi, I need help choosing the right medication. Can you assist me?"
+  )}`
 
   // Delay appearance by 3 seconds after page load
   // so it does not distract from the main content immediately
@@ -115,8 +114,7 @@ export default function PharmacistSupport() {
             </p>
 
             {/* Phone number — primary CTA */}
-            <a
-              href={`tel:${PHARMACY_PHONE}`}
+            <PharmacyCallChooser
               className="
                 flex items-center gap-3 w-full
                 bg-[#15803d] hover:bg-[#166534] active:bg-[#14532d]
@@ -124,7 +122,7 @@ export default function PharmacistSupport() {
                 rounded-xl px-4 py-3.5 mb-2.5
                 group
               "
-              onClick={() => {
+              onCallStart={() => {
                 // Close the card when they tap to call
                 // so it does not block the screen during the call
                 setTimeout(() => setIsOpen(false), 500)
@@ -133,12 +131,12 @@ export default function PharmacistSupport() {
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0 group-active:scale-110 transition-transform">
                 <Phone size={15} color="white" />
               </div>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <p className="text-white text-[10px] font-[500] opacity-80 leading-none mb-0.5">
-                  Tap to call our pharmacist
+                  Choose a line to call
                 </p>
-                <p className="text-white text-base font-[800] leading-tight tracking-wide">
-                  {PHARMACY_PHONE}
+                <p className="text-white text-sm font-[800] leading-tight">
+                  {PHARMACY_CONFIG.phoneNumbers.length} phone lines available
                 </p>
               </div>
               {/* Arrow */}
@@ -147,13 +145,11 @@ export default function PharmacistSupport() {
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </div>
-            </a>
+            </PharmacyCallChooser>
 
             {/* WhatsApp — secondary option */}
             <a
-              href={`https://wa.me/${PHARMACY_WHATSAPP}?text=${encodeURIComponent(
-                "Hi, I need help choosing the right medication. Can you assist me?"
-              )}`}
+              href={whatsappHelpLink}
               target="_blank"
               rel="noopener noreferrer"
               className="

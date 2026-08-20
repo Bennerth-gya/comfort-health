@@ -1,5 +1,17 @@
 import "server-only";
 
+/*
+ SUPABASE STORAGE SETUP (one-time, done in Supabase dashboard):
+ 1. Go to supabase.com → your project → Storage
+ 2. Click "Create bucket"
+ 3. Name: health-images
+ 4. Toggle "Public bucket" ON
+ 5. Click "Create bucket"
+ The public URL base will be:
+   https://ydjqsflsqtczcuskxxli.supabase.co/storage/v1/object/public/health-images/
+*/
+
+import { createClient as createSupabaseAdminClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
@@ -102,5 +114,114 @@ export function storagePublicHostname() {
     return new URL(configured).hostname;
   } catch {
     return null;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SUPABASE STORAGE — Health article cover images
+// Uses SUPABASE_SECRET_KEY (service role) to bypass RLS for admin uploads.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const HEALTH_BUCKET = "health-images";
+const HEALTH_MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+const HEALTH_ALLOWED_TYPES = new Set([
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
+
+function getSupabaseAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  // Accept either naming convention used in this project
+  const key =
+    process.env.SUPABASE_SECRET_KEY ??
+    process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !key) {
+    throw new Error(
+      "Supabase admin credentials missing. Ensure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY are set."
+    );
+  }
+
+  return createSupabaseAdminClient(url, key, {
+    auth: { persistSession: false },
+  });
+}
+
+export type HealthImageUploadResult = {
+  success: boolean;
+  url?: string;
+  error?: string;
+};
+
+/**
+ * Upload a health article cover image to Supabase Storage.
+ * Returns the permanent public URL on success.
+ */
+export async function uploadHealthImage(input: {
+  buffer: Buffer;
+  fileName: string;
+  mimeType: string;
+  folder?: string;
+}): Promise<HealthImageUploadResult> {
+  const { buffer, fileName, mimeType, folder = "covers" } = input;
+
+  if (!HEALTH_ALLOWED_TYPES.has(mimeType.toLowerCase())) {
+    return { success: false, error: "Invalid file type. Only JPEG, PNG, WebP and GIF are allowed." };
+  }
+
+  if (buffer.byteLength > HEALTH_MAX_BYTES) {
+    return { success: false, error: "File too large. Maximum size is 5 MB." };
+  }
+
+  const ext = mimeType.split("/")[1]?.replace("jpeg", "jpg") ?? "bin";
+  const safeName = fileName
+    .toLowerCase()
+    .replace(/[^a-z0-9.]/g, "-")
+    .replace(/-+/g, "-");
+  const storagePath = `${folder}/${Date.now()}-${randomUUID()}-${safeName}.${ext}`;
+
+  const supabase = getSupabaseAdmin();
+  const { error } = await supabase.storage
+    .from(HEALTH_BUCKET)
+    .upload(storagePath, buffer, { contentType: mimeType, upsert: false });
+
+  if (error) {
+    console.error("Supabase health image upload error:", error);
+    return { success: false, error: error.message };
+  }
+
+  const { data } = supabase.storage.from(HEALTH_BUCKET).getPublicUrl(storagePath);
+  return { success: true, url: data.publicUrl };
+}
+
+/**
+ * Delete a health article cover image from Supabase Storage.
+ * Silently succeeds if the URL doesn't match the bucket.
+ */
+export async function deleteHealthImage(imageUrl: string): Promise<boolean> {
+  try {
+    const marker = `/${HEALTH_BUCKET}/`;
+    const idx = imageUrl.indexOf(marker);
+    if (idx === -1) return false;
+
+    // The path after the bucket name (strip any query params)
+    const storagePath = imageUrl.slice(idx + marker.length).split("?")[0];
+
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase.storage
+      .from(HEALTH_BUCKET)
+      .remove([storagePath]);
+
+    if (error) {
+      console.error("Supabase health image delete error:", error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("deleteHealthImage error:", err);
+    return false;
   }
 }

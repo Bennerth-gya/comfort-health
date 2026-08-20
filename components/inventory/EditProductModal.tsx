@@ -10,6 +10,7 @@ import {
   dosageGuideToForm,
 } from "@/lib/dosage-guide";
 import { useFormValidation, commonRules } from "@/hooks/useFormValidation";
+import CategorySelect from "./CategorySelect";
 
 type Product = {
   id: string;
@@ -35,17 +36,7 @@ type Props = {
   onSave: (updated: Product) => Promise<void> | void;
 };
 
-const CATEGORIES = [
-  "Pain Relief",
-  "Sexual Wellness",
-  "Women's Care",
-  "Flu & Cold",
-  "Vitamins & Supplements",
-  "Skincare",
-  "Antibiotics",
-  "General Health",
-  "Other",
-];
+
 
 export default function EditProductModal({ open, product, onClose, onSave }: Props) {
   const { pushToast } = useToast();
@@ -201,19 +192,12 @@ export default function EditProductModal({ open, product, onClose, onSave }: Pro
             {/* Category */}
             <div>
               <label className="block text-sm font-medium text-slate-700">Category</label>
-              <select
+              <CategorySelect
                 value={form.category || ""}
-                onChange={(e) => handleFieldChange("category", e.target.value)}
-                className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:bg-slate-50"
+                onChange={(val) => handleFieldChange("category", val)}
                 disabled={loading}
-              >
-                <option value="">Select category</option>
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+                inputClassName="mt-1"
+              />
             </div>
 
             {/* Manufacturer */}
