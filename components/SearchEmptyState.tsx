@@ -127,11 +127,11 @@ export default function SearchEmptyState({
         </div>
 
         <h2 className="text-[20px] font-800 text-[#0f2318] leading-tight mb-2">
-          We don't have{' '}
-          <span className="text-[#15803d]">"{productName}"</span> yet
+          Can't find {' '}?
+          <span className="text-[#15803d]">"{productName}"</span>
         </h2>
         <p className="text-gray-500 text-[13px] leading-relaxed max-w-xs">
-          But we want to stock exactly what you need. Request it below and our pharmacist will try to add it as soon as possible.
+          Make a request, and get it delivered to your doorstep in minutes.
         </p>
       </div>
 
@@ -166,11 +166,10 @@ export default function SearchEmptyState({
               placeholder="e.g. Kwame Mensah"
               maxLength={50}
               style={{ fontSize: '16px' }}
-              className={`w-full px-4 py-3 rounded-xl border text-[#0f2318] placeholder:text-gray-400 bg-[#f8faf8] outline-none transition-all ${
-                errorMsg && !name.trim()
-                  ? 'border-red-300 focus:border-red-400'
-                  : 'border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10'
-              }`}
+              className={`w-full px-4 py-3 rounded-xl border text-[#0f2318] placeholder:text-gray-400 bg-[#f8faf8] outline-none transition-all ${errorMsg && !name.trim()
+                ? 'border-red-300 focus:border-red-400'
+                : 'border-gray-200 focus:border-[#15803d] focus:ring-2 focus:ring-[#15803d]/10'
+                }`}
             />
           </div>
 
