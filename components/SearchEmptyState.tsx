@@ -127,8 +127,8 @@ export default function SearchEmptyState({
         </div>
 
         <h2 className="text-[20px] font-800 text-[#0f2318] leading-tight mb-2">
-          Can't find {' '}?
-          <span className="text-[#15803d]">"{productName}"</span>
+          Can't find {' '}
+          <span className="text-[#15803d]">"{productName}"</span>?
         </h2>
         <p className="text-gray-500 text-[13px] leading-relaxed max-w-xs">
           Make a request, and get it delivered to your doorstep in minutes.
