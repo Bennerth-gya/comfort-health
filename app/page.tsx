@@ -135,7 +135,6 @@ async function getHomeData() {
     prisma.product.findMany({
       where: { activeListing: true },
       orderBy: { createAt: "desc" },
-      take: 20,
       select: {
         id: true,
         name: true,
