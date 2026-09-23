@@ -1,6 +1,6 @@
 # Comfi Health
 
-Campus pharmacy storefront built with Next.js 16, Prisma, Stack Auth, and Paystack.
+Campus pharmacy storefront built with Next.js 16, Prisma, NextAuth (Auth.js v5) with Google sign-in, and Paystack.
 
 ## Local development
 
@@ -17,6 +17,17 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Admin authentication
+
+Admins sign up and sign in at `/sign-in` with Google (NextAuth v5, JWT sessions):
+
+1. Create an OAuth client in [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials → OAuth client ID → Web application.
+2. Add the redirect URIs `http://localhost:3000/api/auth/callback/google` and `https://<your-domain>/api/auth/callback/google`.
+3. Put `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and `AUTH_SECRET` (`npx auth secret`) in `.env.local`.
+4. List the admin Google addresses in `ADMIN_EMAILS`.
+
+The first sign-in creates the `users` row; the row is matched by email, so an account keeps its id (and its inventory) across sign-ins. Accounts outside the allowlist land on `/sign-in?reason=not-admin`.
 
 ## Neon database
 
@@ -48,7 +59,7 @@ Summary:
 1. Configure environment variables on your host.
 2. Run `npm run db:deploy` against production Postgres.
 3. Register Paystack webhook: `https://your-domain.com/api/paystack/webhook`.
-4. Set `ADMIN_USER_IDS` / `ADMIN_EMAILS` after your first Stack Auth admin sign-in.
+4. Set `ADMIN_EMAILS` to the Google accounts that should reach `/dashboard` (`ADMIN_USER_IDS` still matches existing database user ids).
 
 ## Production services
 

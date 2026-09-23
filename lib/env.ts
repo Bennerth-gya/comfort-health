@@ -56,8 +56,16 @@ export function getProductionEnvIssues() {
     missing.push("DATABASE_URL or DATABASE_POOL_URL");
   }
 
-  if (!process.env.STACK_SECRET_SERVER_KEY) {
-    missing.push("STACK_SECRET_SERVER_KEY");
+  if (!process.env.AUTH_SECRET && !process.env.NEXTAUTH_SECRET) {
+    missing.push("AUTH_SECRET");
+  }
+
+  if (!process.env.AUTH_GOOGLE_ID && !process.env.GOOGLE_CLIENT_ID) {
+    missing.push("AUTH_GOOGLE_ID");
+  }
+
+  if (!process.env.AUTH_GOOGLE_SECRET && !process.env.GOOGLE_CLIENT_SECRET) {
+    missing.push("AUTH_GOOGLE_SECRET");
   }
 
   if (!process.env.PAYSTACK_SECRET_KEY) {

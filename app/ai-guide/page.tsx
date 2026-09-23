@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useCart } from "@/app/context/cartContext";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
-import { stackClientApp } from "@/stack/client";
+import { useSession } from "next-auth/react";
 import PharmacyCallChooser from "@/components/PharmacyCallChooser";
 
 type MessageRole = "user" | "assistant";
@@ -109,7 +109,7 @@ function getStringCandidate(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-function stackUserInitials(user: unknown) {
+function userInitials(user: unknown) {
   if (!user || typeof user !== "object") {
     return "U";
   }
@@ -241,7 +241,7 @@ function recordingErrorMessage(error: unknown) {
 
 export default function AiGuidePage() {
   const router = useRouter();
-  const user = stackClientApp.useUser();
+  const { data: session } = useSession();
   const { addToCart } = useCart();
   const [messages, setMessages] = useState<Message[]>([OPENING_MESSAGE]);
   const [input, setInput] = useState("");
@@ -658,7 +658,7 @@ export default function AiGuidePage() {
     }, 2000);
   }
 
-  const userInitials = stackUserInitials(user);
+  const initials = userInitials(session?.user);
 
   return (
     <div className="h-[100dvh] overflow-hidden bg-[#f8faf8] text-[#1a2e22]">
@@ -742,7 +742,7 @@ export default function AiGuidePage() {
                   aria-hidden="true"
                 >
                   {isUser ? (
-                    userInitials
+                    initials
                   ) : (
                     <HeartPulse className="h-3.5 w-3.5" aria-hidden="true" />
                   )}

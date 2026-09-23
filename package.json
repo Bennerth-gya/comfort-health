@@ -21,8 +21,6 @@
     "@paystack/inline-js": "^2.22.9",
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.8.0",
-    "@stackframe/stack": "^2.8.108",
-    "@stackframe/stack-ui": "^2.8.108",
     "@supabase/server": "^1.4.1",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
@@ -31,20 +29,13 @@
     "groq-sdk": "^1.3.0",
     "lucide-react": "^1.16.0",
     "next": "^16.2.6",
+    "next-auth": "^5.0.0-beta.32",
     "next-cloudinary": "^6.18.8",
     "pg": "^8.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.12.4",
     "zod": "^4.4.3"
-  },
-  "overrides": {
-    "@stackframe/stack": {
-      "lucide-react": "$lucide-react"
-    },
-    "@stackframe/stack-ui": {
-      "lucide-react": "$lucide-react"
-    }
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.2.10",

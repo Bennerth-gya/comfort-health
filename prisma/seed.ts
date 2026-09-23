@@ -32,7 +32,7 @@ export const prisma =
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 async function main() {
-  // Must match your Stack admin user ID (ADMIN_USER_IDS in .env.local), or inventory stays empty.
+  // Must match your admin user id (ADMIN_USER_IDS in .env.local), or inventory stays empty.
   const demoUserId =
     process.env.ADMIN_USER_IDS?.split(",")[0]?.trim() ||
     "2eba823f-23db-40c0-84ef-9d34bdb09cb0";

@@ -31,8 +31,6 @@
     "hooks/**/*.ts",
     "lib/**/*.ts",
     "lib/**/*.tsx",
-    "stack/**/*.ts",
-    "stack/**/*.tsx",
     "prisma/**/*.ts",
     "prisma.config.ts",
     "next.config.ts",

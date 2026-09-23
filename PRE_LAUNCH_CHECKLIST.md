@@ -8,9 +8,9 @@ Use this in order. Check each box before accepting real customer payments.
 
 ## Phase 0 — Secret hygiene (do this first if `.env.example` ever had real keys)
 
-If Stack or Paystack keys were ever committed to git (even in `.env.example`):
+If Google OAuth or Paystack keys were ever committed to git (even in `.env.example`):
 
-- [ ] **Stack Auth:** [Stack dashboard](https://app.stack-auth.com) → project → rotate **secret server key**; update host + `.env.local`
+- [ ] **Google OAuth:** [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials → rotate the **client secret**; update host + `.env.local`
 - [ ] **Paystack:** [Paystack dashboard](https://dashboard.paystack.com) → Settings → API Keys → **roll** test/live secret keys; update host + `.env.local`
 - [ ] Generate a new `ORDER_RECEIPT_SECRET`: `openssl rand -hex 32`
 - [ ] Confirm `.env.local` is **not** tracked: `git check-ignore -v .env.local` should show a match
@@ -23,7 +23,7 @@ If Stack or Paystack keys were ever committed to git (even in `.env.example`):
 - [ ] **Postgres** provisioned (Neon recommended; Supabase/Railway also work)
 - [ ] If using Neon: copy a pooled connection string for app runtime and a direct connection string for Prisma migrations
 - [ ] **Hosting** chosen (Vercel, Railway, Fly.io, etc.) with Node 20+
-- [ ] **Stack Auth** project created; callback URLs include production domain + `http://localhost:3000` for dev
+- [ ] **Google OAuth client** created; redirect URIs include `https://your-domain.com/api/auth/callback/google` + `http://localhost:3000/api/auth/callback/google` for dev
 - [ ] **Paystack** account verified; decide test vs live keys for this deploy
 - [ ] **Upstash Redis** database created (recommended for production rate limits)
 - [ ] **S3-compatible storage** (R2 / S3) + public CDN URL for product images
@@ -39,12 +39,12 @@ Set all of these in the hosting dashboard (not in git). Match the names in this 
 
 - [ ] `DATABASE_POOL_URL` for app runtime, or `DATABASE_URL` if your provider has only one Postgres URL
 - [ ] `DATABASE_DIRECT_URL` or `DATABASE_URL_UNPOOLED` for Prisma migrations/admin tasks (recommended for Neon; Prisma tooling can derive the direct host from a Neon pooled URL if this is missing)
-- [ ] `STACK_SECRET_SERVER_KEY`
-- [ ] `NEXT_PUBLIC_STACK_PROJECT_ID`
-- [ ] `NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY`
+- [ ] `AUTH_SECRET`
+- [ ] `AUTH_GOOGLE_ID`
+- [ ] `AUTH_GOOGLE_SECRET`
 - [ ] `PAYSTACK_SECRET_KEY`
 - [ ] `ORDER_RECEIPT_SECRET` (must ≠ `PAYSTACK_SECRET_KEY`)
-- [ ] `ADMIN_USER_IDS` and/or `ADMIN_EMAILS` (get Stack user ID from dashboard after first sign-in)
+- [ ] `ADMIN_USER_IDS` and/or `ADMIN_EMAILS` (Google sign-ins are matched by email)
 
 ### Required for correct URLs & API security
 
@@ -97,12 +97,12 @@ For Neon, use the direct, non-pooled URL for migration commands when available. 
 
 ---
 
-## Phase 5 — Stack Auth
+## Phase 5 — NextAuth (Google)
 
-- [ ] Production domain added to Stack allowed origins / redirect URLs
-- [ ] Handler route works: `https://your-domain.com/handler`
+- [ ] Production domain added to the Google OAuth client's authorized redirect URIs
+- [ ] Callback route works: `https://your-domain.com/api/auth/callback/google`
 - [ ] Sign-in works: `https://your-domain.com/sign-in`
-- [ ] After first admin login, copy user ID into `ADMIN_USER_IDS` (or use `ADMIN_EMAILS`)
+- [ ] Admin Google address listed in `ADMIN_EMAILS` (non-admins are sent to `/sign-in?reason=not-admin`)
 
 ---
 

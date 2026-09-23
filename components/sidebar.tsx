@@ -11,9 +11,11 @@ import {
   Truck,
   MessageSquareHeart,
   Package as PackageIcon,
-  BookOpen
+  BookOpen,
+  LogOut
 } from "lucide-react";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import AdminOrdersNavLink from "@/components/admin/AdminOrdersNavLink";
@@ -34,6 +36,7 @@ function isNavActive(pathname: string, href: string) {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [unreadCounts, setUnreadCounts] = useState({ reviews: 0, requests: 0 });
 
   useEffect(() => {
@@ -118,6 +121,17 @@ export default function Sidebar() {
           <Store className="h-5 w-5" />
           View storefront
         </Link>
+
+        <button
+          type="button"
+          onClick={() => signOut({ redirectTo: "/sign-in" })}
+          className="flex h-11 w-full items-center gap-4 rounded-lg px-4 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-950"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="truncate">
+            {session?.user?.email ? `Sign out (${session.user.email})` : "Sign out"}
+          </span>
+        </button>
       </nav>
 
       <div className="px-4 pb-8">

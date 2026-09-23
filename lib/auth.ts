@@ -1,108 +1,62 @@
-import { isAllowlistedAdmin, parseAdminAllowlist } from "@/lib/admin-access";
-import { stackServerApp } from "@/stack/server";
+import "server-only";
+
+import { auth } from "@/lib/next-auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { UserRole } from "@/generated/db";
 
-type StackUser = NonNullable<Awaited<ReturnType<typeof stackServerApp.getUser>>>;
+export type SessionUser = {
+  id: string;
+  email: string | null;
+  name: string | null;
+  image: string | null;
+  role: UserRole;
+};
 
-function userEmail(user: StackUser) {
-  const record = user as unknown as Record<string, unknown>;
-  const primary = record.primaryEmail;
-
-  if (typeof primary === "string") {
-    return primary;
-  }
-
-  if (primary && typeof primary === "object" && "email" in primary) {
-    const email = (primary as { email?: unknown }).email;
-    if (typeof email === "string") {
-      return email;
-    }
-  }
-
-  const candidates = [record.email, record.primary_email];
-  return candidates.find((value): value is string => typeof value === "string");
+export function isAdminUser(user: SessionUser) {
+  return user.role === UserRole.ADMIN;
 }
 
-function envAllowlistsAdmin(user: StackUser) {
-  return isAllowlistedAdmin({
-    userId: user.id,
-    email: userEmail(user),
-    adminIds: parseAdminAllowlist(process.env.ADMIN_USER_IDS),
-    adminEmails: parseAdminAllowlist(process.env.ADMIN_EMAILS),
-  });
-}
-
-/**
- * Check if a user has admin role.
- * Provisions missing users on first login; env allowlist grants ADMIN role.
- */
-export async function isAdminUser(user: StackUser): Promise<boolean> {
-  const email = userEmail(user);
-  const allowlisted = envAllowlistsAdmin(user);
-
+export async function getCurrentUserOrNull(): Promise<SessionUser | null> {
   try {
-    const existing = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: { role: true },
-    });
+    const session = await auth();
+    const user = session?.user;
 
-    if (existing) {
-      if (allowlisted && existing.role !== UserRole.ADMIN) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { role: UserRole.ADMIN, ...(email ? { email } : {}) },
-        });
-        return true;
-      }
-      return existing.role === UserRole.ADMIN;
+    if (!user?.id) {
+      return null;
     }
 
-    const dbUser = await prisma.user.create({
-      data: {
-        id: user.id,
-        email,
-        role: allowlisted ? UserRole.ADMIN : UserRole.USER,
-      },
-    });
-    return dbUser.role === UserRole.ADMIN;
+    return {
+      id: user.id,
+      email: user.email ?? null,
+      name: user.name ?? null,
+      image: user.image ?? null,
+      role: user.role ?? UserRole.USER,
+    };
   } catch (error) {
-    console.error("Failed to check admin status:", error);
-    return allowlisted;
+    console.error("Failed to get current user:", error);
+    return null;
   }
 }
 
 export async function getCurrentUser() {
-  try {
-    const user = await stackServerApp.getUser();
-    if (!user) {
-      redirect("/sign-in");
-    }
-    return user;
-  } catch (error) {
-    console.error("Failed to get current user:", error);
+  const user = await getCurrentUserOrNull();
+
+  if (!user) {
     redirect("/sign-in");
   }
-}
 
-export async function getCurrentUserOrNull() {
-  try {
-    return await stackServerApp.getUser({ or: "return-null" });
-  } catch (error) {
-    console.error("Failed to get current user for API request:", error);
-    return null;
-  }
+  return user;
 }
 
 export async function requireAdminUser() {
   const user = await getCurrentUserOrNull();
 
   if (!user) {
-    redirect("/");
+    redirect("/sign-in");
   }
 
-  if (!(await isAdminUser(user))) {
+  if (!isAdminUser(user)) {
     redirect("/sign-in?reason=not-admin");
   }
 
@@ -112,7 +66,7 @@ export async function requireAdminUser() {
 export async function getAdminUserOrNull() {
   const user = await getCurrentUserOrNull();
 
-  if (!user || !(await isAdminUser(user))) {
+  if (!user || !isAdminUser(user)) {
     return null;
   }
 
@@ -124,16 +78,19 @@ export async function getAdminUserOrNull() {
  */
 export async function getUserRole() {
   const user = await getCurrentUserOrNull();
-  if (!user) return null;
+
+  if (!user) {
+    return null;
+  }
 
   try {
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
       select: { role: true },
     });
-    return dbUser?.role ?? "USER";
+    return dbUser?.role ?? user.role;
   } catch (error) {
     console.error("Failed to get user role:", error);
-    return "USER";
+    return user.role;
   }
 }

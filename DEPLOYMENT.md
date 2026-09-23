@@ -43,10 +43,12 @@ DATABASE_URL=postgresql://postgres:password@localhost:5432/comfi
 # Optional: use a separate pooled connection for serverless
 DATABASE_POOL_URL=postgresql://postgres:password@localhost:5432/comfi
 
-# Stack Auth (from https://app.stack-auth.com)
-NEXT_PUBLIC_STACK_PROJECT_ID=<your-project-id>
-NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=<your-publishable-key>
-STACK_SECRET_SERVER_KEY=<your-secret-key>
+# NextAuth / Auth.js v5 (Google sign-in)
+AUTH_SECRET=<npx auth secret>
+AUTH_GOOGLE_ID=<google-oauth-client-id>
+AUTH_GOOGLE_SECRET=<google-oauth-client-secret>
+# Google redirect URI: https://<your-domain>/api/auth/callback/google
+ADMIN_EMAILS=<comma-separated-admin-google-emails>
 
 # Paystack (from https://dashboard.paystack.com)
 PAYSTACK_SECRET_KEY=sk_test_<your-test-key>

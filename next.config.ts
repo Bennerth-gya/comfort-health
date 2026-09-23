@@ -161,9 +161,9 @@ const nextConfig: NextConfig = {
               priority: 40,
               enforce: true,
             },
-            stackAuth: {
-              name: 'chunk-stack-auth',
-              test: /[\\/]node_modules[\\/]@stackframe[\\/]/,
+            nextAuth: {
+              name: 'chunk-next-auth',
+              test: /[\\/]node_modules[\\/](next-auth|@auth)[\\/]/,
               chunks: 'all',
               priority: 35,
             },

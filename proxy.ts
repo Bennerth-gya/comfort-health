@@ -51,13 +51,13 @@ export function proxy(request: NextRequest) {
 
   // ── Production: block completely unauthenticated visitors ──────────────────
   //
-  // Stack Auth stores its session in a cookie whose name begins with
-  // "stack-auth".  We cannot fully verify the JWT here without the SDK
-  // (that happens in the page/layout via requireAdminUser), but we can at
-  // least redirect visitors who have no session cookie at all.
+  // NextAuth stores its session in a cookie named "authjs.session-token"
+  // ("__Secure-" prefixed over HTTPS).  We cannot verify the JWT here without
+  // the Node runtime (that happens in the page/route via requireAdminUser),
+  // but we can at least redirect visitors who have no session cookie at all.
   //
-  const hasSession = [...request.cookies.getAll()].some(
-    (c) => c.name.startsWith('stack-auth'),
+  const hasSession = [...request.cookies.getAll()].some((c) =>
+    c.name.includes('authjs.session-token'),
   )
 
   if (!hasSession) {

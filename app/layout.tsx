@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { CartProvider } from "@/app/context/cartContext";
 import { ToastProvider } from "@/app/context/toastContext";
 import AppChrome from "@/components/AppChrome";
+import AuthProvider from "@/components/AuthProvider";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import type { ReactNode } from "react";
@@ -76,11 +77,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <body className="min-h-full bg-[#f8faf8] text-slate-900 antialiased">
-        <ToastProvider>
-          <CartProvider>
-            <AppChrome>{children}</AppChrome>
-          </CartProvider>
-        </ToastProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <CartProvider>
+              <AppChrome>{children}</AppChrome>
+            </CartProvider>
+          </ToastProvider>
+        </AuthProvider>
         <SpeedInsights />
         <Analytics />
         <PharmacistSupport />

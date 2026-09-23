@@ -10,7 +10,7 @@ import { getCurrentUserOrNull, isAdminUser } from "@/lib/auth";
 export async function AdminHeaderLink() {
   const user = await getCurrentUserOrNull();
 
-  if (!user || !(await isAdminUser(user))) {
+  if (!user || !isAdminUser(user)) {
     return null;
   }
 

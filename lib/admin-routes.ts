@@ -1,4 +1,4 @@
-/** Paths that require an authenticated Stack session (see proxy.ts). */
+/** Paths that require an authenticated session (see proxy.ts). */
 export const ADMIN_ROUTE_PREFIXES = [
   "/dashboard",
   "/inventory",
@@ -15,7 +15,7 @@ export function isAdminPath(pathname: string) {
 export function isAuthPath(pathname: string) {
   return (
     pathname === "/sign-in" ||
-    pathname.startsWith("/handler") ||
+    pathname.startsWith("/api/auth") ||
     isAdminPath(pathname)
   );
 }
