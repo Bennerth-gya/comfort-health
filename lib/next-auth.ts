@@ -21,6 +21,15 @@ declare module "next-auth/jwt" {
   }
 }
 
+// `next dev --hostname 0.0.0.0` forwards `x-forwarded-host: 0.0.0.0:3000`, which
+// Auth.js would otherwise use to build the OAuth callback URL. AUTH_URL wins over
+// the forwarded host, so seed it from the configured origin when it is unset.
+const configuredOrigin = process.env.APP_URL ?? process.env.NEXT_PUBLIC_APP_URL;
+
+if (!process.env.AUTH_URL && !process.env.NEXTAUTH_URL && configuredOrigin) {
+  process.env.AUTH_URL = configuredOrigin;
+}
+
 const authSecret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET;
 const googleClientId = process.env.AUTH_GOOGLE_ID ?? process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret =
