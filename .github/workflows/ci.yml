@@ -12,9 +12,10 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci?sslmode=disable
-      NEXT_PUBLIC_STACK_PROJECT_ID: ci-project
-      NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY: ci-publishable-key
-      STACK_SECRET_SERVER_KEY: ci-secret-key
+      AUTH_SECRET: ci-auth-secret
+      AUTH_GOOGLE_ID: ci-google-client-id
+      AUTH_GOOGLE_SECRET: ci-google-client-secret
+      ADMIN_EMAILS: admin@example.com
       PAYSTACK_SECRET_KEY: sk_test_ci
       ORDER_RECEIPT_SECRET: ci-receipt-secret-not-paystack
 

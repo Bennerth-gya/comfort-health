@@ -10,7 +10,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:status": "prisma migrate status",
     "start": "next start --hostname 0.0.0.0",
-    "lint": "next lint",
+    "lint": "eslint .",
     "analyze": "ANALYZE=true next build",
     "test": "vitest run",
     "test:watch": "vitest"

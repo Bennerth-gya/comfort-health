@@ -4,7 +4,6 @@ import {
   Boxes,
   Cross,
   LayoutDashboard,
-  Package,
   PlusCircle,
   ShoppingBag,
   Store,
