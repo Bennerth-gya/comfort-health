@@ -18,6 +18,8 @@ describe("checkout validation", () => {
   it("accepts a valid checkout payload", () => {
     const parsed = CheckoutRequestSchema.safeParse({
       email: "buyer@example.com",
+      customerPhone: "+233201234567",
+      customerAddress: "123 High Street, Accra",
       idempotencyKey: "checkout-key-12345678",
       items: [{ id: "prod-1", quantity: 2 }],
     });

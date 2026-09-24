@@ -18,8 +18,10 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
   const { cartCount } = useCart();
   const [query, setQuery] = useState("");
   const [isPharmacyOpen, setIsPharmacyOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     // Simple check based on pharmacyHours utility, evaluated on client side
     // to match current local time
     const checkHours = () => {
@@ -51,6 +53,14 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
     const trimmed = query.trim();
     router.push(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
   }
+
+  const showDashboard =
+    isMounted &&
+    (isLocalClient() ||
+      (pathname &&
+        (pathname.startsWith('/dashboard') ||
+          pathname.startsWith('/admin') ||
+          pathname.startsWith('/pharmacist'))));
 
   return (
     <header className="safe-top sticky top-0 z-50 hidden h-16 border-b border-[#254532] bg-[#1a2e22] md:flex">
@@ -97,14 +107,14 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
           >
             Pharmacist Support
             <span className="relative flex h-2 w-2">
-              {isPharmacyOpen && (
+              {isMounted && isPharmacyOpen && (
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
               )}
-              <span className={`relative inline-flex h-2 w-2 rounded-full ${isPharmacyOpen ? 'bg-emerald-500' : 'bg-gray-400'}`}></span>
+              <span className={`relative inline-flex h-2 w-2 rounded-full ${isMounted && isPharmacyOpen ? 'bg-emerald-500' : 'bg-gray-400'}`}></span>
             </span>
           </Link>
           <div className="h-4 w-px bg-[#254532]"></div>
-          {(isLocalClient() || (pathname && (pathname.startsWith('/dashboard') || pathname.startsWith('/admin') || pathname.startsWith('/pharmacist')))) && (
+          {showDashboard && (
             <Link
               href="/dashboard"
               className="text-sm font-medium text-white underline-offset-4 transition hover:text-emerald-100 hover:underline"
@@ -119,3 +129,4 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
     </header>
   );
 }
+
