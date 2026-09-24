@@ -24,9 +24,11 @@ const POPULAR_PRODUCTS_LIMIT = 20;
 function SectionHeader({
   title,
   href = "/shop-page",
+  showSwipeOnMobile = false,
 }: {
   title: string;
   href?: string;
+  showSwipeOnMobile?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between px-3 pb-2.5 pt-4 md:px-0 md:pb-4 md:pt-8">
@@ -37,7 +39,14 @@ function SectionHeader({
         href={href}
         className="min-h-11 rounded-full px-1 py-3 text-[13px] font-medium leading-none text-[#15803d] active:opacity-70 md:hover:underline"
       >
-        View all
+        {showSwipeOnMobile ? (
+          <>
+            <span className="md:hidden">Swipe to see more...</span>
+            <span className="hidden md:inline">View all</span>
+          </>
+        ) : (
+          "View all"
+        )}
       </Link>
     </div>
   );
@@ -105,7 +114,7 @@ function ProductGridSkeleton() {
   return (
     <>
       <section className="md:mx-auto md:max-w-7xl md:px-6">
-        <SectionHeader title="Popular Products" />
+        <SectionHeader title="Popular Products" showSwipeOnMobile />
         <div className="scrollbar-hide flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 md:gap-4 md:px-0">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
@@ -228,11 +237,10 @@ async function HomeContent() {
             <Link
               key={category.name}
               href={category.href}
-              className={`flex h-9 shrink-0 items-center rounded-full px-4 text-[13px] font-medium transition-all duration-100 active:scale-[0.97] active:opacity-90 md:h-10 md:hover:-translate-y-0.5 ${
-                index === 0
+              className={`flex h-9 shrink-0 items-center rounded-full px-4 text-[13px] font-medium transition-all duration-100 active:scale-[0.97] active:opacity-90 md:h-10 md:hover:-translate-y-0.5 ${index === 0
                   ? "bg-[#15803d] text-white"
                   : "border border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
-              }`}
+                }`}
             >
               {category.name}
             </Link>
@@ -253,7 +261,7 @@ async function HomeContent() {
       </div>
 
       <section className="md:mx-auto md:max-w-7xl md:px-6">
-        <SectionHeader title="Popular Products" />
+        <SectionHeader title="Popular Products" showSwipeOnMobile />
         <div
           className="scrollbar-hide flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 md:gap-4 md:px-0"
           aria-label="Popular products"
@@ -317,7 +325,7 @@ export default function HomePage() {
       <section className="px-3 pt-3 md:hidden">
         <SearchBar />
       </section>
-      
+
       <Suspense fallback={<ProductGridSkeleton />}>
         <HomeContent />
       </Suspense>

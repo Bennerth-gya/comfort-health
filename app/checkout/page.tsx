@@ -171,7 +171,7 @@ export default function CheckoutPage() {
                   type="text"
                   value={form.customerName}
                   onChange={(e) => updateField("customerName", e.target.value)}
-                  placeholder="e.g. Kwame Mensah"
+                  placeholder="e.g. Stephen Dadzie"
                   maxLength={60}
                   style={{ fontSize: "16px" }}
                   className={`
@@ -242,7 +242,7 @@ export default function CheckoutPage() {
                 <textarea
                   value={form.customerAddress}
                   onChange={(e) => updateField("customerAddress", e.target.value)}
-                  placeholder="e.g. UMaT Campus, Block C, Room 12, Tarkwa"
+                  placeholder="e.g. K.T Hall, Room 12"
                   rows={2}
                   maxLength={200}
                   style={{ fontSize: "16px" }}
@@ -277,7 +277,7 @@ export default function CheckoutPage() {
                 <textarea
                   value={form.deliveryNotes}
                   onChange={(e) => updateField("deliveryNotes", e.target.value)}
-                  placeholder="e.g. Call me when you arrive, I am in the library..."
+                  placeholder="e.g. Call me when you arrive..."
                   rows={2}
                   maxLength={300}
                   style={{ fontSize: "16px" }}
