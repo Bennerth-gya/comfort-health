@@ -3,7 +3,7 @@ import "server-only";
 import { randomUUID } from "crypto";
 import { type NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendWhatsApp } from "@/lib/notifications";
+import { sendWhatsApp, sendSMS } from "@/lib/notifications";
 
 // ── WhatsApp helpers ────────────────────────────────────────────────────────
 
@@ -238,6 +238,26 @@ export async function POST(req: NextRequest) {
     } else {
       console.info(
         "WhatsApp not fully configured (ADMIN_WHATSAPP or CALLMEBOT_API_KEY missing); skipping notifications.",
+      );
+    }
+
+    // ── Send SMS notification to Admin ──────────────────────────────────────
+    const adminSmsPhone =
+      process.env.ADMIN_SMS_PHONE ||
+      process.env.ADMIN_WHATSAPP ||
+      process.env.NEXT_PUBLIC_PHARMACY_PHONE;
+
+    if (adminSmsPhone && (process.env.BMS_API_KEY || process.env.ARKESEL_API_KEY)) {
+      const smsMessage =
+        `🛍️ NEW COD ORDER #${orderRef}\n` +
+        `Customer: ${customerName.trim()}\n` +
+        `Phone: ${cleanPhone}\n` +
+        `Items: ${orderItems.map((i) => `${i.name} x${i.quantity}`).join(", ")}\n` +
+        `Total: GHS ${total.toFixed(2)}\n` +
+        `Address: ${customerAddress.trim()}`;
+
+      sendSMS(adminSmsPhone, smsMessage).catch((e) =>
+        console.error("Admin SMS dispatch error:", e),
       );
     }
 

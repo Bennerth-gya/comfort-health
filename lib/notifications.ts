@@ -38,6 +38,126 @@ function isWhatsAppConfigured() {
   return Boolean(process.env.ADMIN_WHATSAPP && process.env.CALLMEBOT_API_KEY);
 }
 
+function isSMSConfigured() {
+  return Boolean(
+    (process.env.BMS_API_KEY || process.env.ARKESEL_API_KEY) &&
+      (process.env.ADMIN_SMS_PHONE || process.env.ADMIN_WHATSAPP || process.env.NEXT_PUBLIC_PHARMACY_PHONE),
+  );
+}
+
+/**
+ * Send SMS via BMS Africa (app.bms.africa / mNotify)
+ */
+export async function sendBmsSMS(
+  phone: string,
+  message: string,
+  senderId?: string,
+): Promise<boolean> {
+  const apiKey = process.env.BMS_API_KEY || process.env.ARKESEL_API_KEY;
+  if (!apiKey) {
+    console.info("BMS Africa API key missing; skipping SMS notification.");
+    return false;
+  }
+
+  try {
+    const cleanPhone = phone.replace(/\D/g, "");
+    // BMS Africa accepts local Ghana format (024XXXXXXX) or 233 format
+    const recipient = cleanPhone.startsWith("0") ? cleanPhone : "0" + cleanPhone.replace(/^233/, "");
+    const sender = (
+      senderId ||
+      process.env.BMS_SENDER_ID ||
+      process.env.ARKESEL_SENDER_ID ||
+      "ComfiHealth"
+    ).slice(0, 11);
+
+    const url = `https://api.mnotify.com/api/sms/quick?key=${encodeURIComponent(apiKey)}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        recipient: [recipient],
+        sender,
+        message,
+      }),
+      cache: "no-store",
+    });
+
+    const data = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+
+    if (!res.ok || (data && data.status === "error")) {
+      console.warn(
+        "BMS Africa SMS API error response:",
+        data?.message || data?.summary || res.statusText || `HTTP ${res.status}`,
+      );
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("BMS Africa SMS notification failed:", error);
+    return false;
+  }
+}
+
+export async function sendArkeselSMS(
+  phone: string,
+  message: string,
+  senderId?: string,
+): Promise<boolean> {
+  const apiKey = process.env.ARKESEL_API_KEY;
+  if (!apiKey) {
+    console.info("Arkesel API key missing; skipping SMS notification.");
+    return false;
+  }
+
+  try {
+    const cleanPhone = phone.replace(/\D/g, "");
+    const recipient = cleanPhone.startsWith("0") ? "233" + cleanPhone.slice(1) : cleanPhone;
+    const sender = (senderId || process.env.ARKESEL_SENDER_ID || "ComfiHealth").slice(0, 11);
+
+    // Arkesel SMS API v2 JSON Endpoint
+    const res = await fetch("https://api.arkesel.com/api/v2/sms/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": apiKey,
+      },
+      body: JSON.stringify({
+        sender,
+        recipients: [recipient],
+        message,
+      }),
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      // Fallback to Arkesel GET API if v2 JSON endpoint fails
+      const url = `https://sms.arkesel.com/sms/api?action=send-sms&api_key=${encodeURIComponent(apiKey)}&to=${recipient}&from=${encodeURIComponent(sender)}&sms=${encodeURIComponent(message)}`;
+      const v1Res = await fetch(url, { method: "GET", cache: "no-store" });
+      return v1Res.ok;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Arkesel SMS notification failed:", error);
+    return false;
+  }
+}
+
+/** Unified SMS function that chooses configured SMS provider */
+export async function sendSMS(
+  phone: string,
+  message: string,
+  senderId?: string,
+): Promise<boolean> {
+  if (process.env.BMS_API_KEY) {
+    return sendBmsSMS(phone, message, senderId);
+  }
+  return sendArkeselSMS(phone, message, senderId);
+}
+
 export async function sendWhatsApp(
   phone: string,
   apiKey: string,
@@ -160,6 +280,25 @@ export async function notifyNewOrder(order: OrderNotificationPayload): Promise<v
     );
   } else {
     console.info("CallMeBot is not configured; skipping admin WhatsApp notification.");
+  }
+
+  const smsPhone =
+    process.env.ADMIN_SMS_PHONE ||
+    process.env.ADMIN_WHATSAPP ||
+    process.env.NEXT_PUBLIC_PHARMACY_PHONE;
+
+  if (isSMSConfigured() && smsPhone) {
+    const smsMessage =
+      `🛍️ NEW ORDER #${orderLabel}\n` +
+      `Customer: ${order.customerName}\n` +
+      `Phone: ${order.customerPhone || "N/A"}\n` +
+      `Items: ${itemSummary}\n` +
+      `Total: GHS ${order.total.toFixed(2)}\n` +
+      `Address: ${order.customerAddress || "Campus"}`;
+
+    tasks.push(sendSMS(smsPhone, smsMessage));
+  } else {
+    console.info("SMS is not configured; skipping admin SMS notification.");
   }
 
   await Promise.allSettled(tasks);
