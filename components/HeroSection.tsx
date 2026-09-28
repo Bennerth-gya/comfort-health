@@ -74,7 +74,7 @@ function safeCtaHref(value?: string | null) {
 }
 
 export default function HeroSection({ slides }: HeroSectionProps) {
-  const availableSlides = slides.length > 0 ? slides : defaultHeroSlides;
+  const availableSlides = slides && slides.length > 0 ? slides : defaultHeroSlides;
   const [current, setCurrent] = useState(0);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
@@ -155,7 +155,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
               {slide.ctaText ? (
                 <Link
                   href={safeCtaHref(slide.ctaUrl)}
-              className="mt-3 inline-flex h-9 w-fit items-center justify-center rounded-full bg-[#15803d] px-4 text-[13px] font-semibold text-white transition-all duration-100 active:scale-[0.97] active:opacity-90"
+                  className="mt-3 inline-flex h-9 w-fit items-center justify-center rounded-full bg-[#15803d] px-4 text-[13px] font-semibold text-white transition-all duration-100 active:scale-[0.97] active:opacity-90"
                 >
                   {slide.ctaText}
                 </Link>

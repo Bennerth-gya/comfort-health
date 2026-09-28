@@ -170,9 +170,18 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
               No image
             </div>
           )}
-          <span className="absolute left-2 top-2 max-w-[calc(100%-16px)] truncate rounded-full bg-white/80 px-2 py-[3px] text-[10px] font-semibold text-[#15803d] backdrop-blur">
-            {product.category ?? "Uncategorized"}
-          </span>
+          {(() => {
+            const cat = product.category ?? "Uncategorized";
+            let badgeStyle = "bg-[#f0fdf4] text-[#15803d]";
+            if (cat.toLowerCase().includes("pain")) badgeStyle = "bg-[#e0f2fe] text-[#0369a1]";
+            else if (cat.toLowerCase().includes("vitamin")) badgeStyle = "bg-[#fef9c3] text-[#854d0e]";
+            else if (cat.toLowerCase().includes("sexual")) badgeStyle = "bg-[#ffe4e6] text-[#be123c]";
+            return (
+              <span className={`absolute left-2 top-2 max-w-[calc(100%-16px)] truncate rounded-full px-2 py-[3px] text-[10px] font-bold backdrop-blur shadow-2xs ${badgeStyle}`}>
+                {cat}
+              </span>
+            );
+          })()}
         </div>
 
         <div className="px-2.5 pb-0 pt-2">

@@ -4,93 +4,100 @@ import Link from "next/link";
 import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/app/components/ProductCard";
-import SearchBar from "@/components/SearchBar";
 import SupportFab from "@/components/SupportFab";
-import SupportBannerCard from "@/components/SupportBannerCard";
 import CommunitySection from "@/components/CommunitySection";
 import HealthEducationTeaser from "@/components/HealthEducationTeaser";
+import { Pill, Sparkles, ChevronRight, Heart, Bot, ArrowRight, Activity, Zap } from "lucide-react";
 
-const categories = [
-  { name: "All", href: "/" },
-  { name: "Pain Relief", href: "/shop-page?q=Pain%20Relief" },
-  { name: "Vitamins", href: "/shop-page?q=Vitamins" },
-  { name: "Sexual Wellness", href: "/shop-page?q=Sexual%20Wellness" },
-  { name: "Flu & Cold", href: "/shop-page?q=Flu%20%26%20Cold" },
-  { name: "First Aid", href: "/shop-page?q=First%20Aid" },
+const popularCategories = [
+  { name: "Pain Relief", href: "/shop-page?q=Pain%20Relief", icon: Pill, active: true },
+  { name: "Malaria", href: "/shop-page?q=Malaria", icon: Activity, active: false },
+  { name: "Vitamins", href: "/shop-page?q=Vitamins", icon: Zap, active: false },
+  { name: "Sexual Health", href: "/shop-page?q=Sexual%20Health", icon: Heart, active: false },
 ];
 
 const POPULAR_PRODUCTS_LIMIT = 20;
 
-function SectionHeader({
+function SectionTitle({
+  icon: Icon,
   title,
+  subtitle,
   href = "/shop-page",
-  showSwipeOnMobile = false,
+  showViewAll = true,
 }: {
+  icon?: React.ElementType;
   title: string;
+  subtitle?: string;
   href?: string;
-  showSwipeOnMobile?: boolean;
+  showViewAll?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between px-3 pb-2.5 pt-4 md:px-0 md:pb-4 md:pt-8">
-      <h2 className="text-[17px] font-bold leading-tight text-[#0f2318] md:text-[22px]">
-        {title}
-      </h2>
-      <Link
-        href={href}
-        className="min-h-11 rounded-full px-1 py-3 text-[13px] font-medium leading-none text-[#15803d] active:opacity-70 md:hover:underline"
-      >
-        {showSwipeOnMobile ? (
-          <>
-            <span className="md:hidden">Swipe to see more...</span>
-            <span className="hidden md:inline">View all</span>
-          </>
-        ) : (
-          "View all"
-        )}
-      </Link>
+    <div className="flex items-end justify-between px-3 pb-2 pt-5 md:px-0 md:pb-3 md:pt-8">
+      <div>
+        <div className="flex items-center gap-2">
+          {Icon ? (
+            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#ecfdf5] text-[#15803d]">
+              <Icon className="h-3.5 w-3.5" />
+            </span>
+          ) : null}
+          <h2 className="text-[17px] font-bold leading-tight text-[#0f2318] md:text-[22px]">
+            {title}
+          </h2>
+        </div>
+        {subtitle ? (
+          <p className="mt-0.5 text-xs text-[#4d675f] md:text-sm">
+            {subtitle}
+          </p>
+        ) : null}
+      </div>
+      {showViewAll ? (
+        <Link
+          href={href}
+          className="inline-flex items-center gap-1 text-[13px] font-semibold text-[#15803d] hover:underline"
+        >
+          View all
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      ) : null}
     </div>
   );
 }
 
 function AiHealthGuideCard() {
   return (
-    <section className="px-3 pt-3 md:px-0 md:pt-6">
-      <div className="mx-auto flex min-h-[148px] items-center justify-between gap-3 rounded-2xl bg-gradient-to-br from-[#0f2318] to-[#15803d] p-4 text-white md:max-w-[900px] md:p-6">
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#4ade80]">
-            AI Health Guide
-          </p>
-          <h2 className="mt-1 text-[17px] font-bold leading-tight md:text-2xl">
-            Not sure what to take?
-          </h2>
-          <p className="mt-1.5 max-w-[220px] text-xs leading-[1.5] text-[#86efac] md:max-w-lg md:text-sm">
-            Describe your symptoms and we&apos;ll find the right product.
-          </p>
-          <Link
-            href="/ai-guide"
-            className="mt-3 inline-flex h-9 items-center justify-center rounded-full bg-white px-4 text-[13px] font-semibold text-[#15803d] transition-all duration-100 active:scale-[0.97] active:opacity-90"
-          >
-            Ask Comfort AI
-          </Link>
+    <section className="px-3 pt-4 md:px-0 md:pt-6">
+      <div className="mx-auto flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-br from-[#e8f5e9] via-[#e6f4ea] to-[#dcfce7] p-4 border border-emerald-200/60 text-[#0f2318] md:max-w-none md:p-6 shadow-2xs relative overflow-hidden">
+        <div className="min-w-0 flex-1 z-10">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#15803d] text-white shadow-sm">
+              <Bot className="h-5.5 w-5.5" />
+            </span>
+            <div>
+              <h2 className="text-base font-bold leading-tight text-[#0f2318] md:text-xl">
+                Not sure what you need?
+              </h2>
+              <p className="mt-0.5 text-xs text-[#3b5e4f] md:text-sm max-w-md">
+                Get general health information and learn when to speak with a pharmacist.
+              </p>
+            </div>
+          </div>
+          <div className="mt-3">
+            <Link
+              href="/ai-guide"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-[#15803d] px-4 text-xs font-semibold text-white transition-all duration-100 active:scale-[0.97] hover:bg-[#166534] shadow-xs"
+            >
+              Ask Comfort AI
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
-        <svg
-          width="60"
-          height="60"
-          viewBox="0 0 60 60"
-          fill="none"
-          aria-hidden="true"
-          className="shrink-0 md:h-24 md:w-24"
-        >
-          <rect width="60" height="60" rx="18" fill="white" fillOpacity="0.14" />
-          <path
-            d="M17 20.5C17 17.5 19.5 15 22.5 15H38C41 15 43.5 17.5 43.5 20.5V31C43.5 34 41 36.5 38 36.5H29L21.5 43V36.5C19 36.1 17 33.9 17 31V20.5Z"
-            fill="white"
-          />
-          <path
-            d="M30 31.5L25.5 27.4C23.4 25.5 24.7 22 27.5 22C28.6 22 29.5 22.5 30 23.3C30.5 22.5 31.4 22 32.5 22C35.3 22 36.6 25.5 34.5 27.4L30 31.5Z"
-            fill="#15803d"
-          />
-        </svg>
+
+        {/* Decorative leaf background */}
+        <div className="absolute right-[-10px] bottom-[-10px] opacity-15 pointer-events-none">
+          <svg width="120" height="120" viewBox="0 0 100 100" fill="#15803d">
+            <path d="M50 0 C70 30, 90 50, 100 100 C50 90, 30 70, 0 50 C30 30, 50 10, 50 0 Z" />
+          </svg>
+        </div>
       </div>
     </section>
   );
@@ -114,7 +121,7 @@ function ProductGridSkeleton() {
   return (
     <>
       <section className="md:mx-auto md:max-w-7xl md:px-6">
-        <SectionHeader title="Popular Products" showSwipeOnMobile />
+        <SectionTitle title="Popular Products" subtitle="" />
         <div className="scrollbar-hide flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 md:gap-4 md:px-0">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
@@ -127,7 +134,7 @@ function ProductGridSkeleton() {
         </div>
       </section>
       <section className="scroll-mt-24 md:mx-auto md:max-w-7xl md:px-6">
-        <SectionHeader title="All Medicines" />
+        <SectionTitle title="All Medicines" showViewAll={false} />
         <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
@@ -218,7 +225,8 @@ async function HomeContent() {
 
   return (
     <>
-      <section className="pt-3 md:mx-auto md:max-w-7xl md:px-6 md:pt-6">
+      {/* 1. Hero Section */}
+      <section className="pt-2 md:mx-auto md:max-w-7xl md:px-6 md:pt-6">
         <HeroSection slides={heroSlides} />
       </section>
 
@@ -231,37 +239,49 @@ async function HomeContent() {
         </section>
       ) : null}
 
-      <section className="pt-3 md:mx-auto md:max-w-7xl md:px-6 md:pt-5">
-        <div className="scrollbar-hide flex gap-2 overflow-x-auto px-3 pb-1 md:px-0">
-          {categories.map((category, index) => (
-            <Link
-              key={category.name}
-              href={category.href}
-              className={`flex h-9 shrink-0 items-center rounded-full px-4 text-[13px] font-medium transition-all duration-100 active:scale-[0.97] active:opacity-90 md:h-10 md:hover:-translate-y-0.5 ${index === 0
-                  ? "bg-[#15803d] text-white"
-                  : "border border-[#bbf7d0] bg-[#f0fdf4] text-[#166534]"
-                }`}
-            >
-              {category.name}
-            </Link>
-          ))}
+      {/* 2. Popular Categories Section */}
+      <section className="pt-2 md:mx-auto md:max-w-7xl md:px-6 md:pt-4">
+        <SectionTitle
+          icon={Sparkles}
+          title="Popular Categories"
+          subtitle="Find products and information for your health needs."
+          showViewAll={false}
+        />
+        <div className="scrollbar-hide flex items-center gap-2.5 overflow-x-auto px-3 pb-1 pt-1 md:px-0">
+          {popularCategories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <Link
+                key={category.name}
+                href={category.href}
+                className={`flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-xs font-semibold transition-all duration-100 active:scale-[0.97] md:h-10 ${category.active
+                  ? "bg-[#15803d] text-white shadow-xs"
+                  : "border border-[#d1fae5] bg-white text-[#0f2318] hover:border-[#15803d]"
+                  }`}
+              >
+                <Icon className={`h-4 w-4 ${category.active ? "text-white" : "text-[#15803d]"}`} />
+                <span>{category.name}</span>
+              </Link>
+            );
+          })}
+          <Link
+            href="/shop-page"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#d1fae5] bg-white text-[#15803d] hover:border-[#15803d] shadow-2xs"
+            aria-label="View more categories"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
-      <div className="md:mx-auto md:max-w-7xl md:px-6">
-        <AiHealthGuideCard />
-      </div>
-
-      <div className="md:mx-auto md:max-w-7xl md:px-6 md:pt-4 max-md:pt-4">
-        <HealthEducationTeaser />
-      </div>
-
-      <div className="md:mx-auto md:max-w-7xl md:px-6 max-md:pb-1">
-        <SupportBannerCard />
-      </div>
-
-      <section className="md:mx-auto md:max-w-7xl md:px-6">
-        <SectionHeader title="Popular Products" showSwipeOnMobile />
+      {/* 3. Popular Products Carousel */}
+      <section className="pt-2 md:mx-auto md:max-w-7xl md:px-6">
+        <SectionTitle
+          icon={Pill}
+          title="Popular Products"
+          subtitle=""
+          href="/shop-page"
+        />
         <div
           className="scrollbar-hide flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-3 pb-2 md:gap-4 md:px-0"
           aria-label="Popular products"
@@ -293,9 +313,25 @@ async function HomeContent() {
         </div>
       </section>
 
+      {/* 4. AI Health Guide Banner */}
+      <div className="md:mx-auto md:max-w-7xl md:px-6">
+        <AiHealthGuideCard />
+      </div>
+
+      {/* 5. Health Education Teaser Section */}
+      <div className="md:mx-auto md:max-w-7xl md:px-6 md:pt-4 max-md:pt-4">
+        <HealthEducationTeaser />
+      </div>
+
+      {/* 6. All Medicines Catalog Section */}
       {!showPlaceholder ? (
-        <section id="full-catalog" className="scroll-mt-24 md:mx-auto md:max-w-7xl md:px-6">
-          <SectionHeader title="All Medicines" />
+        <section id="full-catalog" className="scroll-mt-24 pt-2 md:mx-auto md:max-w-7xl md:px-6">
+          <SectionTitle
+            icon={Pill}
+            title="All Medicines"
+            subtitle="Browse all quality medicines and healthcare essentials."
+            showViewAll={false}
+          />
           <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
             {displayProducts.map((product, index) => (
               <ProductCard
@@ -322,15 +358,11 @@ async function HomeContent() {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-[#f8faf8] pb-4 md:pb-10">
-      <section className="px-3 pt-3 md:hidden">
-        <SearchBar />
-      </section>
-
       <Suspense fallback={<ProductGridSkeleton />}>
         <HomeContent />
       </Suspense>
 
-      <section className="md:mx-auto md:max-w-7xl md:px-6">
+      <section className="md:mx-auto md:max-w-7xl md:px-6 mt-6">
         <CommunitySection />
       </section>
 

@@ -46,7 +46,7 @@ export default function AppChrome({ children }: { children: ReactNode }) {
       <main
         className={
           showMobileChrome
-            ? "min-h-dvh pt-[calc(56px+env(safe-area-inset-top,0px))] pb-[calc(86px+env(safe-area-inset-bottom,16px))] md:pb-0 md:pt-0"
+            ? "min-h-dvh pt-[calc(112px+env(safe-area-inset-top,0px))] pb-[calc(86px+env(safe-area-inset-bottom,16px))] md:pb-0 md:pt-0"
             : "min-h-dvh"
         }
       >
