@@ -1,4 +1,4 @@
-export const revalidate = 300;
+export const revalidate = 3600; // revalidate at most every 1 hour
 
 import Link from "next/link";
 import { Suspense } from "react";

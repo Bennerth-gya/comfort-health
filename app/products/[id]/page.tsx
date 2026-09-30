@@ -20,7 +20,7 @@ type ProductDetails = {
   activeListing: boolean;
 };
 
-export const revalidate = 600;
+export const revalidate = 86400; // revalidate once per day
 
 export async function generateStaticParams() {
   const products = await prisma.product.findMany({
