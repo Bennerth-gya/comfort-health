@@ -17,7 +17,7 @@ const actions = [
   {
     href: "/orders",
     title: "Orders",
-    description: "Track Paystack payments and fulfillment status.",
+    description: "Track order details and fulfillment status.",
     icon: ShoppingBag,
   },
   {

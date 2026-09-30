@@ -10,7 +10,7 @@ const tabs = [
   { label: "Shop", href: "/shop-page", icon: ShoppingBag },
   { label: "Health Education", href: "/health", icon: BookOpen },
   { label: "Support", href: "/support", icon: Headphones },
-  { label: "Account", href: "/sign-in", icon: UserRound },
+  { label: "About Us", href: "/about", icon: UserRound },
 ];
 
 function isActive(pathname: string | null, href: string) {

@@ -30,15 +30,22 @@ export async function GET(req: Request) {
 
     const { products, total } = await searchShopProducts({ q, limit, skip });
 
-    return NextResponse.json({
-      products: products.map((p) => ({
-        ...p,
-        price: parseFloat(p.price.toString()),
-      })),
-      total,
-      limit,
-      skip,
-    });
+    return NextResponse.json(
+      {
+        products: products.map((p) => ({
+          ...p,
+          price: parseFloat(p.price.toString()),
+        })),
+        total,
+        limit,
+        skip,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=86400",
+        },
+      },
+    );
   } catch (error) {
     console.error(error);
     if (error instanceof RequestSecurityError) {

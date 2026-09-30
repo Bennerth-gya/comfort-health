@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { HeartPulse, Search, ShoppingBag, UserRound } from "lucide-react";
+import { HeartPulse, Search } from "lucide-react";
 import CartIcon from "@/components/CartIcon";
 import { useCart } from "@/app/context/cartContext";
 import { type FormEvent, type ReactNode, useState, useEffect } from "react";
@@ -120,11 +120,11 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
           ))}
 
           <Link
-            href="/sign-in"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#254532] bg-white/5 text-white transition hover:bg-white/10"
-            aria-label="Account"
+            href="/about"
+            className="flex h-9 items-center justify-center gap-1.5 rounded-full border border-[#254532] bg-white/5 px-3 text-sm font-medium text-white transition hover:bg-white/10"
+            aria-label="About Us"
           >
-            <UserRound className="h-4 w-4" />
+            About Us
           </Link>
 
           {showDashboard && (
@@ -136,12 +136,7 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
             </Link>
           )}
           {adminNode}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-sm font-medium text-white">
-              <ShoppingBag className="h-4 w-4" />
-            </div>
-            <CartIcon itemCount={cartCount} />
-          </div>
+          <CartIcon itemCount={cartCount} />
         </nav>
       </div>
     </header>

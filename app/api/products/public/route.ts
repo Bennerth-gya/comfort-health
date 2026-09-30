@@ -35,6 +35,11 @@ export async function GET(request: Request) {
         ...product,
         price: product.price.toString(),
       })),
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=120, stale-while-revalidate=86400",
+        },
+      },
     );
   } catch (error) {
     console.error("Failed to fetch public products", error);

@@ -1,15 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ShoppingBag } from "lucide-react";
-import {
-  finalizeVerifiedPayment,
-  getOrder,
-  isPaidOrderStatus,
-  PaymentFlowError,
-  type PublicOrder,
-  verifyReceiptToken,
-} from "@/lib/payments";
-import ClearCartOnPaid from "./ClearCartOnPaid";
+import { prisma } from "@/lib/prisma";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +9,6 @@ export const dynamic = "force-dynamic";
 type OrderSuccessPageProps = {
   searchParams: Promise<{
     reference?: string | string[];
-    receipt?: string | string[];
   }>;
 };
 
@@ -25,161 +16,88 @@ function firstParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-async function resolveOrder(reference: string, receiptToken: string | undefined) {
-  if (!verifyReceiptToken(reference, receiptToken)) {
-    return {
-      order: null,
-      error: "For privacy, order details can only be viewed from the secure receipt link sent after checkout.",
-    };
-  }
-
-  const existing = await getOrder(reference);
-  if (isPaidOrderStatus(existing?.status)) {
-    return { order: existing, error: null };
-  }
-
-  try {
-    return {
-      order: await finalizeVerifiedPayment(reference),
-      error: null,
-    };
-  } catch (error) {
-    console.error(`[OrderSuccess] Verification error for reference ${reference}:`, error);
-
-    const fallback = await getOrder(reference);
-    
-    let message = "We could not verify this payment yet.";
-    if (error instanceof PaymentFlowError) {
-      message = error.message;
-    } else if (error instanceof Error) {
-      const errStr = error.message.toLowerCase();
-      if (errStr.includes("transaction") || errStr.includes("timeout") || errStr.includes("expired") || errStr.includes("prisma")) {
-        message = "Your payment was received, but we encountered a temporary delay confirming your order. Please refresh this page in a few moments, or check your email for confirmation.";
-      } else {
-        message = "An unexpected error occurred while verifying your order. Please refresh the page or contact support if the issue persists.";
-      }
-    }
-
-    return {
-      order: fallback,
-      error: message,
-    };
-  }
-}
-
-function paymentStatusCopy(order: PublicOrder) {
-  if (order.status === "paid_fulfillment_review") {
-    return {
-      heading: "Payment received",
-      body: "Your payment was verified. We are reviewing stock for one or more items and will contact you before fulfillment.",
-      note: "Paid with Paystack. Fulfillment needs review.",
-    };
-  }
-
-  return {
-    heading: "Payment confirmed",
-    body: "Thank you for your purchase. Your payment has been verified and your order is now confirmed.",
-    note: "Paid with Paystack and verified successfully.",
-  };
-}
-
-function OrderSummary({ order }: { order: PublicOrder }) {
-  const copy = paymentStatusCopy(order);
-
-  return (
-    <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_320px]">
-      <div className="space-y-6">
-        <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6">
-          <p className="text-sm font-semibold text-slate-800">Order reference</p>
-          <p className="mt-3 break-all text-lg font-medium text-slate-900">{order.reference}</p>
-          <p className="mt-4 text-sm text-slate-600">{copy.note}</p>
-        </div>
-
-        <div className="rounded-[28px] border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-slate-900">Order summary</h2>
-          <div className="mt-5 space-y-4">
-            {order.items.map((item) => (
-              <div key={item.id} className="flex items-center gap-4 rounded-3xl bg-white p-4 shadow-sm">
-                <div className="relative h-16 w-16 overflow-hidden rounded-3xl bg-slate-100">
-                  {item.imageUrl ? (
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.name}
-                      fill
-                      unoptimized={shouldUnoptimizeProductImage(item.imageUrl)}
-                      className="object-cover"
-                    />
-                  ) : null}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-slate-900">{item.name}</p>
-                  <p className="mt-1 text-sm text-slate-600">Qty: {item.quantity}</p>
-                </div>
-                <div className="text-right text-sm text-slate-900">
-                  GHS {item.lineTotal.toFixed(2)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6">
-        <div className="flex items-center gap-3 text-slate-900">
-          <ShoppingBag className="h-5 w-5" />
-          <span className="text-sm font-semibold">Paid amount</span>
-        </div>
-        <p className="mt-4 text-4xl font-semibold text-slate-950">
-          GHS {order.amount.toFixed(2)}
-        </p>
-        <p className="mt-3 text-sm text-slate-600">
-          Confirmation for {order.email}. A receipt email is sent when email delivery is configured;
-          otherwise save this page or your Paystack receipt.
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export default async function OrderSuccessPage({ searchParams }: OrderSuccessPageProps) {
   const query = await searchParams;
   const reference = firstParam(query.reference);
-  const receiptToken = firstParam(query.receipt);
-  const result = reference
-    ? await resolveOrder(reference, receiptToken)
-    : { order: null, error: "Missing order reference." };
-  const isPaid = isPaidOrderStatus(result.order?.status);
-  const copy = result.order ? paymentStatusCopy(result.order) : null;
+
+  const order = reference
+    ? await prisma.order.findUnique({
+        where: { reference },
+        include: { items: true },
+      })
+    : null;
 
   return (
     <div className="min-h-screen bg-[#f8faf8] px-4 py-10 sm:px-6 lg:px-8">
-      {isPaid && result.order ? <ClearCartOnPaid order={result.order} /> : null}
-
       <div className="mx-auto max-w-5xl rounded-4xl border border-gray-200 bg-white px-6 py-10 shadow-sm sm:px-10">
         <div className="flex flex-col gap-4 text-center">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
             <CheckCircle2 className="h-10 w-10" />
           </div>
           <h1 className="text-3xl font-semibold text-slate-950">
-            {isPaid && copy ? copy.heading : "Payment verification pending"}
+            {order ? "Order placed successfully!" : "Order not found"}
           </h1>
           <p className="mx-auto max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-            {isPaid && copy
-              ? copy.body
-              : result.error ?? "We could not verify this payment yet."}
+            {order
+              ? "Thank you for your purchase. Your order has been recorded and our team will contact you shortly to confirm delivery."
+              : "We could not find the order details for that reference. Please check your reference or contact support."}
           </p>
         </div>
 
-        {isPaid && result.order ? (
-          <OrderSummary order={result.order} />
-        ) : (
-          <div className="mt-10 rounded-[28px] border border-gray-200 bg-slate-50 p-8 text-center">
-            <p className="text-sm text-slate-600">
-              {result.error ??
-                "We could not find the order details for that reference. Please contact support or try again."}
-            </p>
+        {order ? (
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_320px]">
+            <div className="space-y-6">
+              <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6">
+                <p className="text-sm font-semibold text-slate-800">Order reference</p>
+                <p className="mt-3 break-all text-lg font-medium text-slate-900">{order.reference}</p>
+                <p className="mt-4 text-sm text-slate-600">Payment method: Pay on Delivery</p>
+              </div>
+
+              <div className="rounded-[28px] border border-gray-200 p-6">
+                <h2 className="text-lg font-semibold text-slate-900">Order summary</h2>
+                <div className="mt-5 space-y-4">
+                  {order.items.map((item) => (
+                    <div key={item.id} className="flex items-center gap-4 rounded-3xl bg-white p-4 shadow-sm">
+                      <div className="relative h-16 w-16 overflow-hidden rounded-3xl bg-slate-100">
+                        {item.imageUrl ? (
+                          <Image
+                            src={item.imageUrl}
+                            alt={item.name}
+                            fill
+                            unoptimized={shouldUnoptimizeProductImage(item.imageUrl)}
+                            className="object-cover"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-slate-900">{item.name}</p>
+                        <p className="mt-1 text-sm text-slate-600">Qty: {item.quantity}</p>
+                      </div>
+                      <div className="text-right text-sm text-slate-900">
+                        GHS {Number(item.lineTotal).toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6">
+              <div className="flex items-center gap-3 text-slate-900">
+                <ShoppingBag className="h-5 w-5" />
+                <span className="text-sm font-semibold">Total Amount</span>
+              </div>
+              <p className="mt-4 text-4xl font-semibold text-slate-950">
+                GHS {Number(order.amount).toFixed(2)}
+              </p>
+              <p className="mt-3 text-sm text-slate-600">
+                Customer: {order.customerName ?? order.email}
+                <br />
+                Phone: {order.customerPhone ?? "Not provided"}
+              </p>
+            </div>
           </div>
-        )}
+        ) : null}
 
         <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
@@ -190,10 +108,10 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
             Back to shop
           </Link>
           <Link
-            href="/cart"
+            href="/shop-page"
             className="inline-flex items-center justify-center rounded-3xl bg-emerald-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
           >
-            View cart
+            Browse items
           </Link>
         </div>
       </div>

@@ -1,8 +1,17 @@
 import "server-only";
 
 import { Resend } from "resend";
-import { createReceiptToken } from "@/lib/payment-security";
-import type { PublicOrder } from "@/lib/payments";
+
+export type OrderEmailInput = {
+  reference: string;
+  email: string;
+  amount: number;
+  items: Array<{
+    name: string;
+    quantity: number;
+    lineTotal: number;
+  }>;
+};
 
 export function isEmailConfigured() {
   return Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
@@ -19,11 +28,10 @@ function appOrigin() {
 function orderReceiptUrl(reference: string) {
   const url = new URL("/order-success", appOrigin());
   url.searchParams.set("reference", reference);
-  url.searchParams.set("receipt", createReceiptToken(reference));
   return url.toString();
 }
 
-export async function sendOrderReceiptEmail(order: PublicOrder) {
+export async function sendOrderReceiptEmail(order: OrderEmailInput) {
   const receiptUrl = orderReceiptUrl(order.reference);
 
   if (!isEmailConfigured()) {
@@ -57,7 +65,7 @@ export async function sendOrderReceiptEmail(order: PublicOrder) {
       "Items:",
       itemLines,
       "",
-      `View your receipt: ${receiptUrl}`,
+      `View your order details: ${receiptUrl}`,
       "",
       "Questions? Reply to this email or contact support@comfihealth.com.",
     ].join("\n"),

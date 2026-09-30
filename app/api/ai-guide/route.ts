@@ -114,9 +114,9 @@ const SYMPTOM_SEARCH_EXPANSIONS: Record<string, string[]> = {
 const COMFORT_HEALTH_CONTEXT = `
 COMFORT HEALTH PROJECT CONTEXT:
 - Comfort Health is a Ghana-focused campus pharmacy and wellness shopping app.
-- Users browse pharmacy products, chat with Comfort AI, add recommendations to cart, and checkout in Ghana cedis (GHS).
+- Users browse pharmacy products, chat with Comfort AI, add recommendations to cart, and place orders in Ghana cedis (GHS).
 - Product data comes from the app's Prisma/PostgreSQL catalogue. Only active, in-stock products are included in the prompt.
-- Checkout is handled by Paystack. Do not claim payment is complete unless the app confirms it.
+- Orders are placed directly through the cart checkout.
 - Product recommendations must use the exact product IDs from the catalogue context so the UI can attach add-to-cart cards.
 `;
 

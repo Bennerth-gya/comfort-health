@@ -58,6 +58,8 @@ function configuredOrigins(request: Request) {
   const requestUrl = new URL(request.url);
   const requestHost = requestUrl.hostname;
 
+  origins.add(requestUrl.origin);
+
   for (const value of csv(process.env.ALLOWED_ORIGINS)) {
     origins.add(toOrigin(value));
   }

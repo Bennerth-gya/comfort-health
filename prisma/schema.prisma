@@ -178,7 +178,7 @@ model PaymentTransaction {
   id                String    @id @default(cuid())
   orderId           String    @unique
   reference         String    @unique
-  provider          String    @default("paystack")
+  provider          String    @default("cod")
   providerReference String?
   authorizationUrl  String?
   accessCode        String?

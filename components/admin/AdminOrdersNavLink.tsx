@@ -40,7 +40,7 @@ export default function AdminOrdersNavLink({
     }
 
     void loadPendingCount();
-    const intervalId = window.setInterval(loadPendingCount, 15_000);
+    const intervalId = window.setInterval(loadPendingCount, 60_000);
 
     return () => {
       cancelled = true;

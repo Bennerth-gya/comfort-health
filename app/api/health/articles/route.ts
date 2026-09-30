@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
@@ -40,7 +40,14 @@ export async function GET(req: NextRequest) {
       take: limit,
     })
 
-    return NextResponse.json({ articles })
+    return NextResponse.json(
+      { articles },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=86400',
+        },
+      },
+    )
   } catch (error) {
     console.error('Error fetching health articles:', error)
     return NextResponse.json(

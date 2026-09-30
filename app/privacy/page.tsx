@@ -15,17 +15,12 @@ export default function PrivacyPage() {
 
         <div className="mt-8 space-y-6 text-sm leading-7 text-slate-700">
           <p>
-            Comfi Health collects information you provide at checkout (such as your email address),
-            order details, and payment references processed by Paystack. Admin accounts are managed
-            through Stack Auth.
+            Comfi Health collects information you provide at checkout (such as your name, phone number, delivery address, and email),
+            and order details to fulfill your requests.
           </p>
           <p>
-            We use this information to fulfill orders, prevent fraud, and operate the pharmacy
+            We use this information to fulfill orders, coordinate delivery, and operate the pharmacy
             storefront. We do not sell your personal information to third parties.
-          </p>
-          <p>
-            Payment card and mobile-money details are handled by Paystack; we do not store full
-            payment credentials on our servers.
           </p>
           <p>
             For privacy requests, contact{" "}

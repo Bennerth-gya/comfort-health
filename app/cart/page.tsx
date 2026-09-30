@@ -4,8 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Lock, Minus, Plus, ShieldCheck, ShoppingCart, Trash2, ShoppingBag } from "lucide-react";
-import PaystackCheckout from "@/app/components/PaystackCheckout";
+import { ArrowLeft, Minus, Plus, ShieldCheck, ShoppingCart, Trash2, ShoppingBag } from "lucide-react";
 import { type CartItem, useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
@@ -306,15 +305,6 @@ export default function CartPage() {
               </div>
 
               <div id="checkout-panel" className="mt-4 scroll-mt-24">
-                {/* PAYSTACK_DISABLED — will re-enable after approval
-                <PaystackCheckout
-                  items={cart}
-                  amount={subtotal}
-                  buttonLabel={`Checkout - GHS ${subtotal.toFixed(2)}`}
-                  buttonClassName="w-full flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#15803d] px-5 py-3.5 text-[14px] font-bold text-white transition active:scale-[0.98] hover:bg-[#166534] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15803d]"
-                  buttonIcon={<Lock className="h-4 w-4" />}
-                />
-                */}
                 <Link
                   href="/checkout"
                   className="

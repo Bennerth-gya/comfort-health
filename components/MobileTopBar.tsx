@@ -126,11 +126,11 @@ export default function MobileTopBar() {
             Pharmacist Support
           </Link>
           <Link
-            href="/sign-in"
+            href="/about"
             onClick={() => setIsMenuOpen(false)}
             className="block py-2 text-sm font-semibold hover:text-[#86efac]"
           >
-            My Account
+            About Us
           </Link>
         </div>
       )}

@@ -259,18 +259,6 @@ export const CheckoutRequestSchema = z
   })
   .strict();
 
-export const PaystackWebhookSchema = z
-  .object({
-    event: z.string().optional(),
-    data: z
-      .object({
-        reference: z.string().trim().min(1).optional(),
-      })
-      .passthrough()
-      .optional(),
-  })
-  .passthrough();
-
 const optionalQueryString = (max: number) =>
   z.preprocess(emptyToUndefined, z.string().trim().max(max).optional());
 

@@ -7,38 +7,26 @@ const withAnalyzer = withBundleAnalyzer({
 })
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/@swc/core-linux-x64-gnu',
+      'node_modules/@swc/core-linux-x64-musl',
+      'node_modules/esbuild',
+      'node_modules/terser',
+      'node_modules/typescript',
+    ],
+  },
   turbopack: {
     root: __dirname,
   },
 
-  // ════════════════════════════════════════
-  // THE BUNDLE SIZE KILLER — THIS IS THE
-  // MOST IMPORTANT SECTION IN THIS FILE
-  // ════════════════════════════════════════
   serverExternalPackages: [
     'groq-sdk',
     '@prisma/client',
     'prisma',
     'resend',
-    '@anthropic-ai/sdk',
-    'nodemailer',
-    'bcrypt',
-    'bcryptjs',
-    'jsonwebtoken',
-    'crypto',
-    'fs',
-    'path',
-    'os',
-    'stream',
-    'http',
-    'https',
-    'net',
-    'tls',
-    'child_process',
-    'dns',
     'pg',
-    'pg-native',
-    'pg-pool',
   ],
 
   // ════════════════════════════════════════
@@ -46,7 +34,7 @@ const nextConfig: NextConfig = {
   // ════════════════════════════════════════
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 86400,
+    minimumCacheTTL: 31536000,
     deviceSizes: [375, 390, 412, 768, 1024, 1280, 1920],
     imageSizes: [32, 64, 128, 256, 384],
     remotePatterns: [
@@ -191,15 +179,6 @@ const nextConfig: NextConfig = {
     }
 
     return [
-      {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
       {
         source: '/hero/:path*',
         headers: [

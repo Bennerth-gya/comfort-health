@@ -30,7 +30,7 @@ export default function SupportFab() {
     checkUnread()
     
     // Check periodically
-    const intervalId = setInterval(checkUnread, 10000)
+    const intervalId = setInterval(checkUnread, 60000)
     return () => clearInterval(intervalId)
   }, [])
 

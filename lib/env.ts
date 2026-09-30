@@ -68,10 +68,6 @@ export function getProductionEnvIssues() {
     missing.push("AUTH_GOOGLE_SECRET");
   }
 
-  if (!process.env.PAYSTACK_SECRET_KEY) {
-    missing.push("PAYSTACK_SECRET_KEY");
-  }
-
   if (!process.env.GROQ_API_KEY) {
     missing.push("GROQ_API_KEY");
   }
@@ -85,13 +81,6 @@ export function getProductionEnvIssues() {
 
   if (!process.env.ORDER_RECEIPT_SECRET) {
     missing.push("ORDER_RECEIPT_SECRET");
-  } else if (
-    process.env.PAYSTACK_SECRET_KEY &&
-    process.env.ORDER_RECEIPT_SECRET === process.env.PAYSTACK_SECRET_KEY
-  ) {
-    errors.push(
-      "ORDER_RECEIPT_SECRET must be different from PAYSTACK_SECRET_KEY in production.",
-    );
   }
 
   if (!hasDeploymentOrigin()) {

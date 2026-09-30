@@ -10,7 +10,7 @@ describe("request origin checks", () => {
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("ALLOWED_ORIGINS", "http://localhost:3000");
 
-    const request = new Request("http://192.168.1.25:3000/api/paystack", {
+    const request = new Request("http://192.168.1.25:3000/api/orders/create", {
       method: "POST",
       headers: { origin: "http://192.168.1.25:3000" },
     });
@@ -22,7 +22,7 @@ describe("request origin checks", () => {
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("ALLOWED_ORIGINS", "");
 
-    const request = new Request("http://192.168.1.25:3000/api/paystack", {
+    const request = new Request("http://192.168.1.25:3000/api/orders/create", {
       method: "POST",
       headers: { origin: "http://127.0.0.1:3000" },
     });
@@ -34,7 +34,7 @@ describe("request origin checks", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("ALLOWED_ORIGINS", "https://comfihealth.com");
 
-    const request = new Request("https://comfihealth.com/api/paystack", {
+    const request = new Request("https://comfihealth.com/api/orders/create", {
       method: "POST",
       headers: { origin: "https://attacker.example" },
     });

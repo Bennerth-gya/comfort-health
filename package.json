@@ -17,11 +17,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1056.0",
-    "@better-auth/infra": "^0.2.13",
-    "@paystack/inline-js": "^2.22.9",
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.8.0",
-    "@supabase/server": "^1.4.1",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
     "@upstash/ratelimit": "^2.0.8",
