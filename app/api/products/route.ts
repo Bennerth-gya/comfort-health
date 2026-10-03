@@ -1,12 +1,7 @@
 import { NextResponse } from "next/server";
 import { rateLimitRequest, RequestSecurityError } from "@/lib/request-security";
-import {
-  searchShopProducts,
-} from "@/lib/shop-products";
-import {
-  PublicProductListQuerySchema,
-  validationMessage,
-} from "@/lib/validation";
+import { searchShopProducts } from "@/lib/shop-products";
+import { PublicProductListQuerySchema, validationMessage } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +23,11 @@ export async function GET(req: Request) {
 
     const { limit, skip, q } = parsedQuery.data;
 
+    // Always query live — the catalogue is too large for Next.js unstable_cache (2MB limit).
+    // Browser/CDN caching via Cache-Control handles repeat requests.
     const { products, total } = await searchShopProducts({ q, limit, skip });
+
+    const isSearchQuery = Boolean(q);
 
     return NextResponse.json(
       {
@@ -42,7 +41,11 @@ export async function GET(req: Request) {
       },
       {
         headers: {
-          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+          // Search results: private (user-specific query), short TTL
+          // No-query listing: publicly cacheable for a short time
+          "Cache-Control": isSearchQuery
+            ? "private, no-store"
+            : "public, s-maxage=60, stale-while-revalidate=300",
         },
       },
     );

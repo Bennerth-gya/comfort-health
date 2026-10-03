@@ -1,16 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Headphones, ShoppingBag, BookOpen, UserRound } from "lucide-react";
+import { Home, ShoppingBag, BookOpen, HeartPulse } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/app/context/cartContext";
 
 const tabs = [
   { label: "Home", href: "/", icon: Home },
   { label: "Shop", href: "/shop-page", icon: ShoppingBag },
-  { label: "Health Education", href: "/health", icon: BookOpen },
-  { label: "Support", href: "/support", icon: Headphones },
-  { label: "About Us", href: "/about", icon: UserRound },
+  { label: "Essentials", href: "/student-essentials", icon: BookOpen },
+  { label: "Health Hub", href: "/health", icon: HeartPulse },
 ];
 
 function isActive(pathname: string | null, href: string) {

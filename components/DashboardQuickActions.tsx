@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Package, PlusCircle, ShoppingBag } from "lucide-react";
+import { LayoutDashboard, Package, PlusCircle, ShoppingBag, Tag, BookOpenText } from "lucide-react";
 
 const actions = [
   {
@@ -19,6 +19,18 @@ const actions = [
     title: "Orders",
     description: "Track order details and fulfillment status.",
     icon: ShoppingBag,
+  },
+  {
+    href: "/admin/bundles",
+    title: "Bundles",
+    description: "Create and manage curated student bundles.",
+    icon: Tag,
+  },
+  {
+    href: "/admin/health",
+    title: "Health Articles",
+    description: "Publish and manage Health Hub content.",
+    icon: BookOpenText,
   },
   {
     href: "/dashboard",

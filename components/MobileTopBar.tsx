@@ -89,49 +89,27 @@ export default function MobileTopBar() {
 
       {/* Expandable Mobile Navigation Menu */}
       {isMenuOpen && (
-        <div className="border-t border-[#0f4d36] bg-[#073b28] px-4 py-3 text-white space-y-2 animate-in slide-in-from-top-2">
-          <Link
-            href="/"
-            onClick={() => setIsMenuOpen(false)}
-            className="block py-2 text-sm font-semibold hover:text-[#86efac]"
-          >
-            Home
-          </Link>
-          <Link
-            href="/shop-page"
-            onClick={() => setIsMenuOpen(false)}
-            className="block py-2 text-sm font-semibold hover:text-[#86efac]"
-          >
-            Shop All Medicines
-          </Link>
-          <Link
-            href="/health"
-            onClick={() => setIsMenuOpen(false)}
-            className="block py-2 text-sm font-semibold hover:text-[#86efac]"
-          >
-            Health Education
-          </Link>
-          <Link
-            href="/ai-guide"
-            onClick={() => setIsMenuOpen(false)}
-            className="block py-2 text-sm font-semibold hover:text-[#86efac]"
-          >
-            Ask Comfort AI
-          </Link>
-          <Link
-            href="/support"
-            onClick={() => setIsMenuOpen(false)}
-            className="block py-2 text-sm font-semibold hover:text-[#86efac]"
-          >
-            Pharmacist Support
-          </Link>
-          <Link
-            href="/about"
-            onClick={() => setIsMenuOpen(false)}
-            className="block py-2 text-sm font-semibold hover:text-[#86efac]"
-          >
-            About Us
-          </Link>
+        <div className="border-t border-[#0f4d36] bg-[#073b28] px-4 py-3 text-white space-y-0.5 animate-in slide-in-from-top-2">
+          {[
+            { href: "/", label: "Home" },
+            { href: "/shop-page", label: "Shop All Products" },
+            { href: "/student-essentials", label: "Student Essentials" },
+            { href: "/bundles", label: "Bundles" },
+            { href: "/health", label: "Health Hub" },
+            { href: "/track-order", label: "Track Order" },
+            { href: "/support", label: "Pharmacist Support" },
+            { href: "/ai-guide", label: "Ask Comfort AI" },
+            { href: "/about", label: "About Us" },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center py-2.5 text-sm font-semibold text-white/90 hover:text-white border-b border-white/5 last:border-0"
+            >
+              {label}
+            </Link>
+          ))}
         </div>
       )}
     </header>

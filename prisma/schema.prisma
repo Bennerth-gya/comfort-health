@@ -72,7 +72,12 @@ model Product {
   createAt     DateTime @default(now())
   updateAt     DateTime @updatedAt
 
-  orderItems OrderItem[]
+  // Phase 2: student collections & bundle support
+  studentCollection String?   // hostel | first-aid | exam | personal-care | women | hygiene | wellness
+  tags              String[]  @default([])
+
+  orderItems  OrderItem[]
+  bundleItems BundleItem[]
 
   @@index([userId, createAt])
   @@index([activeListing, createAt])
@@ -320,4 +325,44 @@ model HealthArticle {
   @@index([slug])
   @@index([isPublished, createdAt])
   @@map("health_article")
+}
+
+// ─── Bundles ────────────────────────────────────────────────────────────────
+
+model Bundle {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  imageUrl    String?
+  price       Decimal  @db.Decimal(12, 2)
+  compareAt   Decimal? @db.Decimal(12, 2) // optional "was" price for savings messaging
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  category    String?  // hostel | first-aid | exam | personal-care | women | wellness
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  items BundleItem[]
+
+  @@index([isActive, isFeatured])
+  @@index([isActive, sortOrder])
+  @@index([category])
+  @@map("bundle")
+}
+
+model BundleItem {
+  id        String @id @default(cuid())
+  bundleId  String
+  productId String
+  quantity  Int    @default(1)
+  sortOrder Int    @default(0)
+
+  bundle  Bundle  @relation(fields: [bundleId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([bundleId])
+  @@index([productId])
+  @@map("bundle_item")
 }

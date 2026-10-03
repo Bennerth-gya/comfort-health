@@ -64,9 +64,11 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
 
   const navItems = [
     { href: '/', label: 'Home', active: pathname === '/' },
-    { href: '/shop-page', label: 'Shop', active: pathname.startsWith('/shop') || pathname.startsWith('/products') },
-    { href: '/health', label: 'Health Education', active: pathname === '/health' || pathname.startsWith('/health/') },
-    { href: '/support', label: 'Pharmacist Support', active: pathname === '/support' || pathname.startsWith('/support/') },
+    { href: '/shop-page', label: 'Shop', active: (pathname.startsWith('/shop') || pathname.startsWith('/products')) && !pathname.startsWith('/shop-page') || pathname === '/shop-page' },
+    { href: '/student-essentials', label: 'Student Essentials', active: pathname.startsWith('/student-essentials') },
+    { href: '/bundles', label: 'Bundles', active: pathname.startsWith('/bundles') },
+    { href: '/health', label: 'Health Hub', active: pathname === '/health' || pathname.startsWith('/health/') },
+    { href: '/track-order', label: 'Track Order', active: pathname === '/track-order' },
   ];
 
   return (
@@ -92,9 +94,9 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search health topics, medicines, vitamins..."
+            placeholder="Search products, health topics..."
             className="h-full min-w-0 flex-1 bg-transparent px-3 text-base text-[#0f2318] outline-none placeholder:text-gray-400"
-            aria-label="Search health topics, medicines, vitamins"
+            aria-label="Search products and health topics"
           />
         </form>
 
@@ -108,23 +110,20 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
               }`}
             >
               {item.label}
-              {item.href === '/support' && (
-                <span className="relative flex h-2 w-2">
-                  {isPharmacyOpen && (
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  )}
-                  <span className={`relative inline-flex h-2 w-2 rounded-full ${isPharmacyOpen ? 'bg-emerald-500' : 'bg-gray-400'}`} />
-                </span>
-              )}
             </Link>
           ))}
 
           <Link
-            href="/about"
+            href="/support"
             className="flex h-9 items-center justify-center gap-1.5 rounded-full border border-[#254532] bg-white/5 px-3 text-sm font-medium text-white transition hover:bg-white/10"
-            aria-label="About Us"
           >
-            About Us
+            <span className="relative flex h-2 w-2">
+              {isPharmacyOpen && (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              )}
+              <span className={`relative inline-flex h-2 w-2 rounded-full ${isPharmacyOpen ? 'bg-emerald-500' : 'bg-gray-400'}`} />
+            </span>
+            Support
           </Link>
 
           {showDashboard && (

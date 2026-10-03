@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { type DosageGuide, normalizeDosageGuide } from "@/lib/dosage-guide";
 import { prisma } from "@/lib/prisma";
 import ProductDetailsClient from "@/app/products/ProductDetailsClient";
+import ProductCard from "@/app/components/ProductCard";
 
 type ProductDetails = {
   id: string;
@@ -20,16 +21,29 @@ type ProductDetails = {
   activeListing: boolean;
 };
 
+type RelatedProduct = {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string | null;
+  category: string | null;
+  prescriptionRequired: boolean;
+  quantity: number;
+  activeListing: boolean;
+  isFeatured: boolean;
+};
+
 export const revalidate = 86400; // revalidate once per day
 
 export async function generateStaticParams() {
   const products = await prisma.product.findMany({
     select: { id: true },
     take: 20,
-    orderBy: { createAt: 'desc' }
+    orderBy: { createAt: "desc" },
   });
-  return products.map(p => ({ id: p.id }));
+  return products.map((p) => ({ id: p.id }));
 }
+
 export default async function ProductDetailsPage({
   params,
 }: {
@@ -109,5 +123,92 @@ export default async function ProductDetailsPage({
     dosageGuide: normalizeDosageGuide(product.dosageGuide),
   };
 
-  return <ProductDetailsClient product={productDetails} />;
+  // Fetch related products from the same category (exclude self)
+  let relatedProducts: RelatedProduct[] = [];
+  if (product.category) {
+    try {
+      const raw = await prisma.product.findMany({
+        where: {
+          category: product.category,
+          id: { not: id },
+          activeListing: true,
+          quantity: { gt: 0 },
+        },
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          imageUrl: true,
+          category: true,
+          prescriptionRequired: true,
+          quantity: true,
+          activeListing: true,
+          isFeatured: true,
+        },
+        take: 6,
+        orderBy: [{ isFeatured: "desc" }, { createAt: "desc" }],
+      });
+      relatedProducts = raw.map((p) => ({
+        ...p,
+        price: parseFloat(p.price.toString()),
+      }));
+    } catch {
+      // Non-critical — just don't show related
+    }
+  }
+
+  return (
+    <>
+      <ProductDetailsClient product={productDetails} />
+
+      {relatedProducts.length > 0 && (
+        <section className="border-t border-[#e5e7eb] bg-[#f8faf8] pb-16 pt-10">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#15803d]">
+                  You might also need
+                </p>
+                <h2 className="mt-1 text-xl font-bold text-[#0f2318]">
+                  More in {product.category}
+                </h2>
+              </div>
+              <Link
+                href={`/shop-page?category=${encodeURIComponent(product.category ?? "")}`}
+                className="hidden text-sm font-semibold text-[#15803d] hover:underline sm:block"
+              >
+                See all →
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+              {relatedProducts.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  product={{
+                    id: p.id,
+                    name: p.name,
+                    price: p.price,
+                    imageUrl: p.imageUrl,
+                    category: p.category,
+                    prescriptionRequired: p.prescriptionRequired,
+                    quantity: p.quantity,
+                  }}
+                />
+              ))}
+            </div>
+
+            <div className="mt-6 sm:hidden">
+              <Link
+                href={`/shop-page?category=${encodeURIComponent(product.category ?? "")}`}
+                className="block w-full rounded-xl border border-[#15803d] py-2.5 text-center text-sm font-semibold text-[#15803d]"
+              >
+                See all in {product.category}
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+    </>
+  );
 }

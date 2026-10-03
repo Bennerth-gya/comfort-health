@@ -8,6 +8,7 @@ import { ArrowLeft, Minus, Plus, ShieldCheck, ShoppingCart, Trash2, ShoppingBag 
 import { type CartItem, useCart } from "@/app/context/cartContext";
 import { useToast } from "@/app/context/toastContext";
 import { shouldUnoptimizeProductImage } from "@/lib/image-url";
+import CartCrossSell from "@/app/components/CartCrossSell";
 
 function CartItemRow({
   item,
@@ -349,6 +350,10 @@ export default function CartPage() {
           </div>
         )}
       </div>
+
+      {cart.length > 0 && (
+        <CartCrossSell cartProductIds={cart.map((i) => i.id)} />
+      )}
 
       {cart.length > 0 ? (
         <Link

@@ -38,7 +38,7 @@ type SearchState =
   | { status: "error"; message: string };
 
 const PAGE_SIZE = 48;
-const LIVE_SEARCH_DELAY_MS = 120;
+const LIVE_SEARCH_DELAY_MS = 80;
 
 async function fetchProducts(query: string, signal: AbortSignal) {
   const params = new URLSearchParams();
@@ -218,34 +218,26 @@ export default function ShopSearchBar({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [inputValue, setInputValue] = useState(initialQuery);
-  const [isFocused, setIsFocused] = useState(false);
   const [searchState, setSearchState] = useState<SearchState>({ status: "idle" });
 
   const debouncedQuery = useDebounce(inputValue.trim(), LIVE_SEARCH_DELAY_MS);
 
   const query = inputValue.trim();
-  const hasQuery = query.length > 0;
+  const isClientFetching = searchState.status === "loading" || searchState.status === "idle";
+
   const displayedProducts = (() => {
-    if (!query) {
-      return initialProducts;
-    }
-
-    if (searchState.status === "success" && debouncedQuery === query) {
-      return searchState.products;
-    }
-
-    return filterProductsLocally(initialProducts, query);
+    // Server returned results → show them
+    if (searchState.status === "success") return searchState.products;
+    // Still loading → show nothing (skeleton will render)
+    if (isClientFetching) return [];
+    // Error → empty
+    if (searchState.status === "error") return [];
+    // Fallback: local filter of any pre-loaded SSR products
+    return query ? filterProductsLocally(initialProducts, query) : initialProducts;
   })();
 
   const displayedTotal = (() => {
-    if (!query) {
-      return initialTotal;
-    }
-
-    if (searchState.status === "success" && debouncedQuery === query) {
-      return searchState.total;
-    }
-
+    if (searchState.status === "success") return searchState.total;
     return displayedProducts.length;
   })();
 
@@ -299,8 +291,11 @@ export default function ShopSearchBar({
   }, []);
 
   useEffect(() => {
-    // Skip the very first render if we have SSR data and the query matches.
-    if (searchState.status === "idle" && debouncedQuery === initialQuery) {
+    // If the server pre-loaded products and the query matches, skip the
+    // initial fetch (SSR data is already showing). Otherwise always fetch
+    // so the client loads products itself (fast-shell pattern).
+    const hasSSRData = initialProducts.length > 0;
+    if (hasSSRData && searchState.status === "idle" && debouncedQuery === initialQuery) {
       return;
     }
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -334,7 +329,8 @@ export default function ShopSearchBar({
     inputRef.current?.focus();
   }
 
-  const isLoading = searchState.status === "loading";
+  // "idle" = just mounted, fetch not yet started — treat as loading so the skeleton shows
+  const isLoading = searchState.status === "loading" || searchState.status === "idle";
 
   return (
     <div className={`w-full ${className}`}>
@@ -344,12 +340,7 @@ export default function ShopSearchBar({
           Search products
         </label>
 
-        <div
-          className={`flex h-12 w-full items-center rounded-full border-[1.5px] bg-white transition-all duration-150 ${isFocused
-              ? "border-[#15803d] shadow-[0_0_0_4px_rgba(21,128,61,0.10)]"
-              : "border-[#d1fae5] shadow-sm"
-            }`}
-        >
+        <div className="flex h-12 w-full items-center rounded-full border-[1.5px] border-[#d1fae5] bg-white">
           {/* Left icon */}
           <div className="ml-4 shrink-0">
             {isLoading ? (
@@ -359,8 +350,7 @@ export default function ShopSearchBar({
               />
             ) : (
               <Search
-                className={`h-[18px] w-[18px] transition-colors duration-150 ${isFocused ? "text-[#15803d]" : "text-[#15803d]"
-                  }`}
+                className="h-[18px] w-[18px] text-[#15803d]"
                 aria-hidden
               />
             )}
@@ -373,8 +363,6 @@ export default function ShopSearchBar({
             name="q"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
             placeholder="Search through medicines..."
             autoComplete="off"
             enterKeyHint="search"
@@ -382,8 +370,6 @@ export default function ShopSearchBar({
             aria-busy={isLoading}
             className="h-full min-w-0 flex-1 bg-transparent px-3 text-base text-[#1E2421] outline-none placeholder:text-gray-400 [&::-webkit-search-cancel-button]:appearance-none"
           />
-
-          {/* Clear button / kbd hint */}
           {inputValue ? (
             <button
               type="button"

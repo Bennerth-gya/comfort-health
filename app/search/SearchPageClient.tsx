@@ -208,7 +208,7 @@ export default function SearchPageClient({
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
-          <div className="flex h-12 min-w-0 flex-1 items-center rounded-xl border border-[#d1fae5] bg-white px-3">
+          <div className="flex h-12 min-w-0 flex-1 items-center rounded-xl border border-[#d1fae5] bg-white px-3 transition-colors focus-within:border-[#15803d]">
             <Search className="h-[18px] w-[18px] shrink-0 text-[#15803d]" aria-hidden="true" />
             <input
               ref={inputRef}
