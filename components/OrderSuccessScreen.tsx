@@ -259,14 +259,7 @@ export default function OrderSuccessScreen({ orderResult, form }: OrderSuccessSc
             <ChevronRight size={18} />
           </button>
 
-          <button
-            type="button"
-            onClick={() => router.push("/orders")}
-            className="w-full flex items-center justify-center gap-2 bg-white text-[#0f2318] rounded-2xl py-3.5 text-[14px] font-semibold border border-gray-200 active:scale-[0.98] transition-all"
-          >
-            <ShoppingBag size={16} />
-            View my orders
-          </button>
+
         </div>
       </div>
     </div>

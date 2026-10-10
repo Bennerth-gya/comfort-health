@@ -2,7 +2,6 @@
 export const ADMIN_ROUTE_PREFIXES = [
   "/dashboard",
   "/inventory",
-  "/orders",
   "/add-products",
 ] as const;
 

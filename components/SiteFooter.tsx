@@ -72,8 +72,6 @@ export default function SiteFooter() {
             <h3 className="text-xs font-bold uppercase tracking-widest text-white/40">Help</h3>
             <ul className="mt-3 space-y-2">
               {[
-                { href: "/track-order", label: "Track Order" },
-                { href: "/orders", label: "My Orders" },
                 { href: "/support", label: "Pharmacist Support" },
                 { href: "/ai-guide", label: "Ask Comfort AI" },
                 { href: "/health", label: "Health Hub" },

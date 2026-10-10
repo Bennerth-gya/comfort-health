@@ -96,7 +96,6 @@ export default function MobileTopBar() {
             { href: "/student-essentials", label: "Student Essentials" },
             { href: "/bundles", label: "Bundles" },
             { href: "/health", label: "Health Hub" },
-            { href: "/track-order", label: "Track Order" },
             { href: "/support", label: "Pharmacist Support" },
             { href: "/ai-guide", label: "Ask Comfort AI" },
             { href: "/about", label: "About Us" },

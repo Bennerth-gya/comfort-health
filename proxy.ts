@@ -5,7 +5,6 @@ const ADMIN_PATHS = [
   '/dashboard',
   '/admin',
   '/inventory',
-  '/orders',
   '/add-products',
   '/api/admin',
 ]
@@ -81,7 +80,6 @@ export const config = {
     '/dashboard/:path*',
     '/admin/:path*',
     '/inventory/:path*',
-    '/orders/:path*',
     '/add-products/:path*',
     '/api/admin/:path*',
   ],

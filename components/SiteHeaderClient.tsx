@@ -68,7 +68,6 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
     { href: '/student-essentials', label: 'Student Essentials', active: pathname.startsWith('/student-essentials') },
     { href: '/bundles', label: 'Bundles', active: pathname.startsWith('/bundles') },
     { href: '/health', label: 'Health Hub', active: pathname === '/health' || pathname.startsWith('/health/') },
-    { href: '/track-order', label: 'Track Order', active: pathname === '/track-order' },
   ];
 
   return (
