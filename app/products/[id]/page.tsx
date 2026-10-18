@@ -35,15 +35,6 @@ type RelatedProduct = {
 
 export const revalidate = 86400; // revalidate once per day
 
-export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    select: { id: true },
-    take: 20,
-    orderBy: { createAt: "desc" },
-  });
-  return products.map((p) => ({ id: p.id }));
-}
-
 export default async function ProductDetailsPage({
   params,
 }: {

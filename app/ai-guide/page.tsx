@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowLeft, HeartPulse, Mic, Send, ShoppingCart, Phone } from "lucide-react";
+import {
+  ArrowLeft,
+  HeartPulse,
+  Mic,
+  Send,
+  ShoppingCart,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useRef, useState } from "react";
@@ -78,7 +87,7 @@ const OPENING_MESSAGE: Message = {
   id: "opening-message",
   role: "assistant",
   content:
-    "Hello! 👋 I'm Comfort AI, your personal health guide.\nTell me how you're feeling and I'll suggest the right products from our pharmacy - whether it's a headache, fever, cough, stomach issues, or anything else.\n\nWhat symptoms are you experiencing today?",
+    "Hi, I'm Comfort AI. Tell me what's bothering you and I'll help you explore suitable options from our pharmacy.\n\nWhat would you like help with today?",
   timestamp: new Date(0),
 };
 
@@ -364,10 +373,13 @@ export default function AiGuidePage() {
           id: createId("assistant"),
           role: "assistant",
           content:
-            data.message?.trim() ??
+            data.message?.replace(/\*/g, "").trim() ??
             "I found a few products that may help. Please check the labels and speak with a pharmacist if symptoms persist.",
           recommendations: Array.isArray(data.recommendations)
-            ? data.recommendations
+            ? data.recommendations.map((product) => ({
+                ...product,
+                reason: product.reason.replace(/\*/g, "").trim(),
+              }))
             : [],
           timestamp: new Date(),
         },
@@ -661,55 +673,58 @@ export default function AiGuidePage() {
   const initials = userInitials(session?.user);
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-[#f8faf8] text-[#1a2e22]">
-      <nav className="flex h-16 flex-none items-center bg-[#1a2e22] px-3">
-        <div className="grid w-full grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-2">
+    <div className="flex h-dvh flex-col overflow-hidden bg-[#f4f7f2] text-[#183326]">
+      <nav className="flex h-17 flex-none items-center bg-[#163d2b] px-4 shadow-sm">
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-[42px_minmax(0,1fr)_auto] items-center gap-3">
           <button
             type="button"
             aria-label="Back to shop"
             onClick={() => router.push("/")}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-[#86efac] transition hover:bg-white/10"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-[#b7e5c0] transition hover:bg-white/10"
           >
             <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           </button>
 
           <div className="flex min-w-0 items-center justify-center gap-2">
-            <div className="relative flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#15803d] to-[#059669] text-white">
+            <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f0f8e9] text-[#17633c]">
               <HeartPulse className="h-4 w-4" aria-hidden="true" />
-              <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-[#1a2e22] bg-[#4ade80]" />
+              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#163d2b] bg-[#83c780]" />
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-bold leading-tight text-white">
+              <p className="truncate text-[15px] font-bold leading-tight text-white">
                 Comfort AI
               </p>
-              <p className="truncate text-[10px] leading-tight text-[#4ade80]">
-                ● Online · powered by Groq
+              <p className="truncate text-[11px] leading-tight text-[#b7e5c0]">
+                Your pharmacy health guide
               </p>
             </div>
           </div>
 
-          <span className="rounded-[20px] border border-[rgba(74,222,128,0.3)] bg-[rgba(74,222,128,0.15)] px-3 py-1 text-[10px] font-semibold text-[#4ade80]">
-            AI Guide
+          <span className="hidden items-center gap-1.5 rounded-full border border-white/20 px-3 py-1.5 text-[11px] font-medium text-[#e3f2df] sm:flex">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#83c780]" />
+            Here to help
           </span>
         </div>
       </nav>
 
-      <div className="flex items-center justify-between px-3 py-2.5 bg-[#fff7ed] border-b border-[#fed7aa] flex-shrink-0">
-        <div className="flex items-center gap-2">
-          <Phone size={13} color="#92400e" />
-          <p className="text-[#92400e] text-[11px] font-[500]">
-            Prefer to talk to a real person?
-          </p>
+      <div className="flex flex-none items-center justify-between gap-3 border-b border-[#eadfca] bg-[#fffaf0] px-4 py-2.5 sm:px-6">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2 text-[#72532a]">
+            <ShieldCheck size={16} aria-hidden="true" />
+            <p className="truncate text-xs font-medium sm:text-sm">
+              Prefer advice from a pharmacist?
+            </p>
+          </div>
+          <PharmacyCallChooser
+            className="shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold text-[#72532a] transition hover:bg-[#f5ecd9] sm:px-4"
+          >
+            <span className="inline-flex items-center gap-1.5"><Phone size={13} aria-hidden="true" /> Call pharmacist</span>
+          </PharmacyCallChooser>
         </div>
-        <PharmacyCallChooser
-          className="bg-transparent p-0 text-[#92400e] text-[11px] font-[700] underline underline-offset-2"
-        >
-          Call pharmacist
-        </PharmacyCallChooser>
       </div>
 
       {showDisclaimer ? (
-        <div className="mx-3 mt-3 flex gap-2 rounded-[10px] border border-[#fed7aa] bg-[#fff7ed] px-3 py-2 text-[11px] leading-snug text-[#9a3412]">
+        <div className="mx-auto mt-3 flex w-[calc(100%-2rem)] max-w-5xl gap-2 rounded-xl border border-[#eadfca] bg-[#fffaf0] px-3.5 py-2.5 text-xs leading-snug text-[#72532a]">
           <span className="text-sm" aria-hidden="true">
             ⚠️
           </span>
@@ -722,22 +737,36 @@ export default function AiGuidePage() {
 
       <main
         aria-live="polite"
-        className="h-[calc(100dvh-64px)] overflow-y-auto px-4 pb-48 pt-4"
+        className="min-h-0 flex-1 overflow-y-auto px-4 pb-6 pt-6 sm:px-6 sm:pt-8"
       >
-        <div className="mx-auto flex max-w-3xl flex-col gap-3">
+        <div className="mx-auto max-w-3xl">
+          <header className="mb-7 border-b border-[#dce7dc] pb-6 sm:mb-9 sm:pb-7">
+            <div className="mb-3 inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase text-[#39734d]">
+              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+              A little support, whenever you need it
+            </div>
+            <h1 className="max-w-xl text-[28px] font-semibold leading-[1.12] text-[#183326] sm:text-[36px]">
+              Let’s find a helpful next step.
+            </h1>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#627267] sm:text-[15px]">
+              Share how you’re feeling. Comfort AI can help you explore pharmacy options and when to speak with a professional.
+            </p>
+          </header>
+
+          <div className="flex flex-col gap-4">
           {messages.map((message) => {
             const isUser = message.role === "user";
 
             return (
               <div
                 key={message.id}
-                className={`flex items-end gap-2 ${isUser ? "flex-row-reverse" : ""}`}
+                className={`flex items-end gap-2.5 ${isUser ? "flex-row-reverse" : ""}`}
               >
                 <div
-                  className={`flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
                     isUser
-                      ? "bg-[#15803d] text-white"
-                      : "bg-gradient-to-br from-[#15803d] to-[#059669] text-white"
+                        ? "bg-[#dcebdc] text-[#285c3a]"
+                        : "bg-[#dcebdc] text-[#285c3a]"
                   }`}
                   aria-hidden="true"
                 >
@@ -749,16 +778,21 @@ export default function AiGuidePage() {
                 </div>
 
                 <div
-                  className={`max-w-[80%] break-words rounded-[14px] px-3.5 py-2.5 text-[13px] leading-relaxed ${
+                    className={`max-w-[88%] wrap-break-word px-4 py-3.5 text-sm leading-[1.7] sm:max-w-[82%] sm:px-5 ${
                     isUser
-                      ? "rounded-br-[4px] bg-[#15803d] text-white"
-                      : "rounded-bl-[4px] border border-[#e5e7eb] bg-white text-[#1a2e22]"
+                        ? "rounded-[20px] rounded-br-[5px] bg-[#24643f] text-white shadow-sm"
+                        : "rounded-[20px] rounded-bl-[5px] border border-[#dce7dc] bg-white text-[#243b2e] shadow-[0_3px_16px_rgba(32,68,44,0.04)]"
                   }`}
                 >
+                  {!isUser ? (
+                    <p className="mb-1 text-[10px] font-bold uppercase text-[#53815d]">
+                      Comfort AI
+                    </p>
+                  ) : null}
                   <p className="whitespace-pre-line">{message.content}</p>
 
                   {!isUser && message.recommendations?.length ? (
-                    <div className="mt-3 space-y-2">
+                    <div className="mt-4 space-y-2.5">
                       {message.recommendations.map((product) => {
                         const productKey = `${message.id}:${product.id}`;
                         const wasAdded = Boolean(addedProducts[productKey]);
@@ -768,19 +802,19 @@ export default function AiGuidePage() {
                         return (
                           <div
                             key={product.id}
-                            className="flex items-center gap-2.5 rounded-[10px] border border-[#bbf7d0] bg-[#f0fdf4] px-[11px] py-[9px]"
+                            className="overflow-hidden rounded-xl border border-[#d3e4d2] bg-[#f6faf3] p-3 shadow-[0_2px_8px_rgba(32,68,44,0.04)] transition-colors hover:border-[#a8c8aa]"
                           >
-                            <div className="relative flex h-[34px] w-[34px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#bbf7d0] bg-white text-base">
+                            <div className="relative flex h-36 w-full items-center justify-center overflow-hidden rounded-xl border border-[#e1e9dc] bg-white text-5xl">
                               {product.imageUrl ? (
                                 <Image
                                   src={product.imageUrl}
                                   alt={product.name}
-                                  width={34}
-                                  height={34}
+                                  width={160}
+                                  height={160}
                                   unoptimized={shouldUnoptimizeProductImage(
                                     product.imageUrl,
                                   )}
-                                  className="h-[34px] w-[34px] object-cover"
+                                  className="h-full w-full object-contain p-3"
                                 />
                               ) : (
                                 <span aria-hidden="true">
@@ -789,29 +823,29 @@ export default function AiGuidePage() {
                               )}
                             </div>
 
-                            <div className="min-w-0 flex-1">
-                              <p className="truncate text-xs font-bold text-[#14532d]">
+                            <div className="mt-3 min-w-0">
+                              <p className="text-sm font-semibold leading-snug text-[#244d32]">
                                 {product.name}
                               </p>
-                              <p className="mt-0.5 text-[10px] leading-[1.4] text-[#166534]">
+                              <p className="mt-1.5 text-xs leading-relaxed text-[#52745a]">
                                 {product.reason}
                               </p>
                             </div>
 
-                            <div className="flex shrink-0 flex-col items-end gap-1">
-                              <p className="text-xs font-bold text-[#15803d]">
+                            <div className="mt-3 flex items-center justify-between gap-3">
+                              <p className="text-[13px] font-bold text-[#24643f]">
                                 {formatPrice(product.price)}
                               </p>
                               <button
                                 type="button"
                                 disabled={addDisabled}
                                 onClick={() => handleAddToCart(product, message.id)}
-                                className={`rounded-md px-2.5 py-1 text-[10px] font-semibold text-white transition disabled:cursor-not-allowed ${
+                                className={`min-h-9 rounded-lg px-3 py-2 text-xs font-semibold text-white transition disabled:cursor-not-allowed ${
                                   wasAdded
                                     ? "bg-[#059669]"
                                     : product.prescriptionRequired
                                       ? "bg-gray-400"
-                                      : "bg-[#15803d] hover:bg-[#166534]"
+                                      : "bg-[#24643f] hover:bg-[#194b2d]"
                                 }`}
                               >
                                 {wasAdded
@@ -833,13 +867,13 @@ export default function AiGuidePage() {
 
           {isLoading ? (
             <div className="flex items-end gap-2">
-              <div className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#15803d] to-[#059669] text-white">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#dcebdc] text-[#285c3a]">
                 <HeartPulse className="h-3.5 w-3.5" aria-hidden="true" />
               </div>
               <div
                 role="status"
                 aria-label="Comfort AI is typing"
-                className="flex max-w-[80%] items-center gap-1 rounded-[14px] rounded-bl-[4px] border border-[#e5e7eb] bg-white px-3.5 py-3"
+                className="flex max-w-[80%] items-center gap-1 rounded-[20px] rounded-bl-[5px] border border-[#dce7dc] bg-white px-4 py-3.5"
               >
                 <span className="ai-guide-dot h-1.5 w-1.5 rounded-full bg-[#15803d]" />
                 <span className="ai-guide-dot h-1.5 w-1.5 rounded-full bg-[#15803d] [animation-delay:0.2s]" />
@@ -849,49 +883,15 @@ export default function AiGuidePage() {
           ) : null}
 
           <div ref={chatEndRef} />
+          </div>
         </div>
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-[#f0f0f0] bg-white px-4 pb-3 pt-2">
+      <div className="z-30 flex-none border-t border-[#dce7dc] bg-white px-4 pb-3 pt-3 shadow-[0_-8px_24px_rgba(32,68,44,0.05)] safe-bottom sm:px-6">
         <div className="mx-auto max-w-3xl">
-          <div style={{ position: 'relative', textAlign: 'center', margin: '12px 0 6px 0' }}>
-            <hr style={{ borderColor: '#e5e7eb', margin: 0 }} />
-            <span style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              background: 'white',
-              padding: '0 10px',
-              fontSize: '11px',
-              color: '#9ca3af',
-              whiteSpace: 'nowrap'
-            }}>
-              or speak to a real person
-            </span>
-          </div>
-          <PharmacyCallChooser
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              color: '#15803d',
-              fontSize: '13px',
-              fontWeight: 600,
-              textDecoration: 'none',
-              padding: '8px 0',
-              marginBottom: '4px',
-              background: 'transparent'
-            }}
-          >
-            <Phone size={14} color="#15803d" />
-            Call our pharmacist directly
-          </PharmacyCallChooser>
-
           <div className="mb-2">
-            <p className="mb-1 text-[10px] text-gray-400">Quick questions</p>
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase text-[#738276]">Try asking</p>
+            <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-1">
               {QUICK_QUESTIONS.map((question) => (
                 <button
                   key={question}
@@ -901,7 +901,7 @@ export default function AiGuidePage() {
                     setInput(question);
                     void sendMessage(question);
                   }}
-                  className="shrink-0 rounded-[20px] border border-[#bbf7d0] bg-[#f0fdf4] px-3 py-1.5 text-[11px] text-[#166534] transition hover:bg-[#dcfce7] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="shrink-0 rounded-full border border-[#d4e7d5] bg-[#f5faf2] px-3.5 py-2 text-xs font-medium text-[#315c3d] transition hover:bg-[#e8f2e4] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {question}
                 </button>
@@ -910,12 +910,12 @@ export default function AiGuidePage() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div className="flex items-center gap-1 rounded-[22px] border-[1.5px] border-[#d1fae5] bg-[#f8faf8] px-1.5">
+            <div className="flex items-center gap-1 rounded-2xl border border-[#cbdccc] bg-[#f8faf6] px-1.5 shadow-inner focus-within:border-[#6a9a70]">
               <input
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
-                placeholder="Describe your symptoms..."
-                className="min-w-0 flex-1 bg-transparent px-3 py-3 text-[13px] text-[#1a2e22] outline-none placeholder:text-gray-400"
+                placeholder="Tell me how you’re feeling..."
+                className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-[#183326] outline-none placeholder:text-[#859188]"
               />
 
               <button
@@ -923,7 +923,7 @@ export default function AiGuidePage() {
                 aria-label={isRecording ? "Stop voice input" : "Voice input"}
                 disabled={isTranscribing}
                 onClick={() => void startVoiceInput()}
-                className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[#15803d] transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[#315c3d] transition hover:bg-[#e8f2e4] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Mic className="h-4 w-4" aria-hidden="true" />
                 {isRecording ? (
@@ -937,21 +937,21 @@ export default function AiGuidePage() {
                 type="submit"
                 aria-label="Send message"
                 disabled={!input.trim() || isLoading}
-                className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#15803d] to-[#059669] text-white transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#24643f] text-white transition hover:bg-[#194b2d] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           </form>
 
-          <p className="mt-2 text-center text-[10px] text-gray-400">
-            Comfort AI suggests products only - not medical advice
+          <p className="mt-2 text-center text-[10px] text-[#7b887e]">
+            Product suggestions are not a diagnosis or a substitute for medical advice.
           </p>
         </div>
       </div>
 
       {chatToast ? (
-        <div className="fixed bottom-32 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full bg-[#1a2e22] px-4 py-2 text-xs font-semibold text-white shadow-lg">
+        <div className="fixed bottom-32 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full bg-[#183326] px-4 py-2 text-xs font-semibold text-white shadow-lg">
           <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
           {chatToast}
         </div>

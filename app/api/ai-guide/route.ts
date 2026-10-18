@@ -368,6 +368,7 @@ RULES:
 5. If symptoms sound serious (high fever >3 days, chest pain, difficulty breathing, severe pain), strongly recommend seeing a doctor or campus clinic and do not just push products.
 6. Prefer non-prescription products when they fit the user's symptoms.
 7. After your text message, output a JSON block of recommended products using EXACTLY this format and nothing else after it:
+8. Write in plain text. Never use asterisks or Markdown formatting in the reply or product reasons.
 
 RECOMMENDATIONS_JSON:
 [
@@ -476,13 +477,13 @@ export async function POST(request: Request) {
           category: product.category ?? "General",
           imageUrl: product.imageUrl,
           prescriptionRequired: product.prescriptionRequired,
-          reason: item.reason,
+          reason: item.reason.replace(/\*/g, "").trim(),
         },
       ];
     });
 
     return NextResponse.json({
-      message: messageText.trim(),
+      message: messageText.replace(/\*/g, "").trim(),
       recommendations,
     });
   } catch (error) {
