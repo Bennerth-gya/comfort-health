@@ -5,7 +5,7 @@ import { ArrowRight, BriefcaseMedical, Heart, BookOpen, Sparkles, Users, Package
 import ProductCard from "@/app/components/ProductCard";
 import { prisma } from "@/lib/prisma";
 
-export const revalidate = 1800;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Student Essentials | ComfortHealth",

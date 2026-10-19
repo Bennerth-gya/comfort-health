@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Package, ArrowRight, Tag, CheckCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
-export const revalidate = 1800;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Bundles | ComfortHealth",

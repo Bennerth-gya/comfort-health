@@ -6,7 +6,7 @@ import { CheckCircle, ArrowLeft, Package, MessageCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import AddBundleToCartButton from "./AddBundleToCartButton";
 
-export const revalidate = 1800;
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
