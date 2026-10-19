@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimitRequest, RequestSecurityError } from "@/lib/request-security";
 
-export const revalidate = 3600; // revalidate at most every 1 hour
+export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   try {
     await rateLimitRequest(request, "product:public", { limit: 120, windowMs: 60_000 });
