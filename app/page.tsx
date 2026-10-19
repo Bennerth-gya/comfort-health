@@ -1,4 +1,5 @@
-export const revalidate = 3600;
+// Query live catalog data at request time, without requiring a database during builds.
+export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { Suspense } from "react";

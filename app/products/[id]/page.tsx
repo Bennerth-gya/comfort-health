@@ -33,7 +33,8 @@ type RelatedProduct = {
   isFeatured: boolean;
 };
 
-export const revalidate = 86400; // revalidate once per day
+// Query live catalog data at request time, without requiring a database during builds.
+export const dynamic = "force-dynamic";
 
 export default async function ProductDetailsPage({
   params,
