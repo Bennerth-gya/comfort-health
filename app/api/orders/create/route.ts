@@ -70,65 +70,206 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Your cart is empty" }, { status: 400 });
     }
 
-    // ── Verify products exist and are in stock ─────────────────────────────
+    // ── Verify products & bundles exist and are in stock ────────────────────
 
-    type RawItem = { productId?: unknown; id?: unknown; quantity?: unknown; price?: unknown };
+    type RawItem = {
+      productId?: unknown;
+      id?: unknown;
+      quantity?: unknown;
+      price?: unknown;
+      isBundle?: unknown;
+      bundleId?: unknown;
+    };
 
-    const productIds = items.map((i: RawItem) => {
-      const id = i.productId ?? i.id;
-      return typeof id === "string" ? id : "";
-    });
+    const rawItems = items as RawItem[];
+    const regularItems: Array<{ id: string; quantity: number }> = [];
+    const bundleRequests: Array<{ bundleId: string; quantity: number }> = [];
 
-    const products = await prisma.product.findMany({
-      where: { id: { in: productIds }, activeListing: true },
-      select: { id: true, name: true, quantity: true, price: true, imageUrl: true, category: true, userId: true },
-    });
+    for (const item of rawItems) {
+      const rawId = String(item.productId ?? item.id ?? "");
+      const isBundle = Boolean(item.isBundle) || rawId.startsWith("bundle-");
+      const qty = Math.max(1, Number(item.quantity ?? 1));
 
-    if (products.length !== productIds.length) {
+      if (isBundle) {
+        const bundleId = String(item.bundleId ?? rawId.replace(/^bundle-/, ""));
+        bundleRequests.push({ bundleId, quantity: qty });
+      } else {
+        regularItems.push({ id: rawId, quantity: qty });
+      }
+    }
+
+    // 1. Fetch & validate regular products
+    const regularProductIds = regularItems.map((r) => r.id);
+    const regularProducts = regularProductIds.length > 0
+      ? await prisma.product.findMany({
+          where: { id: { in: regularProductIds }, activeListing: true },
+          select: {
+            id: true,
+            name: true,
+            quantity: true,
+            price: true,
+            imageUrl: true,
+            category: true,
+            userId: true,
+          },
+        })
+      : [];
+
+    if (regularProducts.length !== regularProductIds.length) {
       return NextResponse.json(
         { error: "One or more products are no longer available" },
         { status: 400 },
       );
     }
 
-    // Stock check
-    for (const item of items as RawItem[]) {
-      const pId = String(item.productId ?? item.id ?? "");
-      const qty = Number(item.quantity ?? 1);
-      const product = products.find((p) => p.id === pId);
-      if (!product) continue;
-      if (product.quantity < qty) {
+    for (const rItem of regularItems) {
+      const prod = regularProducts.find((p) => p.id === rItem.id);
+      if (!prod) continue;
+      if (prod.quantity < rItem.quantity) {
         return NextResponse.json(
-          { error: `Sorry, we only have ${product.quantity} units of ${product.name} in stock` },
+          { error: `Sorry, we only have ${prod.quantity} units of ${prod.name} in stock` },
           { status: 400 },
         );
       }
     }
 
+    // 2. Fetch & validate bundles
+    const bundleIds = bundleRequests.map((b) => b.bundleId);
+    const bundles = bundleIds.length > 0
+      ? await prisma.bundle.findMany({
+          where: { id: { in: bundleIds }, isActive: true },
+          include: {
+            items: {
+              orderBy: { sortOrder: "asc" },
+              include: {
+                product: {
+                  select: {
+                    id: true,
+                    name: true,
+                    quantity: true,
+                    price: true,
+                    imageUrl: true,
+                    category: true,
+                    userId: true,
+                    activeListing: true,
+                  },
+                },
+              },
+            },
+          },
+        })
+      : [];
+
+    if (bundles.length !== bundleIds.length) {
+      return NextResponse.json(
+        { error: "One or more bundles are no longer available" },
+        { status: 400 },
+      );
+    }
+
+    for (const bReq of bundleRequests) {
+      const bundle = bundles.find((b) => b.id === bReq.bundleId)!;
+      if (bundle.items.length === 0) {
+        return NextResponse.json(
+          { error: `Bundle "${bundle.name}" has no products and cannot be ordered` },
+          { status: 400 },
+        );
+      }
+      for (const bi of bundle.items) {
+        const requiredQty = bi.quantity * bReq.quantity;
+        if (!bi.product.activeListing || bi.product.quantity < requiredQty) {
+          return NextResponse.json(
+            {
+              error: `Sorry, "${bi.product.name}" in bundle "${bundle.name}" is out of stock (only ${bi.product.quantity} available)`,
+            },
+            { status: 400 },
+          );
+        }
+      }
+    }
+
     // ── Build order items using DB prices (trust server, not client) ───────
 
-    const orderItems = (items as RawItem[]).map((item) => {
-      const pId = String(item.productId ?? item.id ?? "");
-      const qty = Math.max(1, Number(item.quantity ?? 1));
-      const product = products.find((p) => p.id === pId)!;
-      const unitPrice = Number(product.price);
-      const lineTotal = unitPrice * qty;
-      return {
-        productId: pId,
-        name: product.name,
+    type BuiltOrderItem = {
+      productId: string;
+      name: string;
+      unitPrice: string;
+      quantity: number;
+      lineTotal: string;
+      imageUrl: string | null;
+      category: string | null;
+      lineTotalNum: number;
+    };
+
+    const orderItems: BuiltOrderItem[] = [];
+
+    // Regular products
+    for (const rItem of regularItems) {
+      const prod = regularProducts.find((p) => p.id === rItem.id)!;
+      const unitPrice = Number(prod.price);
+      const lineTotal = unitPrice * rItem.quantity;
+      orderItems.push({
+        productId: prod.id,
+        name: prod.name,
         unitPrice: unitPrice.toFixed(2),
-        quantity: qty,
+        quantity: rItem.quantity,
         lineTotal: lineTotal.toFixed(2),
-        imageUrl: product.imageUrl,
-        category: product.category,
+        imageUrl: prod.imageUrl,
+        category: prod.category,
         lineTotalNum: lineTotal,
-      };
-    });
+      });
+    }
+
+    // Bundle products (proportionally priced to exact bundle price)
+    for (const bReq of bundleRequests) {
+      const bundle = bundles.find((b) => b.id === bReq.bundleId)!;
+      const bundleQty = bReq.quantity;
+      const bundleTotal = Number(bundle.price) * bundleQty;
+
+      const productSum = bundle.items.reduce(
+        (sum, bi) => sum + Number(bi.product.price) * bi.quantity * bundleQty,
+        0,
+      );
+
+      let allocatedTotal = 0;
+      bundle.items.forEach((bi, index) => {
+        const itemQty = bi.quantity * bundleQty;
+        const isLast = index === bundle.items.length - 1;
+
+        let itemLineTotal: number;
+        if (isLast) {
+          itemLineTotal = Number((bundleTotal - allocatedTotal).toFixed(2));
+        } else if (productSum > 0) {
+          const proportion = (Number(bi.product.price) * bi.quantity * bundleQty) / productSum;
+          itemLineTotal = Number((bundleTotal * proportion).toFixed(2));
+          allocatedTotal += itemLineTotal;
+        } else {
+          itemLineTotal = Number((bundleTotal / bundle.items.length).toFixed(2));
+          allocatedTotal += itemLineTotal;
+        }
+
+        const unitPriceNum = itemQty > 0 ? Number((itemLineTotal / itemQty).toFixed(2)) : 0;
+
+        orderItems.push({
+          productId: bi.product.id,
+          name: `[${bundle.name}] ${bi.product.name}`,
+          unitPrice: unitPriceNum.toFixed(2),
+          quantity: itemQty,
+          lineTotal: itemLineTotal.toFixed(2),
+          imageUrl: bi.product.imageUrl,
+          category: bi.product.category,
+          lineTotalNum: itemLineTotal,
+        });
+      });
+    }
 
     const total = orderItems.reduce((sum, i) => sum + i.lineTotalNum, 0);
 
     // Determine sellerId — products should belong to same seller
-    const sellerId = products[0]?.userId ?? null;
+    const sellerId =
+      regularProducts[0]?.userId ??
+      bundles[0]?.items[0]?.product?.userId ??
+      null;
 
     const reference = `cod_${randomUUID().replaceAll("-", "").slice(0, 24)}`;
     // email is required on Order; use a placeholder for COD orders

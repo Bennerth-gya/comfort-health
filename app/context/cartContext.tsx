@@ -16,6 +16,9 @@ export type CartItem = {
   image: string;
   category?: string | null;
   quantity: number;
+  isBundle?: boolean;
+  bundleId?: string;
+  bundleSlug?: string;
 };
 
 export type OrderRecord = {
@@ -58,6 +61,9 @@ function parseStoredCart(value: string | null): CartItem[] {
           ...item,
           price: Number(item.price) || 0,
           quantity: Math.max(1, Number(item.quantity) || 1),
+          isBundle: Boolean(item.isBundle || item.id?.startsWith("bundle-")),
+          bundleId: item.bundleId ?? (item.id?.startsWith("bundle-") ? item.id.replace(/^bundle-/, "") : undefined),
+          bundleSlug: item.bundleSlug,
         }))
       : [];
   } catch {

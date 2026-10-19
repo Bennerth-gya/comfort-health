@@ -18,14 +18,20 @@ export async function PUT(
     const data: Record<string, unknown> = {};
     if (typeof body.name === "string") data.name = body.name.trim();
     if (typeof body.slug === "string") data.slug = body.slug.trim();
-    if (typeof body.description === "string") data.description = body.description.trim() || null;
-    if (typeof body.imageUrl === "string") data.imageUrl = body.imageUrl.trim() || null;
+    if (body.description !== undefined) {
+      data.description = typeof body.description === "string" ? body.description.trim() || null : null;
+    }
+    if (body.imageUrl !== undefined) {
+      data.imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim() || null : null;
+    }
     if (body.price != null) data.price = Number(body.price);
     if (body.compareAt !== undefined) data.compareAt = body.compareAt != null ? Number(body.compareAt) : null;
     if (typeof body.isActive === "boolean") data.isActive = body.isActive;
     if (typeof body.isFeatured === "boolean") data.isFeatured = body.isFeatured;
     if (typeof body.sortOrder === "number") data.sortOrder = body.sortOrder;
-    if (typeof body.category === "string") data.category = body.category.trim() || null;
+    if (body.category !== undefined) {
+      data.category = typeof body.category === "string" ? body.category.trim() || null : null;
+    }
 
     const bundle = await prisma.bundle.update({ where: { id }, data });
     return NextResponse.json({ bundle });

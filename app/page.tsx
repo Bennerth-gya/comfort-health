@@ -12,9 +12,7 @@ import {
   Sparkles,
   ArrowRight,
   Bot,
-  Package,
   Tag,
-  CheckCircle,
   HeartPulse,
   BookOpen,
   MessageCircle,
@@ -207,9 +205,10 @@ async function getHomeData() {
       orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
       take: 4,
       include: {
+        _count: { select: { items: true } },
         items: {
           orderBy: { sortOrder: "asc" },
-          take: 4,
+          take: 3,
           include: { product: { select: { name: true, imageUrl: true } } },
         },
       },
@@ -311,38 +310,68 @@ async function HomeContent() {
               const savings = bundle.compareAt && bundle.compareAt > bundle.price
                 ? Math.round(((bundle.compareAt - bundle.price) / bundle.compareAt) * 100)
                 : null;
+              const productCount = bundle._count.items;
               return (
                 <Link
                   key={bundle.id}
                   href={`/bundles/${bundle.slug}`}
-                  className="group flex items-center gap-4 rounded-2xl border border-[#e5e7eb] bg-white p-4 transition hover:border-[#15803d] hover:shadow-sm"
+                  aria-label={`${bundle.name} — ${productCount} product${productCount !== 1 ? 's' : ''} · GHS ${bundle.price.toFixed(2)}`}
+                  className="group relative flex min-h-[200px] overflow-hidden rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#15803d] focus-visible:ring-offset-2 sm:min-h-[220px]"
                 >
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#f0fdf4]">
-                    <Package className="h-7 w-7 text-[#15803d]" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="font-bold text-[#0f2318] leading-snug line-clamp-1">{bundle.name}</p>
-                      {savings && (
-                        <span className="shrink-0 rounded-full bg-[#0f2318] px-1.5 py-0.5 text-[10px] font-bold text-white">
-                          -{savings}%
-                        </span>
-                      )}
+                  {/* Background image or gradient fallback */}
+                  {bundle.imageUrl ? (
+                    <div
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
+                      style={{ backgroundImage: `url(${bundle.imageUrl})` }}
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <div
+                      className="absolute inset-0 bg-gradient-to-br from-[#0f2318] via-[#134e22] to-[#15803d] transition-transform duration-500 ease-out group-hover:scale-105"
+                      aria-hidden="true"
+                    />
+                  )}
+
+                  {/* Dark gradient overlay for readability */}
+                  <div
+                    className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10"
+                    aria-hidden="true"
+                  />
+
+                  {/* Savings badge */}
+                  {savings && (
+                    <span className="absolute right-3 top-3 z-10 rounded-full bg-[#15803d] px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                      Save {savings}%
+                    </span>
+                  )}
+
+                  {/* Card content */}
+                  <div className="relative z-10 flex w-full flex-col justify-end p-4">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-white/60">
+                      {productCount} product{productCount !== 1 ? 's' : ''}
+                    </p>
+                    <h3 className="mt-0.5 text-base font-bold leading-snug text-white line-clamp-2 md:text-[17px]">
+                      {bundle.name}
+                    </h3>
+                    {bundle.description && (
+                      <p className="mt-1 line-clamp-2 text-xs leading-[1.5] text-white/70">
+                        {bundle.description}
+                      </p>
+                    )}
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-sm font-bold text-white">
+                        GHS {bundle.price.toFixed(2)}
+                        {bundle.compareAt && (
+                          <span className="ml-1.5 text-xs font-normal text-white/50 line-through">
+                            GHS {bundle.compareAt.toFixed(2)}
+                          </span>
+                        )}
+                      </p>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/20 backdrop-blur-sm transition group-hover:bg-white group-hover:text-[#0f2318]">
+                        Explore <ArrowRight className="h-3 w-3" />
+                      </span>
                     </div>
-                    <ul className="mt-1 space-y-0.5">
-                      {bundle.items.slice(0, 2).map((item) => (
-                        <li key={item.id} className="flex items-center gap-1 text-xs text-gray-500">
-                          <CheckCircle className="h-2.5 w-2.5 shrink-0 text-[#15803d]" />
-                          <span className="line-clamp-1">{item.product.name}</span>
-                        </li>
-                      ))}
-                      {bundle.items.length > 2 && (
-                        <li className="text-xs text-gray-400 pl-3.5">+{bundle.items.length - 2} more</li>
-                      )}
-                    </ul>
-                    <p className="mt-1.5 text-sm font-bold text-[#15803d]">GHS {bundle.price.toFixed(2)}</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 shrink-0 text-gray-400 transition group-hover:text-[#15803d]" />
                 </Link>
               );
             })}

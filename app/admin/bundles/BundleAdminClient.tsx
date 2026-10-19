@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Pencil, Trash2, Package, ChevronDown, ChevronUp, X, Check, Loader2 } from "lucide-react";
+import { useRef, useState } from "react";
+import {
+  Plus, Pencil, Trash2, Package, ChevronDown, ChevronUp,
+  X, Check, Loader2, Upload, ImageOff,
+} from "lucide-react";
 import Image from "next/image";
 
 type Product = { id: string; name: string; price: number; category: string | null; quantity: number; imageUrl: string | null };
@@ -22,10 +25,152 @@ const CATEGORY_OPTIONS = [
   { value: "wellness", label: "Wellness" },
 ];
 
+const ALLOWED_TYPES = new Set(["image/jpeg", "image/jpg", "image/png", "image/webp"]);
+const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+
 function slugify(str: string) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
+// ─── Bundle Cover Image Uploader ───────────────────────────────────────────────
+function BundleCoverImageField({
+  currentUrl,
+  onUrlChange,
+}: {
+  currentUrl: string;
+  onUrlChange: (url: string) => void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  // Local object URL for immediate preview before upload completes
+  const [previewObjectUrl, setPreviewObjectUrl] = useState<string | null>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate type
+    if (!ALLOWED_TYPES.has(file.type.toLowerCase())) {
+      setUploadError("Only JPEG, PNG, and WebP images are allowed.");
+      return;
+    }
+    // Validate size
+    if (file.size > MAX_BYTES) {
+      setUploadError("Image must be 5 MB or smaller.");
+      return;
+    }
+
+    setUploadError(null);
+
+    // Show local preview immediately
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewObjectUrl(objectUrl);
+
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/bundles/upload-image", {
+        method: "POST",
+        body: fd,
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) {
+        throw new Error(data.error ?? "Upload failed.");
+      }
+      // Switch from local preview to permanent URL
+      onUrlChange(data.url);
+      URL.revokeObjectURL(objectUrl);
+      setPreviewObjectUrl(null);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed.");
+      // Revert preview on error
+      URL.revokeObjectURL(objectUrl);
+      setPreviewObjectUrl(null);
+    } finally {
+      setUploading(false);
+      // Reset input so same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const displayUrl = previewObjectUrl || currentUrl;
+
+  return (
+    <div className="md:col-span-2">
+      <label className="block text-xs font-semibold text-gray-500 mb-2">
+        Bundle Cover Image
+      </label>
+
+      {/* Preview area */}
+      <div className="relative mb-3 w-full overflow-hidden rounded-xl border border-gray-200 bg-gray-50" style={{ aspectRatio: "16/9", maxHeight: 220 }}>
+        {displayUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={displayUrl}
+              alt="Bundle cover preview"
+              className="h-full w-full object-cover"
+            />
+            {/* Remove button */}
+            {!uploading && (
+              <button
+                type="button"
+                onClick={() => { onUrlChange(""); setUploadError(null); }}
+                title="Remove image"
+                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white transition hover:bg-red-600"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+            {/* Upload overlay while uploading */}
+            {uploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                <Loader2 className="h-8 w-8 animate-spin text-white" />
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-2 text-gray-400">
+            <ImageOff className="h-10 w-10" />
+            <p className="text-xs">No cover image</p>
+          </div>
+        )}
+      </div>
+
+      {/* Upload / change button */}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          disabled={uploading}
+          onClick={() => fileInputRef.current?.click()}
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-700 shadow-xs hover:border-[#15803d] hover:text-[#15803d] disabled:opacity-60"
+        >
+          {uploading ? (
+            <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Uploading…</>
+          ) : (
+            <><Upload className="h-3.5 w-3.5" /> {displayUrl ? "Change image" : "Upload image"}</>
+          )}
+        </button>
+        <span className="text-[11px] text-gray-400">JPEG, PNG, WebP · max 5 MB</span>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          className="sr-only"
+          onChange={handleFileChange}
+        />
+      </div>
+
+      {uploadError && (
+        <p className="mt-1.5 text-xs font-semibold text-red-600">{uploadError}</p>
+      )}
+    </div>
+  );
+}
+
+// ─── Main Component ─────────────────────────────────────────────────────────────
 export default function BundleAdminClient({
   initialBundles,
   allProducts,
@@ -146,6 +291,13 @@ export default function BundleAdminClient({
               <textarea className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm" rows={2} value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
             </div>
+
+            {/* ── Bundle Cover Image ── */}
+            <BundleCoverImageField
+              currentUrl={form.imageUrl}
+              onUrlChange={(url) => setForm((f) => ({ ...f, imageUrl: url }))}
+            />
+
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1">Price (GHS) *</label>
               <input type="number" step="0.01" className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm" value={form.price}
@@ -235,12 +387,20 @@ export default function BundleAdminClient({
           {bundles.map((bundle) => (
             <div key={bundle.id} className="rounded-xl border border-gray-200 bg-white overflow-hidden">
               <div className="flex items-center gap-4 p-4">
-                <Package className="h-8 w-8 shrink-0 text-[#15803d]" />
+                {/* Thumbnail */}
+                {bundle.imageUrl ? (
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                    <Image src={bundle.imageUrl} alt={bundle.name} fill sizes="56px" className="object-cover" unoptimized />
+                  </div>
+                ) : (
+                  <Package className="h-8 w-8 shrink-0 text-[#15803d]" />
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-gray-900">{bundle.name}</p>
                     {!bundle.isActive && <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500">INACTIVE</span>}
                     {bundle.isFeatured && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">FEATURED</span>}
+                    {bundle.imageUrl && <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">HAS IMAGE</span>}
                   </div>
                   <p className="text-xs text-gray-500 mt-0.5">/{bundle.slug} · GHS {bundle.price.toFixed(2)} · {bundle.items.length} items</p>
                 </div>
@@ -268,6 +428,11 @@ export default function BundleAdminClient({
               </div>
               {expandedId === bundle.id && (
                 <div className="border-t border-gray-100 px-4 py-3">
+                  {bundle.imageUrl && (
+                    <div className="mb-3 relative w-full overflow-hidden rounded-lg bg-gray-100" style={{ aspectRatio: "16/9", maxHeight: 160 }}>
+                      <Image src={bundle.imageUrl} alt={bundle.name} fill sizes="(max-width: 768px) 100vw, 600px" className="object-cover" unoptimized />
+                    </div>
+                  )}
                   <p className="text-xs font-semibold text-gray-500 mb-2">Items ({bundle.items.length})</p>
                   <div className="space-y-2">
                     {bundle.items.map((item) => (

@@ -184,9 +184,18 @@ export async function uploadHealthImage(input: {
   const storagePath = `${folder}/${Date.now()}-${randomUUID()}-${safeName}.${ext}`;
 
   const supabase = getSupabaseAdmin();
-  const { error } = await supabase.storage
+  let { error } = await supabase.storage
     .from(HEALTH_BUCKET)
     .upload(storagePath, buffer, { contentType: mimeType, upsert: false });
+
+  if (error && (error.message?.toLowerCase().includes("not found") || (error as { statusCode?: string }).statusCode === "404")) {
+    // Attempt auto-creating the public bucket if it does not exist yet
+    await supabase.storage.createBucket(HEALTH_BUCKET, { public: true }).catch(() => null);
+    const retry = await supabase.storage
+      .from(HEALTH_BUCKET)
+      .upload(storagePath, buffer, { contentType: mimeType, upsert: false });
+    error = retry.error;
+  }
 
   if (error) {
     console.error("Supabase health image upload error:", error);

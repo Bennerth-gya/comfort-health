@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ShoppingBag,
@@ -91,6 +91,8 @@ export default function CheckoutPage() {
             productId: item.id,
             quantity: item.quantity,
             price: item.price,
+            isBundle: Boolean(item.isBundle || item.id.startsWith("bundle-")),
+            bundleId: item.bundleId ?? (item.id.startsWith("bundle-") ? item.id.replace(/^bundle-/, "") : undefined),
           })),
           userId: null, // Add Stack Auth user ID here if available in the future
         }),

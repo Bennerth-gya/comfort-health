@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { Package, ArrowRight, Tag, CheckCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
@@ -57,7 +58,7 @@ function BundleCard({ bundle }: { bundle: Bundle }) {
   return (
     <Link
       href={`/bundles/${bundle.slug}`}
-      className="group flex flex-col rounded-2xl border border-[#e5e7eb] bg-white p-5 transition-all duration-200 hover:border-[#15803d] hover:shadow-md"
+      className="group flex flex-col rounded-2xl border border-[#e5e7eb] bg-white p-5 transition-all duration-200 hover:border-[#15803d] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#15803d]"
     >
       {/* Category + savings */}
       <div className="flex items-center justify-between gap-2">
@@ -73,10 +74,23 @@ function BundleCard({ bundle }: { bundle: Bundle }) {
         ) : null}
       </div>
 
-      {/* Icon */}
-      <div className="mt-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0fdf4]">
-        <Package className="h-8 w-8 text-[#15803d]" />
-      </div>
+      {/* Cover image or fallback icon */}
+      {bundle.imageUrl ? (
+        <div className="mt-4 relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-gray-100">
+          <Image
+            src={bundle.imageUrl}
+            alt={bundle.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 360px"
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            unoptimized
+          />
+        </div>
+      ) : (
+        <div className="mt-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f0fdf4]">
+          <Package className="h-8 w-8 text-[#15803d]" />
+        </div>
+      )}
 
       {/* Name */}
       <h2 className="mt-4 text-[17px] font-bold leading-snug text-[#0f2318]">{bundle.name}</h2>
