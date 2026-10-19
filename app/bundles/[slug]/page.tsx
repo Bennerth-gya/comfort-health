@@ -6,7 +6,8 @@ import { CheckCircle, ArrowLeft, Package, MessageCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import AddBundleToCartButton from "./AddBundleToCartButton";
 
-export const revalidate = 1800;
+// Query live catalog data at request time, without requiring a database during builds.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
