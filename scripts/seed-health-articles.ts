@@ -194,7 +194,7 @@ If you are sick and think you need antibiotics:
 *This article is for educational purposes only. Always consult a licensed healthcare provider for personal medical decisions.*`,
   },
   {
-    title: 'Managing exam anxiety — strategies that actually work',
+    title: 'Managing exam anxiety strategies that actually work',
     slug: 'managing-exam-anxiety',
     category: 'Mental Health',
     excerpt:
@@ -204,7 +204,7 @@ If you are sick and think you need antibiotics:
     isPublished: true,
     isFeatured: false,
     tags: ['mental health', 'anxiety', 'exams', 'stress', 'students'],
-    content: `# Managing exam anxiety — strategies that actually work
+    content: `# Managing exam anxiety strategies that actually work
 
 Exam season at UMaT and universities across Ghana is one of the most stressful periods in any student's life. A certain level of stress is normal and even helpful — it motivates you to prepare. But when anxiety becomes overwhelming, it actually impairs the very memory and thinking ability you need to perform well.
 
