@@ -8,16 +8,16 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Student Essentials | ComfortHealth",
-  description: "Health and personal-care essentials selected for UMaT students. Hostel supplies, first-aid, exam week, and personal care — all available with campus delivery.",
+  title: "Health Essentials | ComfortHealth",
+  description: "Health and personal-care essentials for everyone. First-aid, vitamins, personal care and more — all available with fast delivery.",
 };
 
 const COLLECTIONS = [
   {
     id: "hostel",
-    label: "Hostel Essentials",
+    label: "Daily Essentials",
     icon: Package,
-    description: "Everyday health and personal-care items for day-to-day hostel life.",
+    description: "Everyday health and personal-care items for day-to-day life.",
     color: "#0f2318",
     bg: "#f0fdf4",
   },
@@ -31,9 +31,9 @@ const COLLECTIONS = [
   },
   {
     id: "exam",
-    label: "Exam Week",
+    label: "Focus & Energy",
     icon: BookOpen,
-    description: "Prepare for your busiest academic periods with the right essentials.",
+    description: "Stay sharp and energised during busy or demanding periods.",
     color: "#92400e",
     bg: "#fffbeb",
   },
@@ -57,7 +57,7 @@ const COLLECTIONS = [
     id: "wellness",
     label: "Wellness",
     icon: Heart,
-    description: "Vitamins, supplements, and general wellness products for student life.",
+    description: "Vitamins, supplements, and general wellness products for a healthier life.",
     color: "#065f46",
     bg: "#ecfdf5",
   },
@@ -67,7 +67,7 @@ async function getStudentProducts() {
   try {
     const products = await prisma.product.findMany({
       where: { activeListing: true, studentCollection: { not: null } },
-      orderBy: [{ isFeatured: "desc" }, { createAt: "desc" }],
+      orderBy: [{ isFeatured: "desc" }, { price: "asc" }],
       take: 60,
       select: {
         id: true,
@@ -187,7 +187,7 @@ async function PageContent() {
       {hasAnyBundles && (
         <section className="mb-8">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-[17px] font-bold text-[#0f2318] md:text-xl">Student Bundles</h2>
+            <h2 className="text-[17px] font-bold text-[#0f2318] md:text-xl">Health Bundles</h2>
             <Link href="/bundles" className="inline-flex items-center gap-1 text-xs font-semibold text-[#15803d] hover:underline">
               View all <ArrowRight className="h-3 w-3" />
             </Link>
@@ -232,7 +232,7 @@ async function PageContent() {
           <Package className="mx-auto mb-4 h-10 w-10 text-[#15803d]/40" />
           <h2 className="text-lg font-bold text-[#0f2318]">Coming soon</h2>
           <p className="mx-auto mt-2 max-w-sm text-sm text-gray-500">
-            We&apos;re curating the best student essentials. Browse all products while we set this up.
+            We&apos;re curating the best health essentials. Browse all products while we set this up.
           </p>
           <Link
             href="/shop-page"
@@ -252,13 +252,13 @@ export default function StudentEssentialsPage() {
       {/* Hero */}
       <section className="bg-[#0f2318] px-4 py-10 md:py-14">
         <div className="mx-auto max-w-7xl md:px-6">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#4ade80]">UMaT Students</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#4ade80]">Health Essentials</p>
           <h1 className="mt-2 text-2xl font-bold leading-tight text-white md:text-4xl">
-            Built for student life.
+            For everyone.
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-[1.7] text-white/70 md:text-base">
-            Everyday health and personal-care essentials selected with UMaT students in mind.
-            Delivered to your hostel.
+            Everyday health and personal-care essentials, carefully selected for you.
+            Delivered fast.
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
@@ -276,7 +276,7 @@ export default function StudentEssentialsPage() {
           </div>
           {/* Trust signals */}
           <div className="mt-6 flex flex-wrap gap-4 text-xs text-white/50">
-            <span>🚚 UMaT Campus Delivery</span>
+            <span>🚚 Fast Delivery</span>
             <span>💵 Pay on Delivery</span>
             <span>🔒 Private Shopping</span>
           </div>

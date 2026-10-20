@@ -25,7 +25,7 @@ export default function BottomTabBar() {
 
   return (
     <nav
-      className="safe-bottom fixed bottom-0 left-0 right-0 z-50 border-t border-[#e5e7eb] bg-white md:hidden shadow-lg"
+      className="safe-bottom fixed bottom-[50px] left-0 right-0 z-50 border-t border-[#e5e7eb] bg-white md:bottom-0 md:hidden shadow-lg"
       aria-label="Primary navigation"
     >
       <div className="flex h-[62px] items-stretch">

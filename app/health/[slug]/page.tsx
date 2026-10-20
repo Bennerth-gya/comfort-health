@@ -434,7 +434,7 @@ export default function ArticlePage() {
               </div>
               <p className="text-[12px] text-[#166534] mb-3">
                 Find the medicines and health products mentioned in this article in
-                our pharmacy with same-day campus delivery.
+                our pharmacy with fast delivery.
               </p>
               <Link
                 href={`/shop-page?q=${encodeURIComponent(article.category)}`}

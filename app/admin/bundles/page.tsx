@@ -32,7 +32,7 @@ export default async function AdminBundlesPage() {
       <main className="ml-64 min-h-screen p-8">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Bundles</h1>
-          <p className="text-sm text-gray-500 mt-1">Create and manage curated product bundles for students.</p>
+          <p className="text-sm text-gray-500 mt-1">Create and manage curated product bundles.</p>
         </div>
         <BundleAdminClient
           initialBundles={bundles.map((b) => ({

@@ -238,8 +238,8 @@ async function prismaSearchShopProducts(
       where,
       orderBy: [
         { isFeatured: "desc" },
+        { price: "asc" },
         { featuredRank: "asc" },
-        { createAt: "desc" },
       ],
       take: limit,
       skip,

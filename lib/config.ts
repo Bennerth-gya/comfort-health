@@ -44,7 +44,7 @@ export const PHARMACY_CONFIG = {
   whatsappLink: 'https://wa.me/233537355068',
 
   name: 'Comfort Health Pharmacy',
-  address: 'UMaT Campus, Tarkwa, Ghana',
+  address: 'Tarkwa, Ghana',
 
   // Operating hours to show users
   hours: 'Mon – Sat: 8:00 AM – 8:00 PM',

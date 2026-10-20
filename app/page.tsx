@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 // ── Need-based quick actions (problem-first, not category-first) ──
-const studentNeeds = [
+const quickNeeds = [
   { label: "First Aid", href: "/shop-page?q=first+aid", emoji: "🩹" },
   { label: "Personal Care", href: "/shop-page?q=personal+care", emoji: "✨" },
   { label: "Malaria", href: "/shop-page?q=malaria", emoji: "💊" },
@@ -178,7 +178,7 @@ async function getHomeData() {
   const [products, featuredProducts, heroSlides, bundles] = await Promise.all([
     prisma.product.findMany({
       where: { activeListing: true },
-      orderBy: { createAt: "desc" },
+      orderBy: [{ price: "asc" }, { createAt: "desc" }],
       select: {
         id: true, name: true, price: true, quantity: true,
         imageUrl: true, category: true, prescriptionRequired: true,
@@ -187,7 +187,7 @@ async function getHomeData() {
     }),
     prisma.product.findMany({
       where: { activeListing: true, isFeatured: true },
-      orderBy: [{ featuredRank: "asc" }, { createAt: "desc" }],
+      orderBy: [{ featuredRank: "asc" }, { price: "asc" }],
       take: POPULAR_PRODUCTS_LIMIT,
       select: {
         id: true, name: true, price: true, quantity: true,
@@ -275,7 +275,7 @@ async function HomeContent() {
           className="scrollbar-hide flex items-center gap-2.5 overflow-x-auto px-3 py-2 md:flex-wrap md:px-0"
           aria-label="Browse by need"
         >
-          {studentNeeds.map((need) => (
+          {quickNeeds.map((need) => (
             <Link
               key={need.label}
               href={need.href}
@@ -294,14 +294,14 @@ async function HomeContent() {
         </div>
       </section>
 
-      {/* 3. Student Bundles (if any exist) */}
+      {/* 3. Health Bundles (if any exist) */}
       {bundles.length > 0 && (
         <section className="pt-2 md:mx-auto md:max-w-7xl md:px-6">
           <SectionTitle
             icon={Tag}
-            label="Curated for Students"
-            title="Student Bundles"
-            subtitle="Pre-selected combinations for common student needs."
+            label="Curated for You"
+            title="Health Bundles"
+            subtitle="Pre-selected combinations for common health needs."
             href="/bundles"
             viewAllLabel="All bundles"
           />
@@ -385,7 +385,7 @@ async function HomeContent() {
           <SectionTitle
             icon={Sparkles}
             title="Popular Products"
-            subtitle="Frequently ordered by students on campus."
+            subtitle="Frequently ordered by our customers."
             href="/shop-page"
           />
           <div
@@ -415,7 +415,7 @@ async function HomeContent() {
         </section>
       )}
 
-      {/* 5. Student Essentials CTA banner */}
+      {/* 5. Health Essentials CTA banner */}
       <section className="px-3 pt-4 md:mx-auto md:max-w-7xl md:px-6 md:pt-6">
         <div className="grid gap-3 sm:grid-cols-3">
           <Link
@@ -424,9 +424,9 @@ async function HomeContent() {
           >
             <BriefcaseMedical className="h-7 w-7 text-[#4ade80]" />
             <div className="mt-6">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#4ade80]">For UMaT Students</p>
-              <p className="mt-1 text-[15px] font-bold leading-snug">Student Essentials</p>
-              <p className="mt-1 text-xs text-white/60">Hostel, first aid, exam week, personal care</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#4ade80]">Health Essentials</p>
+              <p className="mt-1 text-[15px] font-bold leading-snug">Health Essentials</p>
+              <p className="mt-1 text-xs text-white/60">First aid, personal care, vitamins and more</p>
             </div>
             <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#4ade80]">
               Explore <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />
@@ -440,7 +440,7 @@ async function HomeContent() {
             <div className="mt-6">
               <p className="text-xs font-bold uppercase tracking-widest text-[#15803d]">Health Knowledge</p>
               <p className="mt-1 text-[15px] font-bold leading-snug text-[#0f2318]">Health Hub</p>
-              <p className="mt-1 text-xs text-gray-500">Guides, articles, and health tips written for students</p>
+              <p className="mt-1 text-xs text-gray-500">Guides, articles, and health tips for everyone</p>
             </div>
             <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#15803d]">
               Read articles <ArrowRight className="h-3 w-3 transition group-hover:translate-x-0.5" />

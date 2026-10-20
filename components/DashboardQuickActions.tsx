@@ -23,7 +23,7 @@ const actions = [
   {
     href: "/admin/bundles",
     title: "Bundles",
-    description: "Create and manage curated student bundles.",
+    description: "Create and manage curated health bundles.",
     icon: Tag,
   },
   {

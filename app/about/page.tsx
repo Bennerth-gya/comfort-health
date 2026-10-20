@@ -57,14 +57,14 @@ const pillars = [
 const stats = [
   { label: "Products Available", value: "100+", icon: HeartPulse },
   { label: "Happy Customers", value: "100+", icon: Users },
-  { label: "Active Campus", value: "UMaT", icon: MapPin },
+  { label: "Based In", value: "Tarkwa", icon: MapPin },
   { label: "Support Hours/Day", value: "12 hrs", icon: Clock },
 ];
 
 const values = [
   {
     title: "Accessibility",
-    description: "Making healthcare products reachable for students and everyday people across Ghana.",
+    description: "Making healthcare products reachable for everyone across Ghana.",
   },
   {
     title: "Transparency",
@@ -158,11 +158,11 @@ export default function AboutPage() {
             <p className="mt-5 text-base leading-8 text-gray-600">
               Our vision is to provide <strong>good and affordable medications</strong> at your
               comfort with great service. We believe that quality healthcare products should be
-              within reach of every student, family, and community across Ghana — not just those
+              within reach of every individual, family, and community across Ghana — not just those
               with easy access to physical pharmacies.
             </p>
             <p className="mt-4 text-base leading-8 text-gray-600">
-              Comfort Health bridges the gap between campus communities and trusted pharmacy
+              Comfort Health bridges the gap between communities and trusted pharmacy
               services — combining a curated product catalogue, AI-powered guidance, and
               compassionate human support into one seamless experience.
             </p>
@@ -182,7 +182,7 @@ export default function AboutPage() {
             <div className="mt-8 grid grid-cols-2 gap-4">
               {[
                 { label: "Founded", value: "2025" },
-                { label: "Based In", value: "UMaT, Tarkwa" },
+                { label: "Based In", value: "Tarkwa, Ghana" },
                 { label: "Delivery", value: "Pay on Delivery" },
                 { label: "AI Support", value: "24 / 7" },
               ].map((item) => (

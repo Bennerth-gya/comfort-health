@@ -65,7 +65,7 @@ export default function SiteHeaderClient({ adminNode }: SiteHeaderClientProps) {
   const navItems = [
     { href: '/', label: 'Home', active: pathname === '/' },
     { href: '/shop-page', label: 'Shop', active: (pathname.startsWith('/shop') || pathname.startsWith('/products')) && !pathname.startsWith('/shop-page') || pathname === '/shop-page' },
-    { href: '/student-essentials', label: 'Student Essentials', active: pathname.startsWith('/student-essentials') },
+    { href: '/student-essentials', label: 'Health Essentials', active: pathname.startsWith('/student-essentials') },
     { href: '/bundles', label: 'Bundles', active: pathname.startsWith('/bundles') },
     { href: '/health', label: 'Health Hub', active: pathname === '/health' || pathname.startsWith('/health/') },
   ];

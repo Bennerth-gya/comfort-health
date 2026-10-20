@@ -11,9 +11,10 @@ export async function GET(request: Request) {
       where: {
         activeListing: true,
       },
-      orderBy: {
-        createAt: "desc",
-      },
+      orderBy: [
+        { price: "asc" },
+        { createAt: "desc" },
+      ],
       take: 100,
       select: {
         id: true,

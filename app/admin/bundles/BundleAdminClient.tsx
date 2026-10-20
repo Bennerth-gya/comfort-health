@@ -17,9 +17,9 @@ type Bundle = {
 
 const CATEGORY_OPTIONS = [
   { value: "", label: "No category" },
-  { value: "hostel", label: "Hostel Essentials" },
+  { value: "hostel", label: "Daily Essentials" },
   { value: "first-aid", label: "First Aid" },
-  { value: "exam", label: "Exam Week" },
+  { value: "exam", label: "Focus & Energy" },
   { value: "personal-care", label: "Personal Care" },
   { value: "women", label: "Women's Care" },
   { value: "wellness", label: "Wellness" },

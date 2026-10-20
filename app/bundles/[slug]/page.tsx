@@ -19,7 +19,7 @@ export async function generateMetadata(
   if (!bundle) return { title: "Bundle Not Found | ComfortHealth" };
   return {
     title: `${bundle.name} | ComfortHealth Bundles`,
-    description: bundle.description ?? `A curated bundle from ComfortHealth for UMaT students.`,
+    description: bundle.description ?? `A curated health bundle from ComfortHealth.`,
   };
 }
 
@@ -54,9 +54,9 @@ async function getBundle(slug: string) {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  hostel: "Hostel Essentials",
+  hostel: "Daily Essentials",
   "first-aid": "First Aid",
-  exam: "Exam Week",
+  exam: "Focus & Energy",
   "personal-care": "Personal Care",
   women: "Women's Care",
   wellness: "Wellness",
@@ -305,7 +305,7 @@ export default async function BundleDetailPage(
                   </div>
                 ) : null}
 
-                <p className="mt-2 text-xs text-gray-500">Pay on delivery · Free hostel delivery available</p>
+                <p className="mt-2 text-xs text-gray-500">Pay on delivery · Delivery available</p>
               </div>
 
               {/* Stock status alert */}
@@ -347,7 +347,7 @@ export default async function BundleDetailPage(
               <div className="mt-5 space-y-2.5 border-t border-gray-100 pt-4">
                 {[
                   "Pay on delivery — cash or MoMo at the door",
-                  "Delivered to your hostel or campus location",
+                  "Delivered to your door or chosen location",
                   "Discreet, sealed packaging",
                   "Licensed pharmacy partner backing",
                 ].map((trust) => (

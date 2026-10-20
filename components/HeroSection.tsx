@@ -22,18 +22,18 @@ const defaultHeroSlides: HeroSlide[] = [
   {
     id: "hero-1",
     imageUrl: "/hero/black-pharmacist.jpg",
-    title: "Health essentials,\ndelivered to your hostel",
+    title: "Health essentials,\ndelivered to your door",
     subtitle:
-      "Everyday health and personal-care products for UMaT students. Order online and pay on delivery.",
+      "Everyday health and personal-care products for everyone. Order online and pay on delivery.",
     ctaText: "Shop Now",
     ctaUrl: "/#full-catalog",
   },
   {
     id: "hero-2",
     imageUrl: "/hero/packaging.jpg",
-    title: "Student Essentials,\npicked for campus life",
-    subtitle: "Hostel supplies, first aid, personal care and more — all in one place.",
-    ctaText: "Browse Student Essentials",
+    title: "Health Essentials,\ncurated for you",
+    subtitle: "First aid, personal care, vitamins and more — all in one place.",
+    ctaText: "Browse Health Essentials",
     ctaUrl: "/student-essentials",
   },
   {

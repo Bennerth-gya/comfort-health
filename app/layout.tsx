@@ -31,17 +31,16 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: 'Comfort Health — Campus Pharmacy Delivery',
+    default: 'Comfort Health — Pharmacy Delivery in Ghana',
     template: '%s | Comfort Health',
   },
-  description: 'Order authentic medications and get same-day campus delivery to your hostel. Comfort Health — Good health with comfort.',
+  description: 'Order authentic medications and health products with fast delivery to your door. Comfort Health — Good health with comfort.',
   keywords: [
-    'pharmacy delivery', 
-    'campus pharmacy', 
+    'pharmacy delivery Ghana',
     'medicine delivery Ghana',
-    'UMaT pharmacy',
+    'online pharmacy Ghana',
     'Tarkwa pharmacy',
-    'health delivery Ghana',
+    'health products Ghana',
     'Comfort Health'
   ],
   authors: [{ name: 'Comfort Health' }],
@@ -53,8 +52,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_GH',
     siteName: 'Comfort Health',
-    title: 'Comfort Health — Campus Pharmacy Delivery',
-    description: 'Same-day medicine delivery to your campus hostel.',
+    title: 'Comfort Health — Pharmacy Delivery in Ghana',
+    description: 'Fast medicine delivery to your door. Shop authentic health products online.',
   },
   robots: {
     index: true,

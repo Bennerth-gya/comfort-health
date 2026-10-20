@@ -174,7 +174,7 @@ function ReviewForm() {
               setMessage(e.target.value)
             }
           }}
-          placeholder="Tell other students about your experience with Comfort Health..."
+          placeholder="Tell others about your experience with Comfort Health..."
           rows={3}
           className="
             w-full border border-gray-200 rounded-xl
@@ -488,7 +488,7 @@ export default function CommunitySection() {
                   Share your experience
                 </p>
                 <p className="text-[11px] text-gray-400 leading-tight mt-0.5">
-                  Help other students know what to expect
+                  Help others know what to expect
                 </p>
               </div>
             </>

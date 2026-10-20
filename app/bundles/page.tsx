@@ -8,13 +8,13 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Bundles | ComfortHealth",
-  description: "Curated health and personal-care bundles for UMaT students. Save on essentials by getting what you need together.",
+  description: "Curated health and personal-care bundles for everyone. Save on essentials by getting what you need together.",
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  hostel: "Hostel Essentials",
+  hostel: "Daily Essentials",
   "first-aid": "First Aid",
-  exam: "Exam Week",
+  exam: "Focus & Energy",
   "personal-care": "Personal Care",
   women: "Women's Care",
   wellness: "Wellness",
@@ -141,17 +141,17 @@ export default async function BundlesPage() {
         <div className="mx-auto max-w-7xl md:px-6">
           <div className="flex items-center gap-2 mb-3">
             <Tag className="h-4 w-4 text-[#4ade80]" aria-hidden="true" />
-            <p className="text-xs font-bold uppercase tracking-widest text-[#4ade80]">Curated for Students</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#4ade80]">Curated Value Packs</p>
           </div>
           <h1 className="text-2xl font-bold leading-tight text-white md:text-4xl">
-            Student Bundles
+            Health &amp; Wellness Bundles
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-[1.7] text-white/70 md:text-base">
-            Pre-selected combinations of health and personal-care products for real student needs — hostel life, exam week, first aid, and more.
+            Pre-selected combinations of health and personal-care essentials for everyday life — first aid, daily wellness, personal care, and more.
           </p>
           <div className="mt-5 flex flex-wrap gap-3 text-xs text-white/50">
             <span>💵 Pay on Delivery</span>
-            <span>🚚 Campus Delivery</span>
+            <span>🚚 Fast Doorstep Delivery</span>
             <span>🔒 Private &amp; Discreet</span>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default async function BundlesPage() {
             <Package className="mx-auto mb-4 h-10 w-10 text-[#15803d]/40" />
             <h2 className="text-lg font-bold text-[#0f2318]">Bundles coming soon</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-gray-500">
-              We&apos;re putting together the best combinations for student life. In the meantime, browse all products.
+              We&apos;re putting together the best combinations for your health needs. In the meantime, browse all products.
             </p>
             <Link
               href="/shop-page"

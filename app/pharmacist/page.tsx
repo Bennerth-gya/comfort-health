@@ -577,7 +577,7 @@ export default function PharmacistDashboard() {
                         handleSend()
                       }
                     }}
-                    placeholder="Type your response to the student..."
+                    placeholder="Type your response to the customer..."
                     rows={3}
                     style={{ flex: 1, border: '1px solid #d1d5db', borderRadius: 12, padding: '12px', fontSize: 15, resize: 'none', outline: 'none' }}
                   />

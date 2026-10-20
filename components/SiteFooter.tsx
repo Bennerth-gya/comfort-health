@@ -23,12 +23,12 @@ export default function SiteFooter() {
               <span className="text-lg font-bold text-white">ComfortHealth</span>
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-[1.7] text-white/60">
-              Everyday health and personal-care essentials, conveniently delivered around UMaT.
+              Everyday health and personal-care essentials, conveniently delivered to your door.
             </p>
             <div className="mt-4 space-y-2 text-sm text-white/50">
               <span className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 shrink-0 text-[#4ade80]" aria-hidden="true" />
-                UMaT Campus, Tarkwa, Ghana
+                Tarkwa, Ghana
               </span>
               <span className="flex items-center gap-2">
                 <Clock className="h-4 w-4 shrink-0 text-[#4ade80]" aria-hidden="true" />
@@ -52,7 +52,7 @@ export default function SiteFooter() {
             <ul className="mt-3 space-y-2">
               {[
                 { href: "/shop-page", label: "All Products" },
-                { href: "/student-essentials", label: "Student Essentials" },
+                { href: "/student-essentials", label: "Health Essentials" },
                 { href: "/bundles", label: "Bundles" },
                 { href: "/shop-page?collection=first-aid", label: "First Aid" },
                 { href: "/shop-page?collection=personal-care", label: "Personal Care" },
@@ -105,7 +105,7 @@ export default function SiteFooter() {
             <div className="mt-6">
               <h3 className="text-xs font-bold uppercase tracking-widest text-white/40">Delivery</h3>
               <p className="mt-2 text-sm leading-[1.6] text-white/60">
-                Currently serving UMaT campus and immediate surroundings. Pay on delivery — cash at the door.
+                Currently serving Tarkwa and surrounding areas. Pay on delivery — cash at the door.
               </p>
             </div>
           </div>
@@ -113,7 +113,7 @@ export default function SiteFooter() {
 
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-white/30 sm:flex-row">
           <p>© {year} ComfortHealth. Good health. With comfort.</p>
-          <p>Made for UMaT students, Tarkwa, Ghana.</p>
+          <p>Comfort Health, Tarkwa, Ghana.</p>
         </div>
       </div>
     </footer>

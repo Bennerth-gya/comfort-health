@@ -71,9 +71,14 @@ function configuredOrigins(request: Request) {
   }
 
   for (const value of [
+    // Vercel-injected deployment URLs
     process.env.VERCEL_URL,
     process.env.VERCEL_BRANCH_URL,
     process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    // Netlify-injected deployment URLs
+    process.env.URL,
+    process.env.DEPLOY_URL,
+    process.env.DEPLOY_PRIME_URL,
   ]) {
     const origin = vercelDeploymentOrigin(value);
     if (origin) {

@@ -10,19 +10,19 @@ const heroSlides = [
     image: "/hero/black-pharmacist.jpg",
     title: "Quality medicines,\ndelivered with care",
     subtitle:
-      "Order genuine medicines and health products online and get them delivered discreetly to your campus.",
+      "Order genuine medicines and health products online and get them delivered discreetly to your door.",
   },
   {
     id: 2,
     image: "/hero/black-computer-pharmacy.jpg",
-    title: "Fast campus delivery\nwithin minutes",
+    title: "Fast delivery,\nright to your door",
     subtitle:
-      "Get your medications delivered quickly and safely anywhere around campus.",
+      "Get your medications delivered quickly and safely, wherever you are.",
   },
   {
     id: 3,
     image: "/hero/oluman.jpg",
-    title: "Your trusted online\ncampus pharmacy",
+    title: "Your trusted online\npharmacy",
     subtitle:
       "Affordable healthcare products from trusted suppliers in Ghana.",
   },
@@ -70,7 +70,7 @@ export default function HeroSection() {
               {/* LEFT SIDE */}
               <div>
                 <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-medium text-emerald-700">
-                  Trusted Campus Pharmacy
+                  Trusted Online Pharmacy
                 </span>
 
                 <h1 className="mt-6 whitespace-pre-line text-5xl font-bold leading-tight text-gray-900">

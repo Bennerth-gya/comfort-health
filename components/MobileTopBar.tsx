@@ -93,7 +93,7 @@ export default function MobileTopBar() {
           {[
             { href: "/", label: "Home" },
             { href: "/shop-page", label: "Shop All Products" },
-            { href: "/student-essentials", label: "Student Essentials" },
+            { href: "/student-essentials", label: "Health Essentials" },
             { href: "/bundles", label: "Bundles" },
             { href: "/health", label: "Health Hub" },
             { href: "/support", label: "Pharmacist Support" },
