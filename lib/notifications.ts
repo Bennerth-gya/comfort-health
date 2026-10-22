@@ -82,21 +82,22 @@ export async function sendBmsSMS(
         message,
       }),
       cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
     });
 
     const data = (await res.json().catch(() => null)) as Record<string, unknown> | null;
 
-    if (!res.ok || (data && data.status === "error")) {
+    if (!res.ok || !data || data.status === "error" || (data.code !== undefined && String(data.code) !== "2000")) {
       console.warn(
         "BMS Africa SMS API error response:",
-        data?.message || data?.summary || res.statusText || `HTTP ${res.status}`,
+        { httpStatus: res.status, providerCode: typeof data?.code === "number" ? data.code : undefined },
       );
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error("BMS Africa SMS notification failed:", error);
+    console.error("BMS Africa SMS notification failed:", error instanceof Error ? error.name : "UnknownError");
     return false;
   }
 }
@@ -130,6 +131,7 @@ export async function sendArkeselSMS(
         message,
       }),
       cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!res.ok) {

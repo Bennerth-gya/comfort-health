@@ -487,7 +487,10 @@ export async function POST(request: Request) {
       recommendations,
     });
   } catch (error) {
-    console.error("AI guide request failed", error);
+    console.error("AI guide request failed", {
+      type: error instanceof Error ? error.name : "UnknownError",
+      status: error instanceof APIError ? error.status : undefined,
+    });
 
     if (error instanceof RequestSecurityError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
@@ -497,11 +500,13 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            error.status >= 400 && error.status < 500
-              ? "The AI service rejected this request. Please check the Groq API key configured on Vercel."
-              : "The AI service is temporarily unavailable. Please try again.",
+            error.status === 401 || error.status === 403
+              ? "The AI service could not authenticate. Check the Groq API key and account permissions configured in Netlify."
+              : error.status === 429
+                ? "The AI service usage limit has been reached. Please try again later."
+                : "The AI service is temporarily unavailable. Please try again.",
         },
-        { status: error.status >= 400 && error.status < 500 ? 400 : 502 },
+        { status: error.status === 429 ? 429 : 502 },
       );
     }
 
