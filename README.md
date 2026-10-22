@@ -80,3 +80,11 @@ GitHub Actions runs `prisma generate`, lint, tests, and build on push/PR to `mai
 
 - Health endpoint: `GET /api/health`
 - Production startup validates required env vars via `instrumentation.ts` and `lib/env.ts`
+
+## AI and SMS on Netlify
+
+Local `.env.local` settings are not uploaded with the application. Configure `GROQ_API_KEY` in Netlify's environment variables with the Functions scope and the Production context (also Deploy Previews if needed), then redeploy. The existing integration uses Groq, which requires its own Groq credential.
+
+For BMS Africa/mNotify SMS, configure `BMS_API_KEY`, the provider-approved `BMS_SENDER_ID`, and `ADMIN_SMS_PHONE` in the same runtime scope and context. For Arkesel, use `ARKESEL_API_KEY` and `ARKESEL_SENDER_ID` instead. Credentials from the two providers are not interchangeable. Check the provider dashboard for sender approval, balance, and delivery reports; API acceptance alone does not guarantee handset delivery.
+
+The order route waits for SMS acknowledgement before returning, because untracked work can stop when a serverless invocation ends. A notification failure does not undo a saved order. Function logs report SMS HTTP status and numeric provider error codes, and AI HTTP status, without logging credentials. AI authentication errors require checking the deployed Groq key/account permissions; a 429 indicates quota or rate limits. After changing environment variables, redeploy and check the function logs while reproducing the issue.
