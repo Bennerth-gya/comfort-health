@@ -99,7 +99,10 @@ export async function POST(request: Request) {
       windowMs: 60_000,
     });
 
-    if (!process.env.GROQ_API_KEY) {
+    const rawKey = process.env.GROQ_API_KEY?.trim();
+    const apiKey = rawKey ? rawKey.replace(/^["']|["']$/g, "").replace(/^Bearer\s+/i, "").trim() : null;
+
+    if (!apiKey) {
       return NextResponse.json(
         { error: "GROQ_API_KEY is not configured." },
         { status: 500 },
@@ -143,7 +146,7 @@ export async function POST(request: Request) {
       audio.name || `comfort-ai-voice.${audioFileExtension(uploadMimeType)}`,
       { type: uploadMimeType },
     );
-    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const groq = new Groq({ apiKey });
     const transcription = await groq.audio.transcriptions.create({
       file: uploadFile,
       model: "whisper-large-v3-turbo",

@@ -1,5 +1,6 @@
 import "server-only";
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -56,6 +57,9 @@ export async function POST(req: Request) {
     const bundle = await prisma.bundle.create({
       data: { name, slug, description, imageUrl, price, compareAt, isActive, isFeatured, sortOrder, category },
     });
+
+    // Purge cached pages/API responses that depend on the bundle catalogue
+    revalidateTag("bundles", { expire: 0 });
 
     return NextResponse.json({ bundle }, { status: 201 });
   } catch (error: unknown) {

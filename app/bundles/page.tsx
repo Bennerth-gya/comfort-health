@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { Package, ArrowRight, Tag, CheckCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
+// ISR: regenerate every 120 s. Bundle catalogue changes rarely.
+export const revalidate = 120;
 
 export const metadata: Metadata = {
   title: "Bundles | ComfortHealth",
@@ -20,31 +21,37 @@ const CATEGORY_LABELS: Record<string, string> = {
   wellness: "Wellness",
 };
 
-async function getBundles() {
-  try {
-    const bundles = await prisma.bundle.findMany({
-      where: { isActive: true },
-      orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
-      include: {
-        items: {
-          orderBy: { sortOrder: "asc" },
-          include: {
-            product: {
-              select: { id: true, name: true, imageUrl: true, price: true, quantity: true },
+import { unstable_cache } from "next/cache";
+
+const getBundles = unstable_cache(
+  async () => {
+    try {
+      const bundles = await prisma.bundle.findMany({
+        where: { isActive: true },
+        orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }, { createdAt: "desc" }],
+        include: {
+          items: {
+            orderBy: { sortOrder: "asc" },
+            include: {
+              product: {
+                select: { id: true, name: true, imageUrl: true, price: true, quantity: true },
+              },
             },
           },
         },
-      },
-    });
-    return bundles.map((b) => ({
-      ...b,
-      price: Number(b.price),
-      compareAt: b.compareAt ? Number(b.compareAt) : null,
-    }));
-  } catch {
-    return [];
-  }
-}
+      });
+      return bundles.map((b) => ({
+        ...b,
+        price: Number(b.price),
+        compareAt: b.compareAt ? Number(b.compareAt) : null,
+      }));
+    } catch {
+      return [];
+    }
+  },
+  ["bundles-page"],
+  { revalidate: 120, tags: ["bundles"] },
+);
 
 type Bundle = Awaited<ReturnType<typeof getBundles>>[number];
 

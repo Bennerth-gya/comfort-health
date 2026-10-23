@@ -5,7 +5,8 @@ import { ArrowRight, BriefcaseMedical, Heart, BookOpen, Sparkles, Users, Package
 import ProductCard from "@/app/components/ProductCard";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
+// ISR: regenerate every 120 s.
+export const revalidate = 120;
 
 export const metadata: Metadata = {
   title: "Health Essentials | ComfortHealth",
@@ -63,43 +64,53 @@ const COLLECTIONS = [
   },
 ];
 
-async function getStudentProducts() {
-  try {
-    const products = await prisma.product.findMany({
-      where: { activeListing: true, studentCollection: { not: null } },
-      orderBy: [{ isFeatured: "desc" }, { price: "asc" }],
-      take: 60,
-      select: {
-        id: true,
-        name: true,
-        price: true,
-        imageUrl: true,
-        category: true,
-        quantity: true,
-        prescriptionRequired: true,
-        studentCollection: true,
-        isFeatured: true,
-      },
-    });
-    return products.map((p) => ({ ...p, price: Number(p.price) }));
-  } catch {
-    return [];
-  }
-}
+import { unstable_cache } from "next/cache";
 
-async function getBundles() {
-  try {
-    const bundles = await prisma.bundle.findMany({
-      where: { isActive: true },
-      orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
-      take: 4,
-      include: { items: { include: { product: { select: { name: true, imageUrl: true } } } } },
-    });
-    return bundles.map((b) => ({ ...b, price: Number(b.price), compareAt: b.compareAt ? Number(b.compareAt) : null }));
-  } catch {
-    return [];
-  }
-}
+const getStudentProducts = unstable_cache(
+  async () => {
+    try {
+      const products = await prisma.product.findMany({
+        where: { activeListing: true, studentCollection: { not: null } },
+        orderBy: [{ isFeatured: "desc" }, { price: "asc" }],
+        take: 60,
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          imageUrl: true,
+          category: true,
+          quantity: true,
+          prescriptionRequired: true,
+          studentCollection: true,
+          isFeatured: true,
+        },
+      });
+      return products.map((p) => ({ ...p, price: Number(p.price) }));
+    } catch {
+      return [];
+    }
+  },
+  ["student-products"],
+  { revalidate: 120, tags: ["products"] },
+);
+
+const getStudentBundles = unstable_cache(
+  async () => {
+    try {
+      const bundles = await prisma.bundle.findMany({
+        where: { isActive: true },
+        orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
+        take: 4,
+        include: { items: { include: { product: { select: { name: true, imageUrl: true } } } } },
+      });
+      return bundles.map((b) => ({ ...b, price: Number(b.price), compareAt: b.compareAt ? Number(b.compareAt) : null }));
+    } catch {
+      return [];
+    }
+  },
+  ["student-bundles"],
+  { revalidate: 120, tags: ["bundles"] },
+);
 
 function CollectionSection({
   collection,
@@ -155,7 +166,7 @@ function CollectionSection({
 }
 
 async function PageContent() {
-  const [products, bundles] = await Promise.all([getStudentProducts(), getBundles()]);
+  const [products, bundles] = await Promise.all([getStudentProducts(), getStudentBundles()]);
 
   const byCollection = Object.fromEntries(
     COLLECTIONS.map((c) => [c.id, products.filter((p) => p.studentCollection === c.id)])

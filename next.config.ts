@@ -180,15 +180,17 @@ const nextConfig: NextConfig = {
 
     return [
       {
+        // Hero images and assets — very long TTL
         source: '/hero/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=86400, stale-while-revalidate=604800',
+            value: 'public, max-age=604800, stale-while-revalidate=2592000',
           },
         ],
       },
       {
+        // Image assets — long immutable-ish TTL
         source: '/:path*.{jpg,jpeg,png,webp,avif,svg,ico}',
         headers: [
           {
@@ -198,6 +200,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Security headers for all routes
         source: '/(.*)',
         headers: [
           {

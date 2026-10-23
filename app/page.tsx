@@ -1,4 +1,6 @@
-export const dynamic = "force-dynamic";
+// ISR: revalidate every 60 s. The CDN serves a cached HTML shell;
+// only one origin request per 60 s hits the DB (via unstable_cache).
+export const revalidate = 60;
 
 import Link from "next/link";
 import { Suspense } from "react";
@@ -172,60 +174,66 @@ function HomePageSkeleton() {
   );
 }
 
-// ── Server data fetcher ────────────────────────────────────────────
-async function getHomeData() {
-  const { prisma } = await import("@/lib/prisma");
-  const [products, featuredProducts, heroSlides, bundles] = await Promise.all([
-    prisma.product.findMany({
-      where: { activeListing: true },
-      orderBy: [{ price: "asc" }, { createAt: "desc" }],
-      select: {
-        id: true, name: true, price: true, quantity: true,
-        imageUrl: true, category: true, prescriptionRequired: true,
-        isFeatured: true, featuredRank: true, createAt: true,
-      },
-    }),
-    prisma.product.findMany({
-      where: { activeListing: true, isFeatured: true },
-      orderBy: [{ featuredRank: "asc" }, { price: "asc" }],
-      take: POPULAR_PRODUCTS_LIMIT,
-      select: {
-        id: true, name: true, price: true, quantity: true,
-        imageUrl: true, category: true, prescriptionRequired: true,
-        isFeatured: true, featuredRank: true, createAt: true,
-      },
-    }),
-    prisma.heroSlide.findMany({
-      where: { active: true },
-      orderBy: { sortOrder: "asc" },
-      select: { id: true, title: true, subtitle: true, imageUrl: true, ctaText: true, ctaUrl: true },
-    }),
-    prisma.bundle.findMany({
-      where: { isActive: true },
-      orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
-      take: 4,
-      include: {
-        _count: { select: { items: true } },
-        items: {
-          orderBy: { sortOrder: "asc" },
-          take: 3,
-          include: { product: { select: { name: true, imageUrl: true } } },
-        },
-      },
-    }),
-  ]);
+// ── Server data fetcher (cached) ──────────────────────────────────
+import { unstable_cache } from "next/cache";
 
-  return {
-    products,
-    featuredProducts,
-    heroSlides,
-    bundles: bundles.map((b) => ({
-      ...b,
-      price: Number(b.price),
-      compareAt: b.compareAt ? Number(b.compareAt) : null,
-    })),
-  };
-}
+const getHomeData = unstable_cache(
+  async () => {
+    const { prisma } = await import("@/lib/prisma");
+    const [products, featuredProducts, heroSlides, bundles] = await Promise.all([
+      prisma.product.findMany({
+        where: { activeListing: true },
+        orderBy: [{ price: "asc" }, { createAt: "desc" }],
+        select: {
+          id: true, name: true, price: true, quantity: true,
+          imageUrl: true, category: true, prescriptionRequired: true,
+          isFeatured: true, featuredRank: true, createAt: true,
+        },
+      }),
+      prisma.product.findMany({
+        where: { activeListing: true, isFeatured: true },
+        orderBy: [{ featuredRank: "asc" }, { price: "asc" }],
+        take: POPULAR_PRODUCTS_LIMIT,
+        select: {
+          id: true, name: true, price: true, quantity: true,
+          imageUrl: true, category: true, prescriptionRequired: true,
+          isFeatured: true, featuredRank: true, createAt: true,
+        },
+      }),
+      prisma.heroSlide.findMany({
+        where: { active: true },
+        orderBy: { sortOrder: "asc" },
+        select: { id: true, title: true, subtitle: true, imageUrl: true, ctaText: true, ctaUrl: true },
+      }),
+      prisma.bundle.findMany({
+        where: { isActive: true },
+        orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
+        take: 4,
+        include: {
+          _count: { select: { items: true } },
+          items: {
+            orderBy: { sortOrder: "asc" },
+            take: 3,
+            include: { product: { select: { name: true, imageUrl: true } } },
+          },
+        },
+      }),
+    ]);
+
+    return {
+      products,
+      featuredProducts,
+      heroSlides,
+      bundles: bundles.map((b) => ({
+        ...b,
+        price: Number(b.price),
+        compareAt: b.compareAt ? Number(b.compareAt) : null,
+      })),
+    };
+  },
+  ["home-data"],
+  { revalidate: 60, tags: ["products", "bundles", "hero-slides"] },
+);
 
 // ── Main async content ─────────────────────────────────────────────
 async function HomeContent() {

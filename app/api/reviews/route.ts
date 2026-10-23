@@ -75,7 +75,15 @@ export async function GET(req: NextRequest) {
       }
     })
 
-    return NextResponse.json({ reviews })
+    return NextResponse.json(
+      { reviews },
+      {
+        headers: {
+          // Public, short-lived — safe to cache at the CDN for 5 min
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=86400",
+        },
+      },
+    )
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to load reviews' },

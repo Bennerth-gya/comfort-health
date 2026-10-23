@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { rateLimitRequest, RequestSecurityError } from "@/lib/request-security";
 
-export const dynamic = "force-dynamic";
+// Publicly cacheable — no user-specific data.
 export async function GET(request: Request) {
   try {
     await rateLimitRequest(request, "product:public", { limit: 120, windowMs: 60_000 });
@@ -38,7 +38,8 @@ export async function GET(request: Request) {
       })),
       {
         headers: {
-          "Cache-Control": "public, s-maxage=120, stale-while-revalidate=86400",
+          // 5-min CDN edge cache, 24-h stale-while-revalidate
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=86400",
         },
       },
     );

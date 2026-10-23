@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
+// Publicly cacheable — no user-specific data in this response.
 
 export async function GET(req: Request) {
   try {
@@ -65,7 +65,8 @@ export async function GET(req: Request) {
       },
       {
         headers: {
-          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+          // 10-min CDN edge cache; stale-while-revalidate for 24 h
+          "Cache-Control": "public, s-maxage=600, stale-while-revalidate=86400",
         },
       }
     );

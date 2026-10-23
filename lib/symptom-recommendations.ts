@@ -87,15 +87,18 @@ export async function getSymptomRecommendations(
     };
   }
 
-  if (!process.env.GROQ_API_KEY) {
+  const rawKey = process.env.GROQ_API_KEY?.trim();
+  const apiKey = rawKey ? rawKey.replace(/^["']|["']$/g, "").replace(/^Bearer\s+/i, "").trim() : null;
+
+  if (!apiKey) {
     return buildFallbackRecommendations(symptoms, products);
   }
 
   try {
-    const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const client = new Groq({ apiKey });
 
     const completion = await client.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "qwen/qwen3.8-27b",
       messages: [
         {
           role: "system",

@@ -388,29 +388,38 @@ ${productContext}
 `;
 }
 
+function getSanitizedGroqApiKey(): string | null {
+  const rawKey = process.env.GROQ_API_KEY?.trim();
+  if (!rawKey) return null;
+  const cleaned = rawKey.replace(/^["']|["']$/g, "").replace(/^Bearer\s+/i, "").trim();
+  return cleaned || null;
+}
+
 async function createCompletion(
   groq: Groq,
   messages: ChatCompletionMessageParam[],
 ) {
-  try {
-    return await groq.chat.completions.create({
-      model: "openai/gpt-oss-120b",
-      messages,
-      temperature: 0.5,
-      max_tokens: 800,
-    });
-  } catch (error) {
-    if (error instanceof APIError && error.status === 400) {
-      return groq.chat.completions.create({
-        model: "openai/gpt-oss-20b",
+  const models = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b", "openai/gpt-oss-20b"];
+  let lastError: unknown;
+
+  for (const model of models) {
+    try {
+      return await groq.chat.completions.create({
+        model,
         messages,
         temperature: 0.5,
         max_tokens: 800,
       });
+    } catch (error) {
+      lastError = error;
+      if (error instanceof APIError && (error.status === 400 || error.status === 404)) {
+        continue;
+      }
+      throw error;
     }
-
-    throw error;
   }
+
+  throw lastError;
 }
 
 export async function POST(request: Request) {
@@ -432,7 +441,8 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.GROQ_API_KEY) {
+    const apiKey = getSanitizedGroqApiKey();
+    if (!apiKey) {
       return NextResponse.json(
         { error: "GROQ_API_KEY is not configured." },
         { status: 500 },
@@ -442,7 +452,7 @@ export async function POST(request: Request) {
     const { products, catalogueAvailable } = await getProductsForAiGuide(messages);
     const systemPrompt = buildSystemPrompt(products, catalogueAvailable);
 
-    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const groq = new Groq({ apiKey });
     const completion = await createCompletion(groq, [
       { role: "system", content: systemPrompt },
       ...messages.map((message) => ({
@@ -494,14 +504,22 @@ export async function POST(request: Request) {
     }
 
     if (error instanceof APIError) {
+      const isAuthError = error.status === 401;
+      const isRateLimit = error.status === 429;
+      const isClientError = error.status >= 400 && error.status < 500;
+
+      let errorMessage = "The AI service is temporarily unavailable. Please try again.";
+      if (isAuthError) {
+        errorMessage = "The AI service rejected the API key (401 Unauthorized). Please check the GROQ_API_KEY configured in Netlify.";
+      } else if (isRateLimit) {
+        errorMessage = "The AI service rate limit has been reached. Please try again in a few moments.";
+      } else if (isClientError) {
+        errorMessage = `The AI service rejected this request (${error.status}). Please check the Groq API key configured in Netlify.`;
+      }
+
       return NextResponse.json(
-        {
-          error:
-            error.status >= 400 && error.status < 500
-              ? "The AI service rejected this request. Please check the Groq API key configured on Vercel."
-              : "The AI service is temporarily unavailable. Please try again.",
-        },
-        { status: error.status >= 400 && error.status < 500 ? 400 : 502 },
+        { error: errorMessage },
+        { status: isClientError ? 400 : 502 },
       );
     }
 

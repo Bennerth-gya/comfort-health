@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-dynamic';
+// Articles are publicly cacheable at the CDN — no user-specific data.
+// Remove force-dynamic so s-maxage is respected by Vercel/CDN.
 
 export async function GET(req: NextRequest) {
   try {
@@ -44,7 +45,8 @@ export async function GET(req: NextRequest) {
       { articles },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=86400',
+          // 10-min CDN edge cache, stale-while-revalidate for 24 h
+          'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=86400',
         },
       },
     )
