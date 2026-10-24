@@ -397,9 +397,11 @@ export async function POST(req: NextRequest) {
         `Total: GHS ${total.toFixed(2)}\n` +
         `Address: ${customerAddress.trim()}`;
 
-      sendSMS(adminSmsPhone, smsMessage).catch((e) =>
-        console.error("Admin SMS dispatch error:", e),
-      );
+      // Keep the invocation alive until the provider acknowledges the request.
+      const sent = await sendSMS(adminSmsPhone, smsMessage);
+      if (!sent) {
+        console.warn("Admin SMS was not accepted; check SMS configuration and provider status.");
+      }
     }
 
     return NextResponse.json({

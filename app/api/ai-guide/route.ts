@@ -497,29 +497,34 @@ export async function POST(request: Request) {
       recommendations,
     });
   } catch (error) {
-    console.error("AI guide request failed", error);
+    console.error("AI guide request failed", {
+      type: error instanceof Error ? error.name : "UnknownError",
+      status: error instanceof APIError ? error.status : undefined,
+    });
 
     if (error instanceof RequestSecurityError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
 
     if (error instanceof APIError) {
-      const isAuthError = error.status === 401;
+      const isAuthError = error.status === 401 || error.status === 403;
       const isRateLimit = error.status === 429;
       const isClientError = error.status >= 400 && error.status < 500;
 
       let errorMessage = "The AI service is temporarily unavailable. Please try again.";
       if (isAuthError) {
-        errorMessage = "The AI service rejected the API key (401 Unauthorized). Please check the GROQ_API_KEY configured in Netlify.";
+        errorMessage =
+          "The AI service could not authenticate. Check the Groq API key and account permissions configured in Netlify.";
       } else if (isRateLimit) {
-        errorMessage = "The AI service rate limit has been reached. Please try again in a few moments.";
+        errorMessage =
+          "The AI service usage limit has been reached. Please try again later.";
       } else if (isClientError) {
         errorMessage = `The AI service rejected this request (${error.status}). Please check the Groq API key configured in Netlify.`;
       }
 
       return NextResponse.json(
         { error: errorMessage },
-        { status: isClientError ? 400 : 502 },
+        { status: isRateLimit ? 429 : isClientError ? 400 : 502 },
       );
     }
 
