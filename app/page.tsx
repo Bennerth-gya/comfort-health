@@ -177,27 +177,27 @@ function HomePageSkeleton() {
 // ── Server data fetcher (cached) ──────────────────────────────────
 import { unstable_cache } from "next/cache";
 
+/** Above-the-fold data: hero slides, featured products, bundles.
+ * Only select fields rendered on the home page to stay under the 2 MB
+ * unstable_cache limit.
+ */
 const getHomeData = unstable_cache(
   async () => {
     const { prisma } = await import("@/lib/prisma");
-    const [products, featuredProducts, heroSlides, bundles] = await Promise.all([
-      prisma.product.findMany({
-        where: { activeListing: true },
-        orderBy: [{ price: "asc" }, { createAt: "desc" }],
-        select: {
-          id: true, name: true, price: true, quantity: true,
-          imageUrl: true, category: true, prescriptionRequired: true,
-          isFeatured: true, featuredRank: true, createAt: true,
-        },
-      }),
+    const [featuredProducts, heroSlides, bundles] = await Promise.all([
       prisma.product.findMany({
         where: { activeListing: true, isFeatured: true },
         orderBy: [{ featuredRank: "asc" }, { price: "asc" }],
+        // Limit to what's actually displayed; each extra row adds ~KB of imageUrl.
         take: POPULAR_PRODUCTS_LIMIT,
         select: {
-          id: true, name: true, price: true, quantity: true,
-          imageUrl: true, category: true, prescriptionRequired: true,
-          isFeatured: true, featuredRank: true, createAt: true,
+          id: true,
+          name: true,
+          price: true,
+          quantity: true,
+          imageUrl: true,
+          category: true,
+          prescriptionRequired: true,
         },
       }),
       prisma.heroSlide.findMany({
@@ -209,19 +209,23 @@ const getHomeData = unstable_cache(
         where: { isActive: true },
         orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
         take: 4,
-        include: {
+        select: {
+          id: true, name: true, slug: true, price: true, compareAt: true,
+          description: true, isActive: true, isFeatured: true, sortOrder: true,
           _count: { select: { items: true } },
           items: {
             orderBy: { sortOrder: "asc" },
             take: 3,
-            include: { product: { select: { name: true, imageUrl: true } } },
+            select: {
+              id: true, sortOrder: true,
+              product: { select: { name: true, imageUrl: true } },
+            },
           },
         },
       }),
     ]);
 
     return {
-      products,
       featuredProducts,
       heroSlides,
       bundles: bundles.map((b) => ({
@@ -235,21 +239,40 @@ const getHomeData = unstable_cache(
   { revalidate: 60, tags: ["products", "bundles", "hero-slides"] },
 );
 
+/**
+ * Fallback product list shown when no featured products are configured.
+ * NOT wrapped in unstable_cache — 200 products × large Cloudinary imageUrl
+ * strings easily exceeds the 2 MB cache entry limit. The home page only
+ * renders POPULAR_PRODUCTS_LIMIT items anyway, so we fetch exactly that many.
+ */
+async function getAllProducts() {
+  const { prisma } = await import("@/lib/prisma");
+  return prisma.product.findMany({
+    where: { activeListing: true },
+    orderBy: [{ price: "asc" }, { createAt: "desc" }],
+    take: POPULAR_PRODUCTS_LIMIT,
+    select: {
+      id: true, name: true, price: true, quantity: true,
+      imageUrl: true, category: true, prescriptionRequired: true,
+    },
+  });
+}
+
 // ── Main async content ─────────────────────────────────────────────
 async function HomeContent() {
   type HomeData = Awaited<ReturnType<typeof getHomeData>>;
-  let products: HomeData["products"] = [];
+  let products: Awaited<ReturnType<typeof getAllProducts>> = [];
   let featuredProducts: HomeData["featuredProducts"] = [];
   let heroSlides: HomeData["heroSlides"] = [];
   let bundles: HomeData["bundles"] = [];
   let loadError: string | null = null;
 
   try {
-    const data = await getHomeData();
-    products = data.products;
+    const [data, allProducts] = await Promise.all([getHomeData(), getAllProducts()]);
     featuredProducts = data.featuredProducts;
     heroSlides = data.heroSlides;
     bundles = data.bundles;
+    products = allProducts;
   } catch (error) {
     console.error("Failed to load home data", error);
     loadError = "Unable to load products right now. Please try again later.";
