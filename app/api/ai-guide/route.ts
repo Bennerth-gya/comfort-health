@@ -362,23 +362,26 @@ ${COMFORT_HEALTH_CONTEXT}
 
 RULES:
 1. You are NOT a doctor. Never diagnose. Never prescribe dosages beyond what's on the product label. Always add a brief safety note for serious symptoms.
-2. Only recommend products from the catalogue below. Never invent products.
+2. Only recommend products from the CURRENT PHARMACY CATALOGUE section below. Never invent or name products not in the list.
 3. ${recommendationRule}
 4. Be warm, friendly, and brief. Write in simple English — users are from all walks of life across Ghana.
 5. If symptoms sound serious (high fever >3 days, chest pain, difficulty breathing, severe pain), strongly recommend seeing a doctor or the nearest clinic and do not just push products.
 6. Prefer non-prescription products when they fit the user's symptoms.
-7. After your text message, output a JSON block of recommended products using EXACTLY this format and nothing else after it:
-8. Write in plain text. Never use asterisks or Markdown formatting in the reply or product reasons.
+7. Write in plain text. Never use asterisks (*) or Markdown formatting anywhere in your reply.
+
+OUTPUT FORMAT — you MUST follow this exactly every single response, no exceptions:
+- First, write your plain-text reply to the user.
+- Then, on a new line, write the RECOMMENDATIONS_JSON block. Do NOT skip this block — always output it, even if recommendations is an empty array.
 
 RECOMMENDATIONS_JSON:
 [
   {
-    "productId": "the product id from the catalogue",
-    "reason": "one sentence explaining why this helps their symptom"
+    "productId": "exact product id from the catalogue",
+    "reason": "one sentence explaining why this product helps their specific symptom"
   }
 ]
 
-If there are no catalogue products to recommend, output exactly:
+If there are no suitable catalogue products to recommend, output exactly:
 
 RECOMMENDATIONS_JSON:
 []
@@ -399,7 +402,15 @@ async function createCompletion(
   groq: Groq,
   messages: ChatCompletionMessageParam[],
 ) {
-  const models = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b", "openai/gpt-oss-20b"];
+  // Prefer llama-3.3-70b-versatile: best instruction-following on Groq and
+  // reliably emits the RECOMMENDATIONS_JSON structured block. Fall back to
+  // the faster 8B for rate-limit headroom, then gpt-oss variants.
+  const models = [
+    "llama-3.3-70b-versatile",
+    "llama-3.1-8b-instant",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+  ];
   let lastError: unknown;
 
   for (const model of models) {

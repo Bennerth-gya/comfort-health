@@ -1,12 +1,12 @@
 // ISR: revalidate every 60 s. The CDN serves a cached HTML shell;
-// only one origin request per 60 s hits the DB (via unstable_cache).
+// only one origin request per 60 s hits the DB.
 export const revalidate = 60;
 
 import Link from "next/link";
 import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/app/components/ProductCard";
-import SupportFab from "@/components/SupportFab";
+
 import CommunitySection from "@/components/CommunitySection";
 import HealthEducationTeaser from "@/components/HealthEducationTeaser";
 import {
@@ -174,70 +174,66 @@ function HomePageSkeleton() {
   );
 }
 
-// ── Server data fetcher (cached) ──────────────────────────────────
-import { unstable_cache } from "next/cache";
+// ── Server data fetchers ──────────────────────────────────────────
+// NOTE: unstable_cache is NOT used here because imageUrl columns can hold
+// large data (base64 or long CDN URLs) that easily exceeds the 2 MB
+// unstable_cache JSON limit. Cache invalidation is handled by the page-level
+// `export const revalidate = 60` (ISR) which caches compressed HTML with no
+// size cap. Mutations should call `revalidatePath("/")` to purge early.
 
-/** Above-the-fold data: hero slides, featured products, bundles.
- * Only select fields rendered on the home page to stay under the 2 MB
- * unstable_cache limit.
- */
-const getHomeData = unstable_cache(
-  async () => {
-    const { prisma } = await import("@/lib/prisma");
-    const [featuredProducts, heroSlides, bundles] = await Promise.all([
-      prisma.product.findMany({
-        where: { activeListing: true, isFeatured: true },
-        orderBy: [{ featuredRank: "asc" }, { price: "asc" }],
-        // Limit to what's actually displayed; each extra row adds ~KB of imageUrl.
-        take: POPULAR_PRODUCTS_LIMIT,
-        select: {
-          id: true,
-          name: true,
-          price: true,
-          quantity: true,
-          imageUrl: true,
-          category: true,
-          prescriptionRequired: true,
-        },
-      }),
-      prisma.heroSlide.findMany({
-        where: { active: true },
-        orderBy: { sortOrder: "asc" },
-        select: { id: true, title: true, subtitle: true, imageUrl: true, ctaText: true, ctaUrl: true },
-      }),
-      prisma.bundle.findMany({
-        where: { isActive: true },
-        orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
-        take: 4,
-        select: {
-          id: true, name: true, slug: true, price: true, compareAt: true,
-          description: true, isActive: true, isFeatured: true, sortOrder: true,
-          _count: { select: { items: true } },
-          items: {
-            orderBy: { sortOrder: "asc" },
-            take: 3,
-            select: {
-              id: true, sortOrder: true,
-              product: { select: { name: true, imageUrl: true } },
-            },
+/** Above-the-fold data: hero slides, featured products, bundles. */
+async function getHomeData() {
+  const { prisma } = await import("@/lib/prisma");
+  const [featuredProducts, heroSlides, bundles] = await Promise.all([
+    prisma.product.findMany({
+      where: { activeListing: true, isFeatured: true },
+      orderBy: [{ featuredRank: "asc" }, { price: "asc" }],
+      take: POPULAR_PRODUCTS_LIMIT,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        quantity: true,
+        imageUrl: true,
+        category: true,
+        prescriptionRequired: true,
+      },
+    }),
+    prisma.heroSlide.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: "asc" },
+      select: { id: true, title: true, subtitle: true, imageUrl: true, ctaText: true, ctaUrl: true },
+    }),
+    prisma.bundle.findMany({
+      where: { isActive: true },
+      orderBy: [{ isFeatured: "desc" }, { sortOrder: "asc" }],
+      take: 4,
+      select: {
+        id: true, name: true, slug: true, price: true, compareAt: true,
+        description: true, imageUrl: true, isActive: true, isFeatured: true, sortOrder: true,
+        _count: { select: { items: true } },
+        items: {
+          orderBy: { sortOrder: "asc" },
+          take: 3,
+          select: {
+            id: true, sortOrder: true,
+            product: { select: { name: true, imageUrl: true } },
           },
         },
-      }),
-    ]);
+      },
+    }),
+  ]);
 
-    return {
-      featuredProducts,
-      heroSlides,
-      bundles: bundles.map((b) => ({
-        ...b,
-        price: Number(b.price),
-        compareAt: b.compareAt ? Number(b.compareAt) : null,
-      })),
-    };
-  },
-  ["home-data"],
-  { revalidate: 60, tags: ["products", "bundles", "hero-slides"] },
-);
+  return {
+    featuredProducts,
+    heroSlides,
+    bundles: bundles.map((b) => ({
+      ...b,
+      price: Number(b.price),
+      compareAt: b.compareAt ? Number(b.compareAt) : null,
+    })),
+  };
+}
 
 /**
  * Fallback product list shown when no featured products are configured.
@@ -558,7 +554,7 @@ export default function HomePage() {
         <CommunitySection />
       </section>
 
-      <SupportFab />
+
     </div>
   );
 }
