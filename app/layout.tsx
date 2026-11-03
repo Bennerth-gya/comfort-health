@@ -66,8 +66,6 @@ export const metadata: Metadata = {
   },
 };
 
-import PharmacistSupport from '@/components/PharmacistSupport';
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
@@ -85,7 +83,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </AuthProvider>
         <SpeedInsights />
         <Analytics />
-        <PharmacistSupport />
       </body>
     </html>
   );
