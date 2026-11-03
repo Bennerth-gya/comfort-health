@@ -32,7 +32,7 @@ const defaultHeroSlides: HeroSlide[] = [
     id: "hero-2",
     imageUrl: "/hero/packaging.jpg",
     title: "Health Essentials,\ncurated for you",
-    subtitle: "First aid, personal care, vitamins and more — all in one place.",
+    subtitle: "First aid, personal care, vitamins and more; all in one place.",
     ctaText: "Browse Health Essentials",
     ctaUrl: "/student-essentials",
   },
