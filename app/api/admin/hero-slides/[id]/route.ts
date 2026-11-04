@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getAdminUserOrNull } from "@/lib/auth";
 import {
@@ -45,6 +46,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
+    revalidatePath("/");
     return NextResponse.json(slide);
   } catch (error) {
     console.error(error);
@@ -74,6 +76,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
+    revalidatePath("/");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);

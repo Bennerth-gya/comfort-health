@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getAdminUserOrNull } from "@/lib/auth";
 import { Prisma } from "@/generated/db";
@@ -195,6 +195,8 @@ export async function POST(req: Request) {
 
     // Purge cached pages/API responses that depend on the product catalogue
     revalidateTag("products", { expire: 0 });
+    revalidatePath("/");
+    revalidatePath("/student-essentials");
 
     return NextResponse.json(product);
   } catch (error) {

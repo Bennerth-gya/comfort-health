@@ -1,6 +1,6 @@
 import "server-only";
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -37,6 +37,9 @@ export async function PUT(
     const bundle = await prisma.bundle.update({ where: { id }, data });
     // Purge cached pages/API responses that include this bundle
     revalidateTag("bundles", { expire: 0 });
+    revalidatePath("/");
+    revalidatePath("/bundles");
+    revalidatePath("/student-essentials");
     return NextResponse.json({ bundle });
   } catch (error) {
     console.error("Admin bundle PUT error:", error);
@@ -54,6 +57,9 @@ export async function DELETE(
     const { id } = await params;
     await prisma.bundle.delete({ where: { id } });
     revalidateTag("bundles", { expire: 0 });
+    revalidatePath("/");
+    revalidatePath("/bundles");
+    revalidatePath("/student-essentials");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Admin bundle DELETE error:", error);
@@ -95,6 +101,9 @@ export async function POST(
 
     // Purge cached pages/API responses that include this bundle's items
     revalidateTag("bundles", { expire: 0 });
+    revalidatePath("/");
+    revalidatePath("/bundles");
+    revalidatePath("/student-essentials");
     return NextResponse.json({ bundle });
   } catch (error) {
     console.error("Admin bundle items POST error:", error);

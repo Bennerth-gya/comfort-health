@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getAdminUserOrNull } from "@/lib/auth";
 import { Prisma } from "@/generated/db";
@@ -107,6 +107,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
     // Purge cached pages/API responses that include this product
     revalidateTag("products", { expire: 0 });
+    revalidatePath("/");
+    revalidatePath("/student-essentials");
 
     return NextResponse.json({
       ...updated,
@@ -140,6 +142,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     // Purge cached pages/API responses that include this product
     revalidateTag("products", { expire: 0 });
+    revalidatePath("/");
+    revalidatePath("/student-essentials");
 
     return NextResponse.json({
       success: true,

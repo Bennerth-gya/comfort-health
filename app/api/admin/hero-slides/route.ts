@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getAdminUserOrNull } from "@/lib/auth";
 import {
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
 
     // Prisma expects a non-null `imageUrl` string; our schema guarantees it.
     const slide = await prisma.heroSlide.create({ data: parsed.data as Prisma.HeroSlideCreateInput });
+    revalidatePath("/");
     return NextResponse.json(slide);
   } catch (error) {
     console.error(error);

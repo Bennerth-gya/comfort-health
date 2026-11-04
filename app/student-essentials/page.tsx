@@ -5,8 +5,8 @@ import { ArrowRight, BriefcaseMedical, Heart, BookOpen, Sparkles, Users, Package
 import ProductCard from "@/app/components/ProductCard";
 import { prisma } from "@/lib/prisma";
 
-// ISR: regenerate every 120 s.
-export const revalidate = 120;
+// Catalogue changes are invalidated by admin mutations; this is a safety refresh.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Health Essentials | ComfortHealth",
@@ -91,7 +91,7 @@ const getStudentProducts = unstable_cache(
     }
   },
   ["student-products"],
-  { revalidate: 120, tags: ["products"] },
+  { revalidate: 3600, tags: ["products"] },
 );
 
 const getStudentBundles = unstable_cache(
@@ -109,7 +109,7 @@ const getStudentBundles = unstable_cache(
     }
   },
   ["student-bundles"],
-  { revalidate: 120, tags: ["bundles"] },
+  { revalidate: 3600, tags: ["bundles"] },
 );
 
 function CollectionSection({

@@ -1,6 +1,5 @@
-// ISR: revalidate every 60 s. The CDN serves a cached HTML shell;
-// only one origin request per 60 s hits the DB.
-export const revalidate = 60;
+// Keep the catalogue warm for an hour; admin mutations invalidate this route.
+export const revalidate = 3600;
 
 import Link from "next/link";
 import { Suspense } from "react";
@@ -177,9 +176,8 @@ function HomePageSkeleton() {
 // ── Server data fetchers ──────────────────────────────────────────
 // NOTE: unstable_cache is NOT used here because imageUrl columns can hold
 // large data (base64 or long CDN URLs) that easily exceeds the 2 MB
-// unstable_cache JSON limit. Cache invalidation is handled by the page-level
-// `export const revalidate = 60` (ISR) which caches compressed HTML with no
-// size cap. Mutations should call `revalidatePath("/")` to purge early.
+// unstable_cache JSON limit. The ISR cache stores rendered output, and
+// catalogue mutations invalidate this route so it refreshes on its next visit.
 
 /** Above-the-fold data: hero slides, featured products, bundles. */
 async function getHomeData() {

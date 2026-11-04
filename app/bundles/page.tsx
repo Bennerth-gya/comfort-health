@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import { Package, ArrowRight, Tag, CheckCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
-// ISR: regenerate every 120 s. Bundle catalogue changes rarely.
-export const revalidate = 120;
+// Bundle changes are invalidated by admin mutations; this is a safety refresh.
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Bundles | ComfortHealth",
@@ -50,7 +50,7 @@ const getBundles = unstable_cache(
     }
   },
   ["bundles-page"],
-  { revalidate: 120, tags: ["bundles"] },
+  { revalidate: 3600, tags: ["bundles"] },
 );
 
 type Bundle = Awaited<ReturnType<typeof getBundles>>[number];

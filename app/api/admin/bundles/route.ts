@@ -1,6 +1,6 @@
 import "server-only";
 import { NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -60,6 +60,9 @@ export async function POST(req: Request) {
 
     // Purge cached pages/API responses that depend on the bundle catalogue
     revalidateTag("bundles", { expire: 0 });
+    revalidatePath("/");
+    revalidatePath("/bundles");
+    revalidatePath("/student-essentials");
 
     return NextResponse.json({ bundle }, { status: 201 });
   } catch (error: unknown) {
