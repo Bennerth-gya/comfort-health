@@ -2,9 +2,11 @@
 export const revalidate = 3600;
 
 import Link from "next/link";
+import Image from "next/image";
 import { Suspense } from "react";
 import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/app/components/ProductCard";
+import { shouldUnoptimizeProductImage } from "@/lib/image-url";
 
 import CommunitySection from "@/components/CommunitySection";
 import HealthEducationTeaser from "@/components/HealthEducationTeaser";
@@ -345,9 +347,13 @@ async function HomeContent() {
                 >
                   {/* Background image or gradient fallback */}
                   {bundle.imageUrl ? (
-                    <div
-                      className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
-                      style={{ backgroundImage: `url(${bundle.imageUrl})` }}
+                    <Image
+                      src={bundle.imageUrl}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 600px"
+                      unoptimized={shouldUnoptimizeProductImage(bundle.imageUrl)}
+                      className="object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
                       aria-hidden="true"
                     />
                   ) : (
@@ -512,10 +518,9 @@ async function HomeContent() {
             showViewAll={false}
           />
           <div className="grid grid-cols-2 gap-2.5 px-3 md:grid-cols-3 md:gap-4 md:px-0 lg:grid-cols-4">
-            {products.map((product, index) => (
+            {products.map((product) => (
               <ProductCard
                 key={product.id}
-                priority={index < 4}
                 product={{
                   id: product.id,
                   name: product.name,

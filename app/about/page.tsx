@@ -31,7 +31,7 @@ const pillars = [
   {
     icon: Sparkles,
     title: "Comfort AI Guide",
-    body: "Our intelligent AI assistant helps you discover the right health products from our live inventory — safely and without replacing professional advice.",
+    body: "Our intelligent AI assistant helps you discover the right health products from our live inventory safely and without replacing professional advice.",
     color: "from-violet-500 to-purple-600",
     bg: "bg-violet-50",
     border: "border-violet-100",
@@ -58,7 +58,7 @@ const stats = [
   { label: "Products Available", value: "100+", icon: HeartPulse },
   { label: "Happy Customers", value: "100+", icon: Users },
   { label: "Based In", value: "Tarkwa", icon: MapPin },
-  { label: "Support Hours/Day", value: "12 hrs", icon: Clock },
+  { label: "Support Hours/Day", value: "24 hrs", icon: Clock },
 ];
 
 const values = [
@@ -158,12 +158,12 @@ export default function AboutPage() {
             <p className="mt-5 text-base leading-8 text-gray-600">
               Our vision is to provide <strong>good and affordable medications</strong> at your
               comfort with great service. We believe that quality healthcare products should be
-              within reach of every individual, family, and community across Ghana — not just those
+              within reach of every individual, family, and community across Ghana not just those
               with easy access to physical pharmacies.
             </p>
             <p className="mt-4 text-base leading-8 text-gray-600">
               Comfort Health bridges the gap between communities and trusted pharmacy
-              services — combining a curated product catalogue, AI-powered guidance, and
+              services combining a curated product catalogue, AI-powered guidance, and
               compassionate human support into one seamless experience.
             </p>
           </div>
@@ -175,13 +175,13 @@ export default function AboutPage() {
             />
             <MessageCircleHeart className="h-10 w-10 text-emerald-400" aria-hidden="true" />
             <blockquote className="mt-5 text-lg font-semibold leading-relaxed">
-              &ldquo;We want to be the pharmacy in your pocket — always available,
+              &ldquo;We want to be the pharmacy in your pocket always available,
               always affordable, always caring.&rdquo;
             </blockquote>
-            <p className="mt-4 text-sm font-medium text-emerald-300">— The Comfort Health Team</p>
+            <p className="mt-4 text-sm font-medium text-emerald-300"> The Comfort Health Team</p>
             <div className="mt-8 grid grid-cols-2 gap-4">
               {[
-                { label: "Founded", value: "2025" },
+                { label: "Founded", value: "2026" },
                 { label: "Based In", value: "Tarkwa, Ghana" },
                 { label: "Delivery", value: "Pay on Delivery" },
                 { label: "AI Support", value: "24 / 7" },
@@ -206,7 +206,7 @@ export default function AboutPage() {
             </span>
             <h2 className="mt-3 text-3xl font-extrabold md:text-4xl">Built on four core pillars</h2>
             <p className="mx-auto mt-4 max-w-xl text-base text-gray-500">
-              Every decision we make — from product selection to delivery — is guided by these principles.
+              Every decision we make, from product selection to delivery is guided by these principles.
             </p>
           </div>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

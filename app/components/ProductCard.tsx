@@ -161,7 +161,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
               alt={product.name}
               fill
               sizes="(max-width: 768px) 50vw, 25vw"
-              priority={priority}
+              fetchPriority={priority ? "high" : undefined}
               unoptimized={shouldUnoptimizeProductImage(imageSrc)}
               className="object-cover"
             />

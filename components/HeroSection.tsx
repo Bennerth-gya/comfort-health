@@ -139,7 +139,7 @@ export default function HeroSection({ slides }: HeroSectionProps) {
               fill
               unoptimized={shouldUnoptimizeProductImage(slide.imageUrl)}
               className="object-cover"
-              priority={index === 0}
+              fetchPriority={index === 0 ? "high" : undefined}
               sizes="(max-width: 768px) calc(100vw - 24px), 960px"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10" />
