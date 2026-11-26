@@ -173,7 +173,7 @@ export default function CheckoutPage() {
                   type="text"
                   value={form.customerName}
                   onChange={(e) => updateField("customerName", e.target.value)}
-                  placeholder="e.g. Stephen Dadzie"
+                  placeholder=""
                   maxLength={60}
                   style={{ fontSize: "16px" }}
                   className={`
@@ -207,7 +207,7 @@ export default function CheckoutPage() {
                   type="tel"
                   value={form.customerPhone}
                   onChange={(e) => updateField("customerPhone", e.target.value)}
-                  placeholder="e.g. 0537355068"
+                  placeholder=""
                   maxLength={15}
                   style={{ fontSize: "16px" }}
                   className={`
@@ -244,7 +244,7 @@ export default function CheckoutPage() {
                 <textarea
                   value={form.customerAddress}
                   onChange={(e) => updateField("customerAddress", e.target.value)}
-                  placeholder="e.g. K.T Hall, Room 12"
+                  placeholder=""
                   rows={2}
                   maxLength={200}
                   style={{ fontSize: "16px" }}
@@ -279,7 +279,7 @@ export default function CheckoutPage() {
                 <textarea
                   value={form.deliveryNotes}
                   onChange={(e) => updateField("deliveryNotes", e.target.value)}
-                  placeholder="e.g. Call me when you arrive..."
+                  placeholder=""
                   rows={2}
                   maxLength={300}
                   style={{ fontSize: "16px" }}

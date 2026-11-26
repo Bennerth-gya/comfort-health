@@ -306,6 +306,35 @@ export async function notifyNewOrder(order: OrderNotificationPayload): Promise<v
   await Promise.allSettled(tasks);
 }
 
+export async function notifyNewProductRequest(request: {
+  id: string;
+  name: string;
+  productName: string;
+  reason?: string | null;
+}): Promise<void> {
+  const smsPhone =
+    process.env.ADMIN_SMS_PHONE ||
+    process.env.ADMIN_WHATSAPP ||
+    process.env.NEXT_PUBLIC_PHARMACY_PHONE;
+
+  if (!smsPhone || !(process.env.BMS_API_KEY || process.env.ARKESEL_API_KEY)) {
+    console.info("SMS is not configured; skipping product request notification.");
+    return;
+  }
+
+  const message =
+    `NEW PRODUCT REQUEST #${request.id.slice(-6).toUpperCase()}\n` +
+    `Product: ${request.productName}\n` +
+    `Requested by: ${request.name}` +
+    (request.reason ? `\nNote: ${request.reason.trim().slice(0, 100)}` : "") +
+    `\nReview in the Comfort Health admin dashboard.`;
+
+  const sent = await sendSMS(smsPhone, message);
+  if (!sent) {
+    console.warn("Product request SMS was not accepted; check SMS configuration and provider status.");
+  }
+}
+
 export async function notifyRider(
   riderPhone: string,
   riderApiKey: string,

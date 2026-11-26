@@ -1,20 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { notifyNewProductRequest } from '@/lib/notifications'
+import { rateLimitRequest, RequestSecurityError } from '@/lib/request-security'
 
 export async function POST(req: NextRequest) {
   try {
+    // This endpoint now sends paid SMS alerts; limit repeat submissions per client.
+    await rateLimitRequest(req, 'product-request:create', { limit: 5, windowMs: 10 * 60_000 })
+
     const body = await req.json()
     const { name, productName, reason } = body
 
     // Validation
-    if (!name || name.trim().length < 2) {
+    if (typeof name !== 'string' || name.trim().length < 2) {
       return NextResponse.json(
         { error: 'Please enter your name' },
         { status: 400 }
       )
     }
 
-    if (!productName || productName.trim().length < 2) {
+    if (name.trim().length > 50) {
+      return NextResponse.json(
+        { error: 'Name is too long' },
+        { status: 400 }
+      )
+    }
+
+    if (typeof productName !== 'string' || productName.trim().length < 2) {
       return NextResponse.json(
         { error: 'Please enter the medicine name' },
         { status: 400 }
@@ -24,6 +36,13 @@ export async function POST(req: NextRequest) {
     if (productName.trim().length > 100) {
       return NextResponse.json(
         { error: 'Medicine name is too long' },
+        { status: 400 }
+      )
+    }
+
+    if (reason != null && (typeof reason !== 'string' || reason.trim().length > 300)) {
+      return NextResponse.json(
+        { error: 'Please keep your note under 300 characters' },
         { status: 400 }
       )
     }
@@ -58,11 +77,18 @@ export async function POST(req: NextRequest) {
       data: {
         name: name.trim(),
         productName: productName.trim(),
-        reason: reason?.trim() || null,
+        reason: typeof reason === 'string' ? reason.trim() || null : null,
         status: 'PENDING',
         isRead: false,
       }
     })
+
+    // Keep the saved request even if the SMS provider is temporarily unavailable.
+    try {
+      await notifyNewProductRequest(request)
+    } catch (notificationError) {
+      console.error('Product request SMS notification failed:', notificationError)
+    }
 
     return NextResponse.json(
       { success: true, id: request.id },
@@ -70,6 +96,9 @@ export async function POST(req: NextRequest) {
     )
 
   } catch (error) {
+    if (error instanceof RequestSecurityError) {
+      return NextResponse.json({ error: error.message }, { status: error.status })
+    }
     console.error('Product request error:', error)
     return NextResponse.json(
       { error: 'Something went wrong. Please try again.' },
